@@ -56,7 +56,6 @@ public class AvailabilityFilter
         {
             int score = 0;
             CommandAction ca = commands[i];
-            Debug.Log("ca.commandId: " + ca.phrase + " just learn? " + ca.isJustLearnt + " isUnknown " + ca.isUnknown + " isUsedOnce " + ca.isUsedOnce + " isPossible" + ca.isPossible);
             if (ca.isJustLearnt) score += 5;
             if (!ca.isUnknown) score += 1; else score -= 5;
             if (ca.isUsedOnce) score -= 3; else score += 3;

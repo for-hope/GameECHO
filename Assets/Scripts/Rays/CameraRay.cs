@@ -11,8 +11,7 @@ public class CameraRay : MonoBehaviour
     
     private Vector3 origin;
     private Vector3 direction;
-    private float currentHitDistance;
-
+    float currentHitDistance;
     void FixedUpdate()
     {
         RaycastHit hit;
@@ -21,6 +20,7 @@ public class CameraRay : MonoBehaviour
         direction = ray.direction;
         int layerMask = LayerMask.GetMask("VoiceInteractable");
         GameObject objectText = GameObject.Find("objectText");
+ 
         if (Physics.SphereCast(origin, sphereRadius, direction ,out hit, maxDistance, layerMask, QueryTriggerInteraction.UseGlobal))
         {
             currentHitDistance = hit.distance;
@@ -28,13 +28,14 @@ public class CameraRay : MonoBehaviour
             string tag = gameObject.tag;
             GameManager.currentExactEnvObject = (EnvObjects)System.Enum.Parse(typeof(EnvObjects), tag);
                     
-         
+        
 
             //get Text from gameobject
          
             objectText.GetComponent<UnityEngine.UI.Text>().text = gameObject.name;
             GameManager.updateCommandsList(gameObject.tag);
-
+            GameObject rayObjText = GameObject.Find("rayObj");
+            rayObjText.GetComponent<UnityEngine.UI.Text>().text = "RAY OBJECT:\n " + gameObject.tag;
             //Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
             //Debug.Log("Hit " + hit.collider.name + " - " + hit.distance + " - " + hit.collider.gameObject.tag);
         } else
@@ -42,7 +43,10 @@ public class CameraRay : MonoBehaviour
             objectText.GetComponent<UnityEngine.UI.Text>().text = "";
             currentHitDistance = maxDistance;
             GameManager.updateCommandsList("");
-            
+            GameObject rayObjText = GameObject.Find("rayObj");
+            rayObjText.GetComponent<UnityEngine.UI.Text>().text = "RAY OBJECT:\n ";
+
+   
             //Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
 
         }
