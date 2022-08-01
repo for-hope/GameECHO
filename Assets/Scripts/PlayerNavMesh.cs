@@ -12,7 +12,7 @@ public class PlayerNavMesh : MonoBehaviour
     private CinemachineVirtualCamera playerCam;
     private Camera mainCamera; 
     private bool isStopped = false;
-
+    private  GameObject transformCenter;
     public delegate void OnReachedTargetDelegate();
     public OnReachedTargetDelegate OnReachedTarget;
 
@@ -22,27 +22,27 @@ public class PlayerNavMesh : MonoBehaviour
         objectCam = GameObject.Find("ObjectLookAtCamera").GetComponent<CinemachineVirtualCamera>();
         playerCam = GameObject.Find("PlayerFollowCamera").GetComponent<CinemachineVirtualCamera>();
         mainCamera = GameObject.Find("MainCamera").GetComponent<Camera>();
+        transformCenter = new GameObject("TransformCenter");
     }
     
     private void Update()
     {
         if (target == null) return;
         navMeshAgent.destination = target.GetComponent<Renderer>().bounds.center;
-        GameObject transformCenter = new GameObject();
         transformCenter.transform.position = target.GetComponent<Renderer>().bounds.center;
         objectCam.LookAt = transformCenter.transform;
         // Debug.Log("Position: " + target.transform.position);
         // Debug.Log("Bounds: " + target.GetComponent<Renderer>().bounds.center);
         bool pathPending = navMeshAgent.pathPending;
-        if (!pathPending  && !isStopped)
+        if (!pathPending)
         {
             if(objectCam.Priority < playerCam.Priority) SwitchCamPriority();
             if (navMeshAgent.remainingDistance <= 0.15f )
             {
                 if (objectCam.Priority > playerCam.Priority) SwitchCamPriority();
-                isStopped = true;
+                target = null;
                 if (OnReachedTarget != null) OnReachedTarget();
-                Debug.Log("Agent Stopped");
+                Debug.Log("Agent Stopped!!!!!!!!");
             }
         }
 

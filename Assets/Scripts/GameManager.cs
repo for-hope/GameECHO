@@ -59,37 +59,40 @@ public class GameManager : MonoBehaviour
         commandsTextComponent.GetComponent<UnityEngine.UI.Text>().text = commandsText;
     }
 
+
+    public static void LearnCommands(List<CommandAction> cmds)
+    {
+        for (int i = 0; i < GameManager.commandActions.Count; i++)
+        {
+            CommandAction gmCmdAction = GameManager.commandActions[i];
+            for (int j = 0; j < cmds.Count; j++)
+            {
+                if (gmCmdAction != cmds[j])
+                {
+                    GameManager.commandActions[i].isJustLearnt = false;
+                    continue;
+                }
+                if (cmds[j].id == 0)
+                {
+                    GameManager.commandActions[i].isUsedOnce = true;
+                }
+                else
+                {
+                    GameManager.commandActions[i].isJustLearnt = !GameManager.commandActions[i].isUnknown;
+                    GameManager.commandActions[i].isUnknown = false;
+                }
+
+            }
+        }
+    }
+
     public static void TriggerAction(int id, string context)
     {
-        switch(context.ToLower())
-        {
-            case "buckets":
-                BucketsAction.triggerAction(id);
-                break;
-            case "trash":
-                TrashAction.triggerAction(id);
-                break;
-            case "door":
-                DoorAction.triggerAction(id);
-                break;
-            case "metal box":
-                MetalBoxAction.triggerAction(id);
-                break;
-            case "bed":
-                BedAction.triggerAction(id);
-                break;
-            case "toilet":
-                ToiletAction.triggerAction(id);
-                break;
-            case "table":
-                TableAction.triggerAction(id);
-                break;
-            case "chair":
-                ChairAction.triggerAction(id);
-                break;
-            default:
-                break;
-        }
+        Debug.Log("TAG TO INSPECT " + context.ToUpper());
+        GameObject go = GameObject.FindGameObjectWithTag(context.ToUpper());
+        VAction action = go.GetComponent<VAction>();
+        Debug.Log("Action Triggered! " + id + " " + context);
+        action.TriggerAction(id);
     }
 
 }

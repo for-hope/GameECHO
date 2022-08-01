@@ -2,88 +2,36 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BedAction : MonoBehaviour
+public class BedAction : VAction
 {
-    private static string TAG = "Bed";
-    // Start is called before the first fframe update
-    public bool inspect;
+
+    protected override string InspectAudioFileName { get; } = "Sounds/a25";
+
+    protected override string LateReplyAudioFileName { get; } = "Sounds/a26";
     public bool lookUnder;
     public bool tryMove;
 
-    private CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the bed");
-    private CommandAction cmdAction2 = new CommandAction(1, TAG, "Look under the bed");
-    private CommandAction cmdAction3 = new CommandAction(2, TAG, "Try to move the bed");
-
-    private List<CommandAction> cmds = new List<CommandAction>();
 
 
-    void Start()
+
+    public new void Start()
     {
-        inspect = false;
+
+        CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the bed");
+        CommandAction cmdAction2 = new CommandAction(1, TAG, "Look under the bed");
+        CommandAction cmdAction3 = new CommandAction(2, TAG, "Try to move the bed");
         lookUnder = false;
         tryMove = false;
-  
-        cmds = new List<CommandAction>
-        {
-            cmdAction,
-            cmdAction2,
-            cmdAction3
-        };
-        GameManager.commandActions.AddRange(cmds);
+
+        actions.Add(1, LookUnder);
+        actions.Add(2, TryMove);
+        cmds.Add(cmdAction);
+        cmds.Add(cmdAction2);
+        cmds.Add(cmdAction3);
+        base.Start();
     }
 
-    public static void triggerAction(int commandId)
-    {
-        GameObject gameObject = GameObject.Find(TAG);
-        BedAction bedAction = gameObject.GetComponent<BedAction>();
-        if (commandId == 0)
-        {
-            bedAction.Inspect();
-        }
-        else if (commandId == 1)
-        {
-            bedAction.LookUnder();
-        }
-        else if (commandId == 2)
-        {
-            bedAction.TryMove();
-        }
-    }
 
-    public void Inspect()
-    {
-        Debug.Log("Inspecting The bed");
-        AudioClip DialogAudio = Resources.Load<AudioClip>("Sounds/a25");
-        SoundManager.Instance.Play(DialogAudio);
-        gameObject.GetComponent<VoiceObject>().isInspected = true;
-        inspect = true;
-        StartCoroutine(BedInspectionReply());
-        VoiceObject vo = gameObject.GetComponent<VoiceObject>();
-        vo.isInspected = true;
-        //find cmdAction in GameManager.commandActions
-        for (int i = 0; i < GameManager.commandActions.Count; i++)
-        {
-            CommandAction gmCmdAction = GameManager.commandActions[i];
-            for (int j = 0; j < cmds.Count; j++)
-            {
-                if (gmCmdAction != cmds[j])
-                {
-                    GameManager.commandActions[i].isJustLearnt = false;
-                    continue;
-                }
-                if (cmds[j].id == 0)
-                {
-                    GameManager.commandActions[i].isUsedOnce = true;
-                }
-                else
-                {
-                    GameManager.commandActions[i].isJustLearnt = !GameManager.commandActions[i].isUnknown;
-                    GameManager.commandActions[i].isUnknown = false;
-                }
-
-            }
-        }
-    }
 
     public void LookUnder()
     {
@@ -101,11 +49,7 @@ public class BedAction : MonoBehaviour
         tryMove = true;
     }
 
-    IEnumerator BedInspectionReply()
-    { 
-        yield return new WaitForSeconds(5);
-        AudioClip DialogAudio = Resources.Load<AudioClip>("Sounds/a26");
-        SoundManager.Instance.Play(DialogAudio);
-    }
+
+
 
 }

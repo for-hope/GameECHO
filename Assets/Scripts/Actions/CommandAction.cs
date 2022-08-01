@@ -27,17 +27,17 @@ public class CommandAction
 
     public static Dictionary<string, EnvObjects> tagToEnvObj = new Dictionary<string, EnvObjects>()
     {
-        {"door", EnvObjects.DOORS },
+        {"doors", EnvObjects.DOORS },
         {"wall", EnvObjects.WALLS },
-        {"bucket", EnvObjects.BUCKETS },
+        {"buckets", EnvObjects.BUCKETS },
         {"chair", EnvObjects.CHAIR },
         {"table", EnvObjects.TABLE },
         {"bed", EnvObjects.BED },
-        {"toilet", EnvObjects.WC },
-        {"hanged clothes", EnvObjects.HANGED_CLOTHES },
+        {"toilet", EnvObjects.TOILET },
+        {"hanged_clothes", EnvObjects.HANGED_CLOTHES },
         {"light", EnvObjects.LIGHT },
         {"trash", EnvObjects.TRASH },
-        {"metal box", EnvObjects.METAL_BOX }
+        {"metal_box", EnvObjects.METAL_BOX }
 
     };
 

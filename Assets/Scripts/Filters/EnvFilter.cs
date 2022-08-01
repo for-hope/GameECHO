@@ -9,7 +9,7 @@ public class EnvFilter : MonoBehaviour
         List<CommandAction> filtered = new List<CommandAction>();
         foreach (CommandAction command in commandActions)
         {
-            
+            Debug.Log("KEY: " + command.context);
             EnvObjects envObject = CommandAction.tagToEnvObj[command.context.ToLower()];
             
                 if (GameManager.currentExactEnvObject == envObject)
@@ -50,7 +50,7 @@ public enum EnvObjects
     CHAIR,
     TABLE,
     BED,
-    WC,
+    TOILET,
     HANGED_CLOTHES,
     LIGHT,
     TRASH,
