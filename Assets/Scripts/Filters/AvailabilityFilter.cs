@@ -4,50 +4,8 @@ using UnityEngine;
 
 public class AvailabilityFilter
 {
-    
-    static public CommandsAvailibity[] commandsAvailibiliy = new CommandsAvailibity[]
-    {
-        new CommandsAvailibity(1, new[]{Levels.LEVEL1, } , new[]{GameState.HAS_MESSABLE_OBJ}),
-        new CommandsAvailibity(2,new Levels[]{Levels.LEVEL1},new GameState[]{GameState.HAS_DOOR_BAR}),
-        new CommandsAvailibity(3, new Levels[]{Levels.LEVEL1}, new GameState[]{GameState.HAS_GREEN_GUARDS, GameState.HAS_GUARDS}),
-        new CommandsAvailibity(4, new Levels[]{Levels.LEVEL1}, new GameState[]{GameState.HAS_RED_GUARDS, GameState.HAS_GUARDS}),
-        new CommandsAvailibity(5, new Levels[]{Levels.LEVEL1}, new GameState[]{GameState.HAS_GREEN_GUARDS, GameState.HAS_GUARDS}),
-        new CommandsAvailibity(6, new Levels[]{Levels.LEVEL1}, new GameState[]{GameState.HAS_RED_GUARDS, GameState.HAS_GUARDS}),
-        new CommandsAvailibity(7, new Levels[]{Levels.LEVEL1}, new GameState[]{GameState.HAS_TERMINAL}),
-        new CommandsAvailibity(8, new Levels[]{Levels.LEVEL1}, new GameState[]{GameState.HAS_DOORS}),
-        new CommandsAvailibity(9, new Levels[]{Levels.LEVEL1}, new GameState[]{GameState.NOT_WIDE_OPEN}),
-        new CommandsAvailibity(10, new Levels[]{Levels.LEVEL1}, new GameState[]{GameState.HAS_OPEN_LIGHT })
+   
 
-    };
-
-    public static List<int> filterByAv()
-    {
-        List<int> commandsAvailibiliyFiltered = new List<int>();
-       
-        for (int i = 0; i < commandsAvailibiliy.Length; i++)
-        {
-            CommandsAvailibity ca = commandsAvailibiliy[i];
-            List<Levels> levels = new List<Levels>(ca.levels);
-            List<GameState> gameState = new List<GameState>(ca.gState);
-            bool hasGameState = false;
-            for (int j = 0; j < gameState.Count; j++)
-            {
-                if (GameManager.currentGameState.Contains(gameState[j]))
-                {
-                    hasGameState = true;
-                    break;
-                }
-            }
-            if (levels.Contains(GameManager.currentLevels) && hasGameState)
-            {
-                commandsAvailibiliyFiltered.Add(ca.commandId);
-            }
-         
-          
-        }
-        return commandsAvailibiliyFiltered;
-    }
-    
     public static IDictionary<CommandAction, int> filterByGameState(List<CommandAction> commands)
     {
         IDictionary<CommandAction, int> filtered = new Dictionary<CommandAction, int>();

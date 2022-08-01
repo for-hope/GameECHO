@@ -2,25 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class TrashAction : MonoBehaviour
 {
     // Start is called before the first frame update
     public bool inspect;
     public bool move;
     public bool search;
-    private CommandAction cmdAction = new CommandAction(0,"trash", "Inspect the trash");
-    private CommandAction cmdAction2 = new CommandAction(1,"trash", "Move the trash");
+    private CommandAction cmdAction = new CommandAction(0, "trash", "Inspect the trash");
+    private CommandAction cmdAction2 = new CommandAction(1, "trash", "Move the trash");
     private CommandAction cmdAction3 = new CommandAction(2, "trash", "Search inside the trash");
     private List<CommandAction> cmds = new List<CommandAction>();
-
+    private PlayerNavMesh playerNavMesh;
 
 
     void Start()
     {
+        playerNavMesh = GameObject.Find("PlayerCapsule").GetComponent<PlayerNavMesh>();
         inspect = false;
         move = false;
         search = false;
-      
+
         cmds = new List<CommandAction>
         {
             cmdAction,
@@ -30,11 +32,6 @@ public class TrashAction : MonoBehaviour
         GameManager.commandActions.AddRange(cmds);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     public static void triggerAction(int commandId)
     {
@@ -42,7 +39,8 @@ public class TrashAction : MonoBehaviour
         TrashAction trashAction = gameObject.GetComponent<TrashAction>();
         if (commandId == 0)
         {
-            trashAction.Inspect();
+            PlayerNavMesh.OnReachedTargetDelegate onReachedTarget = new PlayerNavMesh.OnReachedTargetDelegate(trashAction.Inspect);
+            trashAction.playerNavMesh.GoToTarget(gameObject, onReachedTarget);
         }
         else if (commandId == 1)
         {

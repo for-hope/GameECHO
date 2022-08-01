@@ -97,7 +97,7 @@ namespace StarterAssets
 
 		private void Start()
 		{
-			_controller = GetComponent<CharacterController>();
+			//_controller = GetComponent<CharacterController>();
 			_input = GetComponent<StarterAssetsInputs>();
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 			_playerInput = GetComponent<PlayerInput>();
@@ -112,9 +112,9 @@ namespace StarterAssets
 
 		private void Update()
 		{
-			JumpAndGravity();
+			//JumpAndGravity();
 			GroundedCheck();
-			Move();
+			//Move();
 		}
 
 		private void LateUpdate()

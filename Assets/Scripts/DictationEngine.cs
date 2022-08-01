@@ -10,6 +10,7 @@ public class DictationEngine : MonoBehaviour
     protected DictationRecognizer dictationRecognizer;
     void Start()
     {
+        Debug.Log("DictationEngine Start");
         StartDictationEngine();
     }
     private void DictationRecognizer_OnDictationHypothesis(string text)
