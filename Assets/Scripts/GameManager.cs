@@ -6,32 +6,65 @@ using System.Text.RegularExpressions;
 public class GameManager : MonoBehaviour
 {
 
-    public static Levels currentLevels;
-    public static List<GameState> currentGameState;
+
+
+    public static GameManager Instance = null;
+    Animator animator;
+
+
+    public bool ignoreLowScopeScores = true;
     public static EnvObjects currentExactEnvObject;
     public static List<EnvObjects> currentFrameEnvObjects;
     public static List<CommandAction> commandActions = new List<CommandAction>();
+   private Cinemachine.CinemachineVirtualCamera playerCam;
+     private Cinemachine.CinemachineVirtualCamera handCam;
     // Start is called before the first frame update
     void Start()
     {
-        currentLevels = Levels.LEVEL1;
-        currentGameState = new List<GameState>
-        {
-           GameState.HAS_MESSABLE_OBJ,
-           GameState.HAS_DOOR_BAR,
-           GameState.HAS_GUARDS,
-           GameState.HAS_GREEN_GUARDS,
-           GameState.HAS_RED_GUARDS,
-           GameState.HAS_TERMINAL,
-           GameState.HAS_DOORS,
-           GameState.NOT_WIDE_OPEN
-        };
+        animator = GameObject.Find("HandCamPrefab").GetComponent<Animator>();
+        playerCam = GameObject.Find("PlayerFollowCamera").GetComponent<Cinemachine.CinemachineVirtualCamera>();
+        handCam = GameObject.Find("HandCam").GetComponent<Cinemachine.CinemachineVirtualCamera>();
+        currentFrameEnvObjects = new List<EnvObjects>();
+    }
 
-       
-        currentFrameEnvObjects = new List<EnvObjects>
+    // Initialize the singleton instance.
+    private void Awake()
+    {
+        // If there is not already an instance of SoundManager, set it to this.
+        if (Instance == null)
         {
+            Instance = this;
+        }
+        //If an instance already exists, destroy whatever this object is to enforce the singleton.
+        else if (Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        //Set SoundManager to DontDestroyOnLoad so that it won't be destroyed when reloading our scene.
+        DontDestroyOnLoad(gameObject);
+    }
 
-        };
+    private void Update()
+    {
+       //check if animator is animating
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("PutDownCam") || animator.GetCurrentAnimatorStateInfo(0).IsName("PutUp"))
+        {
+            if (playerCam.Priority > handCam.Priority) {
+                handCam.Priority = playerCam.Priority + 1; 
+            }
+        } else if (handCam != null) {
+            if (handCam.Priority > playerCam.Priority) {
+                playerCam.Priority = handCam.Priority - 1;
+                handCam.Priority = -1;
+            }
+        }
+    }
+
+    public void putDownCamera(bool isPutDown)
+    {
+        Debug.Log("putDownCamera " + isPutDown);
+        animator.SetBool("putDown", isPutDown);
+
     }
 
     public static void updateCommandsList(string objectTag)
@@ -44,7 +77,7 @@ public class GameManager : MonoBehaviour
             return;
         }
         GameObject gameObject = GameObject.FindGameObjectWithTag(objectTag);
-   
+
         string commandsText = "Actions: \n";
         VoiceObject vo = gameObject.GetComponent<VoiceObject>();
         string[] defaultCommands = vo.defaultCommands;
@@ -60,30 +93,38 @@ public class GameManager : MonoBehaviour
     }
 
 
-    public static void LearnCommands(List<CommandAction> cmds)
+    public static void RevealHiddenCommandsOfAction(List<CommandAction> cmds)
     {
-        for (int i = 0; i < GameManager.commandActions.Count; i++)
+        foreach (CommandAction cmd in cmds)
         {
-            CommandAction gmCmdAction = GameManager.commandActions[i];
-            for (int j = 0; j < cmds.Count; j++)
+            Debug.Log("Revealing hidden command: " + cmd.phrase);
+        }
+
+        //iterate through the commands of GameManager.
+        foreach (CommandAction gmCommand in commandActions)
+        {
+
+            if (cmds.Contains(gmCommand))
             {
-                if (gmCmdAction != cmds[j])
-                {
-                    GameManager.commandActions[i].isJustLearnt = false;
-                    continue;
-                }
-                if (cmds[j].id == 0)
-                {
-                    GameManager.commandActions[i].isUsedOnce = true;
-                }
+                if (gmCommand.id == 0) gmCommand.isUsedOnce = true;
                 else
                 {
-                    GameManager.commandActions[i].isJustLearnt = !GameManager.commandActions[i].isUnknown;
-                    GameManager.commandActions[i].isUnknown = false;
+                    gmCommand.isJustLearnt = true;
+                    gmCommand.isUnknown = false;
                 }
-
             }
+            else
+            {
+                gmCommand.isJustLearnt = false;
+            }
+
         }
+
+        foreach (CommandAction gmCommand in commandActions)
+        {
+            Debug.Log("gmCommand: " + gmCommand.phrase + " just learnt" + gmCommand.isJustLearnt);
+        }
+
     }
 
     public static void TriggerAction(int id, string context)
@@ -91,7 +132,6 @@ public class GameManager : MonoBehaviour
         Debug.Log("TAG TO INSPECT " + context.ToUpper());
         GameObject go = GameObject.FindGameObjectWithTag(context.ToUpper());
         VAction action = go.GetComponent<VAction>();
-        Debug.Log("Action Triggered! " + id + " " + context);
         action.TriggerAction(id);
     }
 

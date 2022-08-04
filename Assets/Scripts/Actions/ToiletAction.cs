@@ -8,9 +8,9 @@ public class ToiletAction : VAction
     public bool tryBreak;
     public bool takeOutPipe;
 
-    protected override string InspectAudioFileName { get; } = "Sounds/a17";
+    protected override string InitialInspectAudioFN { get; } = "Sounds/a17";
 
-    protected override string LateReplyAudioFileName { get; } = "Sounds/a40";
+    protected override string FollowUpInspectAudioFN { get; } = "Sounds/a40";
 
 
      public new void Start()

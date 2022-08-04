@@ -5,9 +5,9 @@ using UnityEngine;
 public class BedAction : VAction
 {
 
-    protected override string InspectAudioFileName { get; } = "Sounds/a25";
+    protected override string InitialInspectAudioFN { get; } = "Sounds/a25";
 
-    protected override string LateReplyAudioFileName { get; } = "Sounds/a26";
+    protected override string FollowUpInspectAudioFN { get; } = "Sounds/a26";
     public bool lookUnder;
     public bool tryMove;
 

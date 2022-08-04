@@ -11,7 +11,6 @@ public class PlayerNavMesh : MonoBehaviour
     private CinemachineVirtualCamera objectCam;
     private CinemachineVirtualCamera playerCam;
     private Camera mainCamera; 
-    private bool isStopped = false;
     private  GameObject transformCenter;
     public delegate void OnReachedTargetDelegate();
     public OnReachedTargetDelegate OnReachedTarget;

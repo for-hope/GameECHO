@@ -5,9 +5,9 @@ using UnityEngine;
 public class DoorAction : VAction
 {
 
-    protected override string InspectAudioFileName { get;} = "Sounds/a9";
+    protected override string InitialInspectAudioFN { get;} = "Sounds/a9";
  
-    protected override string LateReplyAudioFileName  { get;} = "Sounds/a10";
+    protected override string FollowUpInspectAudioFN  { get;} = "Sounds/a10";
 
     public bool tryOpen;
     public bool tryBreak;

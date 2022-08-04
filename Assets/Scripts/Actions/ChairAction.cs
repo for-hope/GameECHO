@@ -5,7 +5,7 @@ using UnityEngine;
 public class ChairAction : VAction
 {
 
-    protected override string LateReplyAudioFileName { get;} = "Sounds/a23";
+    protected override string FollowUpInspectAudioFN { get;} = "Sounds/a23";
     
 
 

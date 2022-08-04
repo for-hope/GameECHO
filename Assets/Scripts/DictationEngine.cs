@@ -41,59 +41,11 @@ public class DictationEngine : MonoBehaviour
     }
     private void DictationRecognizer_OnDictationResult(string text, ConfidenceLevel confidence)
     {
-        //Debug.Log("Dictation result: " + text);
-        //if (CommandList.phrases.Contains(text.ToLower()))
-        //{
-        //    int id = 0;
-        //    foreach (VoiceInteraction va in CommandList.commandsArray)
-        //    {
-        //        if (va.phrase == text.ToLower())
-        //        {
-        //            id = va.id;
-        //        }
-        //    }
-        //    Debug.Log("ACTION OF ID : " + id);
-        //} else
-        //{
 
-        //    List<int> av = AvailabilityFilter.filterByAv();
-        //    List<int> ef = EnvFilter.filteredByEnv();
-
-        //    List<int> maybeActions = new List<int>();
-        //    for (int i = 0; i < av.Count; i++)
-        //    {
-
-        //        if (ef.Contains(av[i]))
-        //        {
-        //            //Debug.Log("[MAYBE1] ACTION OF ID : " + av[i]);
-        //            maybeActions.Add(av[i]);
-        //        }
-        //    }
-        //    int currentScore = 0;
-        //    int lastScore = 100;
-        //    int winnerAction = -1;
-        //    string phrase = "";
-        //    foreach (VoiceInteraction va in CommandList.commandsArray)
-        //    {
-        //        if (maybeActions.Contains(va.id))
-        //        {
-        //            //Debug.Log("ACTION OF ID : " + va.id);
-        //            currentScore = LevenshteinDistance.Compute(va.phrase, text);
-        //            if (currentScore < lastScore)
-        //            {
-        //                lastScore = currentScore;
-        //                winnerAction = va.id;
-        //                phrase = va.phrase;
-        //            }
-
-        //        }
-
-        //    }
-        //    Debug.Log("[FINAL] ACTION OF ID : " + winnerAction + " WITH SCORE : " + lastScore + " AND PHRASE : " + phrase);
-        //}
-        Debug.Log("Dictation result: " + text);
+        Debug.Log("Dictation result: " + text + " with confidence: " + confidence);
         List<CommandAction> cmdActions = GameManager.commandActions;
-        IDictionary<CommandAction, int> commandStringScore = new Dictionary< CommandAction,int>();
+        ScopeFilter scopeFilter = new ScopeFilter();
+
         bool cmdFound = false;
         for (int i = 0; i < cmdActions.Count; i++)
         {
@@ -103,69 +55,51 @@ public class DictationEngine : MonoBehaviour
                 cmdFound = true;
                 break;
             }
-            int score = LevenshteinDistance.Compute(cmdActions[i].phrase, text);
-            commandStringScore.Add(new KeyValuePair<CommandAction, int>(cmdActions[i], score));
+            scopeFilter.Filter(cmdActions[i], text);
         }
 
         if (cmdFound) return;
-
+        IDictionary<CommandAction, int> scopeFilteredCommands = scopeFilter.filteredCommands;
         //predict the command
-        Debug.Log("1st STEP" + commandStringScore.Values.Min());
-        int max = commandStringScore.Values.Min();
-        Debug.Log("MAX SCORE" + commandStringScore.First(x => x.Value == max).Key.phrase);
-        if (commandStringScore.Values.Min() > 12) return;
-        List<CommandAction> possibleCommands = new List<CommandAction>();
-        List<int> possibleCommandsScores = new List<int>();
-        foreach (var item in commandStringScore)
+        Debug.Log("Command not found, Predicting...");
+        if (scopeFilteredCommands.Count == 0)
         {
-            CommandAction cmdAction = item.Key;
-            int score = item.Value;
-            if (score <= 12)
-            {
-                possibleCommands.Add(cmdAction);
-                possibleCommandsScores.Add(score);
-            }
+            Debug.Log("Command is not in the scope of the available commands");
+            return;
         }
-        Debug.Log("2nd STEP");
+        float startTime = Time.realtimeSinceStartup;
+        var bestScore = scopeFilter.BestScoreCommand();
+        Debug.Log("[BEST GUESS BASED ON STRING COMP] : " + bestScore.Key.phrase + " with score: " + bestScore.Value);
 
-        List<CommandAction> cmdBasedOnRay = EnvFilter.filteredByEnv(GameManager.commandActions);
-        List<CommandAction> cmdsBasedOnFrame = EnvFilter.filterByFrameEnv(GameManager.commandActions);
-        IDictionary<CommandAction, int> cmdsBasedOnContext = AvailabilityFilter.filterByGameState(GameManager.commandActions);
-        Debug.Log("CMDS BASED ON RAY => " + cmdBasedOnRay.Count);
-        foreach (CommandAction cmd in cmdsBasedOnFrame)
-        {
-            Debug.Log("CMD BASED ON FRAME " + cmd.phrase);
-        }
 
-        foreach (var cmd in cmdsBasedOnContext)
+
+        var scopeFilteredCommandsList = scopeFilteredCommands.Keys.ToList();
+        var cmdBasedOnRay = EnvironmentFilter.filteredByEnv(scopeFilteredCommandsList);
+        var cmdsBasedOnFrame = EnvironmentFilter.filterByFrameEnv(scopeFilteredCommandsList);
+        IDictionary<CommandAction, int> cmdsBasedOnContext = AvailabilityFilter.filterByContext(scopeFilteredCommandsList);
+        IDictionary<CommandAction, int> finalCommandsScores = new Dictionary<CommandAction, int>();
+        Debug.Log("---- Calculating final score ----");
+        foreach (KeyValuePair<CommandAction, int> commandScore in scopeFilteredCommands)
         {
-            Debug.Log("CMD BASED ON Context " + cmd.Key.phrase + " With score " + cmd.Value);
-        }
-        IDictionary<CommandAction, int> finalScore = new Dictionary<CommandAction, int>();
-        for (int i=0; i < possibleCommands.Count; i++)
-        {
-            CommandAction possibleCmd = possibleCommands[i];
-            int score = 0;
-            Debug.Log("Scoring cmd " + possibleCmd.phrase);
+            CommandAction possibleCmd = commandScore.Key;
+            int score = 0; // MAX SCORE = 100
+            //Environment Score MAX = 30
             if (cmdBasedOnRay.Contains(possibleCmd)) score += 20;
-            Debug.Log("Score after ray " + score);
-            if (cmdsBasedOnFrame.Contains(possibleCmd)) score += 10;
-            Debug.Log("Score after frames " + score);
-            if (cmdsBasedOnContext.Keys.Contains(possibleCmd)) score += ((cmdsBasedOnContext[possibleCmd] - 5) * 6);
-            Debug.Log("Score after context " + score );
+            var uniqueObjectsOnFrame = cmdsBasedOnFrame.Values.Distinct().Count();
+            if (cmdsBasedOnFrame.Keys.ToList().Contains(possibleCmd)) score += (10 / uniqueObjectsOnFrame);
+            //Context Score MAX = 30
+            if (cmdsBasedOnContext.Keys.Contains(possibleCmd)) score += cmdsBasedOnContext[possibleCmd];
+            //Scope Score MAX = 40
+            score += Convert.ToInt32((ScopeFilter.MIN_SCOPE_FILTER_SCORE - commandScore.Value + 1) * 4);
+            //Debug.Log("Score after str " + score);
 
-            score += Convert.ToInt32((101 - possibleCommandsScores[i] - 88) * 2.5);
-            Debug.Log("Score after str " + score);
-
-            finalScore.Add(new KeyValuePair<CommandAction, int>(possibleCmd, score));
+            finalCommandsScores.Add(new KeyValuePair<CommandAction, int>(possibleCmd, score));
         }
-
-        Debug.Log("3rd STEP");
-
-        int maxValue = finalScore.Values.Max();
-        Debug.Log("MAx Value" + maxValue);
-        CommandAction finalCommand =  finalScore.First(x => x.Value == maxValue).Key;
-        Debug.Log("cmd id " + finalCommand.id);
+        var maxCommand = finalCommandsScores.OrderByDescending(x => x.Value).First();
+        CommandAction finalCommand = maxCommand.Key;
+        Debug.Log("========> Final Command: " + finalCommand.phrase + " with score: " + maxCommand.Value);
+        float endTime = Time.realtimeSinceStartup;
+        Debug.Log("Time taken to predict: " + (endTime - startTime) + " seconds");
 
         GameManager.TriggerAction(finalCommand.id, finalCommand.context);
 

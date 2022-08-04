@@ -5,9 +5,9 @@ using UnityEngine;
 public class TrashAction : VAction
 {
 
-    protected override string InspectAudioFileName { get; } = "Sounds/a13";
+    protected override string InitialInspectAudioFN { get; } = "Sounds/a13";
 
-    protected override string LateReplyAudioFileName { get; } = "Sounds/a14";
+    protected override string FollowUpInspectAudioFN { get; } = "Sounds/a14";
     public bool move;
     public bool search;
 

@@ -5,9 +5,9 @@ using UnityEngine;
 public class MetalBoxAction : VAction
 {
 
-    protected override string InspectAudioFileName { get; } = "Sounds/a31";
+    protected override string InitialInspectAudioFN { get; } = "Sounds/a31";
 
-    protected override string LateReplyAudioFileName { get; } = "Sounds/a30";
+    protected override string FollowUpInspectAudioFN { get; } = "Sounds/a30";
     public bool tryOpen;
     public bool useKey;
     public bool tryBreak;
