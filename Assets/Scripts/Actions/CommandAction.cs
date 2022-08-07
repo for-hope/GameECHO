@@ -2,28 +2,51 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum Visibility
+{
+    VISIBLE,
+    INVISIBLE,
+    HIDDEN
+}
 public class CommandAction
 {
+    public static string INSPECT_ACTION_NAME = "Inspect";
     public int id;
-    public string context;
+    public string context; // example BED or TRASH
     public string phrase;
     public bool isUsedOnce = false;
     public bool isPossible = true;
     public bool isUnknown = false;
     public bool isJustLearnt = false;
+    public Visibility visibility = Visibility.VISIBLE;
+
+    public string actionName;
 
 
-    public CommandAction(int id, string context, string phrase)
+
+
+    public CommandAction(int id, string context, string phrase, string actionName, Visibility visibility = Visibility.INVISIBLE, bool isPossible = true)
     {
         this.id = id;
         this.context = context;
         this.phrase = phrase;
-        
-
+        this.actionName = actionName;
+        this.visibility = visibility;
+        this.isUnknown = visibility == Visibility.HIDDEN || visibility == Visibility.INVISIBLE;
     }
 
+        public CommandAction(int id, string context, string phrase)
+    {
+        this.id = id;
+        this.context = context;
+        this.phrase = phrase;
+        this.actionName = INSPECT_ACTION_NAME;
+        this.visibility = Visibility.VISIBLE;
+    }
+
+
     //equals
-    
+
 
     public static Dictionary<string, EnvObjects> tagToEnvObj = new Dictionary<string, EnvObjects>()
     {

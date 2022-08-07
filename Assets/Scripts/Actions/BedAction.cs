@@ -8,8 +8,6 @@ public class BedAction : VAction
     protected override string InitialInspectAudioFN { get; } = "Sounds/a25";
 
     protected override string FollowUpInspectAudioFN { get; } = "Sounds/a26";
-    public bool lookUnder;
-    public bool tryMove;
 
 
 
@@ -18,10 +16,9 @@ public class BedAction : VAction
     {
 
         CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the bed");
-        CommandAction cmdAction2 = new CommandAction(1, TAG, "Look under the bed");
-        CommandAction cmdAction3 = new CommandAction(2, TAG, "Try to move the bed");
-        lookUnder = false;
-        tryMove = false;
+        CommandAction cmdAction2 = new CommandAction(1, TAG, "Look under the bed", "Look Under");
+        CommandAction cmdAction3 = new CommandAction(2, TAG, "Try to move the bed", "Try to Move");
+
 
         actions.Add(1, LookUnder);
         actions.Add(2, TryMove);
@@ -38,7 +35,8 @@ public class BedAction : VAction
         Debug.Log("looking under the bed");
         AudioClip DialogAudio = Resources.Load<AudioClip>("Sounds/a28");
         SoundManager.Instance.Play(DialogAudio);
-        lookUnder = true;
+        cmds[1].isUsedOnce = true;
+
     }
 
     public void TryMove()
@@ -46,7 +44,8 @@ public class BedAction : VAction
         Debug.Log("trying to move the bed");
         AudioClip DialogAudio = Resources.Load<AudioClip>("Sounds/a27");
         SoundManager.Instance.Play(DialogAudio);
-        tryMove = true;
+        cmds[2].isUsedOnce = true;
+    
     }
 
 

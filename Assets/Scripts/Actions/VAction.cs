@@ -44,6 +44,45 @@ public class VAction : MonoBehaviour
         action.actions[commandId]();
     }
 
+    public List<CommandAction> GetVisibleCommands()
+    {
+        List<CommandAction> visibleCommands = new List<CommandAction>();
+        foreach (CommandAction cmd in cmds)
+        {
+            if (cmd.visibility == Visibility.VISIBLE)
+            {
+                visibleCommands.Add(cmd);
+            }
+        }
+        return visibleCommands;
+    }
+
+    public List<CommandAction> GetInvisibleCommands()
+    {
+        List<CommandAction> invisibleCommands = new List<CommandAction>();
+        foreach (CommandAction cmd in cmds)
+        {
+            if (cmd.visibility == Visibility.INVISIBLE)
+            {
+                invisibleCommands.Add(cmd);
+            }
+        }
+        return invisibleCommands;
+    }
+
+    public List<CommandAction> GetHiddenCommands()
+    {
+        List<CommandAction> hiddenCommands = new List<CommandAction>();
+        foreach (CommandAction cmd in cmds)
+        {
+            if (cmd.visibility == Visibility.HIDDEN)
+            {
+                hiddenCommands.Add(cmd);
+            }
+        }
+        return hiddenCommands;
+    }
+
     void Awake()
     {
         TAG = gameObject.tag;
@@ -64,15 +103,12 @@ public class VAction : MonoBehaviour
 
     public void Inspect()
     {
-        Debug.Log("Inspecting Action! TAG: " + TAG);
-        gameObject.GetComponent<VoiceObject>().isInspected = true;
+        Debug.Log("Inspecting Action! TAG: " + TAG); 
         inspect = true;
         audioPlayed = true;
         AudioClip DialogAudio = Resources.Load<AudioClip>(InitialInspectAudioFN);
         SoundManager.Instance.Play(DialogAudio);
         audioPlayed = false;
-        VoiceObject vo = gameObject.GetComponent<VoiceObject>();
-        vo.isInspected = true;
         GameManager.RevealHiddenCommandsOfAction(cmds);
     }
 

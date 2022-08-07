@@ -32,7 +32,7 @@ public class CameraRay : MonoBehaviour
 
             //get Text from gameobject
          
-            objectText.GetComponent<UnityEngine.UI.Text>().text = gameObject.name;
+            objectText.GetComponent<UnityEngine.UI.Text>().text = gameObject.tag.ToUpper()[0].ToString() + gameObject.tag.ToLower().Substring(1);
             GameManager.updateCommandsList(gameObject.tag);
             GameObject rayObjText = GameObject.Find("rayObj");
             rayObjText.GetComponent<UnityEngine.UI.Text>().text = "RAY OBJECT:\n " + gameObject.tag;

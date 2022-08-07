@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 public class GameManager : MonoBehaviour
 {
@@ -79,16 +80,17 @@ public class GameManager : MonoBehaviour
         GameObject gameObject = GameObject.FindGameObjectWithTag(objectTag);
 
         string commandsText = "Actions: \n";
-        VoiceObject vo = gameObject.GetComponent<VoiceObject>();
-        string[] defaultCommands = vo.defaultCommands;
-        string[] inspectedCommands = vo.inspectedCommands;
-        string[] hiddenCommands = vo.hiddenCommands;
-        List<string> cmdList = new List<string>(vo.isInspected ? inspectedCommands : defaultCommands);
+        //VoiceObject vo = gameObject.GetComponent<VoiceObject>();
+        VAction va = gameObject.GetComponent<VAction>();
+        List<string> defaultCommands = va.GetVisibleCommands().Select(x => x.actionName).ToList();
+        List<string> inspectedCommands = va.GetInvisibleCommands().Select(x => x.actionName).ToList();
+        List<string> hiddenCommands = va.GetHiddenCommands().Select(x => x.actionName).ToList();
+        List<string> cmdList = new List<string>(va.inspect ? defaultCommands.Concat(inspectedCommands).ToList() : defaultCommands);
         for (int i = 0; i < cmdList.Count; i++)
         {
             commandsText += cmdList[i] + " \n";
         }
-        commandsText += hiddenCommands.Length != 0 && vo.isInspected ? "+ " + hiddenCommands.Length + " Hidden Actions" : "";
+        commandsText += hiddenCommands.Count != 0 && va.inspect ? "+ " + hiddenCommands.Count + " Hidden" : "";
         commandsTextComponent.GetComponent<UnityEngine.UI.Text>().text = commandsText;
     }
 

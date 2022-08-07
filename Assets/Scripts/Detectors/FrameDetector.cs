@@ -40,7 +40,7 @@ public class FrameDetector : MonoBehaviour
             {
                 if (envObjs.Contains(envObject))
                 {
-                   renderer.material.color = renderer.material.color == Color.yellow ? Color.yellow : Color.green;
+                  // renderer.material.color = renderer.material.color == Color.yellow ? Color.yellow : Color.green;
                     if (!frameText.text.Contains(envObject.ToString())) frameText.text = frameText.text + "\n" + envObject.ToString();
                     rendererTags[renderer.GetInstanceID()] = envObject.ToString();
                     continue;   
@@ -72,7 +72,7 @@ public class FrameDetector : MonoBehaviour
                     }
                 }
            
-                renderer.material.color = Color.red;
+                //renderer.material.color = Color.red;
                 if (isBroken) continue;
                 GameManager.currentFrameEnvObjects.Remove(envObject);
                 string s = string.Join("\n", GameManager.currentFrameEnvObjects.ToArray());

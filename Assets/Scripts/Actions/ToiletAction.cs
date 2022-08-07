@@ -5,42 +5,41 @@ using UnityEngine;
 public class ToiletAction : VAction
 {
 
-    public bool tryBreak;
-    public bool takeOutPipe;
-
     protected override string InitialInspectAudioFN { get; } = "Sounds/a17";
 
     protected override string FollowUpInspectAudioFN { get; } = "Sounds/a40";
 
+    protected override string ActionEffectInspectAudioFN { get; } = "Sounds/inspect-bucket";
 
-     public new void Start()
+
+
+    public new void Start()
     {
         CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the toilet");
-        CommandAction cmdAction2 = new CommandAction(1, TAG, "Break the toilet");
-        CommandAction cmdAction3 = new CommandAction(2, TAG, "Take out the pipe from the toilet");
-        tryBreak = false;
-        takeOutPipe = false;
+        CommandAction cmdAction1 = new CommandAction(1, TAG, "Break the toilet", "Break");
+        CommandAction cmdAction2 = new CommandAction(2, TAG, "Take out the pipe from the toilet", "Take out Pipe");
+
+        cmdAction1.isUnknown = true;
         cmdAction2.isUnknown = true;
-        cmdAction3.isUnknown = true;
         cmds = new List<CommandAction>
         {
             cmdAction,
-            cmdAction2,
-            cmdAction3
+            cmdAction1,
+            cmdAction2
         };
         actions.Add(1, TryBreak);
         actions.Add(2, TakeOutPipe);
         base.Start();
-        
+
     }
 
-  
+
     public void TryBreak()
     {
         Debug.Log("Trying to break the toilet");
         AudioClip DialogAudio = Resources.Load<AudioClip>("Sounds/a18");
         SoundManager.Instance.Play(DialogAudio);
-        tryBreak = true;
+        cmds[1].isUsedOnce = true;
     }
 
     public void TakeOutPipe()
@@ -48,7 +47,7 @@ public class ToiletAction : VAction
         Debug.Log("Taking out the pipe");
         AudioClip DialogAudio = Resources.Load<AudioClip>("Sounds/a19");
         SoundManager.Instance.Play(DialogAudio);
-        takeOutPipe = true;
+        cmds[2].isUsedOnce = true;
         StartCoroutine(TakeOutPipeLateAction());
 
 

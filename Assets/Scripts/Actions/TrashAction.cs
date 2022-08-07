@@ -8,27 +8,24 @@ public class TrashAction : VAction
     protected override string InitialInspectAudioFN { get; } = "Sounds/a13";
 
     protected override string FollowUpInspectAudioFN { get; } = "Sounds/a14";
-    public bool move;
-    public bool search;
 
 
     public void Move()
     {
         Debug.Log("Moving trash");
-        //TODO voice answer
         AudioClip DialogAudio = Resources.Load<AudioClip>("Sounds/a16");
         SoundManager.Instance.Play(DialogAudio);
         gameObject.transform.position = new Vector3(gameObject.transform.position.x + 5, gameObject.transform.position.y, gameObject.transform.position.z);
-        move = true;
 
+        cmds[1].isUsedOnce = true;
     }
 
     public void Search()
     {
         Debug.Log("Searching inside trash");
-        search = true;
         AudioClip DialogAudio = Resources.Load<AudioClip>("Sounds/a15");
         SoundManager.Instance.Play(DialogAudio);
+        cmds[2].isUsedOnce = true;
     }
 
 
@@ -37,11 +34,8 @@ public class TrashAction : VAction
     {
 
         CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the trash");
-        CommandAction cmdAction2 = new CommandAction(1, TAG, "Move the trash");
-        CommandAction cmdAction3 = new CommandAction(2, TAG, "Search inside the trash");
-
-        move = false;
-        search = false;
+        CommandAction cmdAction2 = new CommandAction(1, TAG, "Move the trash", "Move");
+        CommandAction cmdAction3 = new CommandAction(2, TAG, "Look inside the trash", "Look inside");
 
 
         actions.Add(1, Move);
