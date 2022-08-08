@@ -42,7 +42,7 @@ public class CameraRay : MonoBehaviour
         {
             objectText.GetComponent<UnityEngine.UI.Text>().text = "";
             currentHitDistance = maxDistance;
-            GameManager.updateCommandsList("");
+            //GameManager.updateCommandsList("");
             GameObject rayObjText = GameObject.Find("rayObj");
             rayObjText.GetComponent<UnityEngine.UI.Text>().text = "RAY OBJECT:\n ";
 

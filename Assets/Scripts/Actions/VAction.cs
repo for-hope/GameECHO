@@ -10,6 +10,7 @@ public enum AudioActionType
 }
 public class AudioAction
 {
+    public string TAG { get; set; }
     public AudioActionType actionType;
     public string audioFN;
 
@@ -32,8 +33,9 @@ public class VAction : MonoBehaviour
     protected bool reachedDestination = false;
     protected virtual string InitialInspectAudioFN { get; } = "";
 
-    protected virtual string ActionEffectInspectAudioFN { get; } = "";
+    //protected virtual string ActionEffectInspectAudioFN { get; } = "";
     protected virtual string FollowUpInspectAudioFN { get; } = "";
+    private string inspectAudioFN;
 
     private Queue<AudioAction> queuedAudioFiles = new Queue<AudioAction>();
 
@@ -86,6 +88,7 @@ public class VAction : MonoBehaviour
     void Awake()
     {
         TAG = gameObject.tag;
+        inspectAudioFN = "Sounds/inspect-" + TAG.ToLower();
         playerNavMesh = GameObject.Find("PlayerCapsule").GetComponent<PlayerNavMesh>();
 
     }
@@ -114,6 +117,7 @@ public class VAction : MonoBehaviour
 
     IEnumerator PlayAudioOnQueue()
     {
+        Debug.Log("Playing audio on q " + queuedAudioFiles.Count);
         currentAudioAction = queuedAudioFiles.Dequeue();
         if (currentAudioAction.actionType == AudioActionType.Action)
         {
@@ -130,12 +134,16 @@ public class VAction : MonoBehaviour
     public void Start()
     {
         inspect = false;
-        queuedAudioFiles.Enqueue(new AudioAction(AudioActionType.Action, ActionEffectInspectAudioFN));
+        queuedAudioFiles.Enqueue(new AudioAction(AudioActionType.Action, inspectAudioFN));
         queuedAudioFiles.Enqueue(new AudioAction(AudioActionType.FollowUp, FollowUpInspectAudioFN));
 
 
         actions.Add(0, ReadyThenInspect);
         GameManager.commandActions.AddRange(cmds);
+    }
+
+    protected void doAction(string startAudio,string actionAudio, string responseAudio) {
+
     }
 
 

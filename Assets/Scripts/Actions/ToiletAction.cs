@@ -9,7 +9,7 @@ public class ToiletAction : VAction
 
     protected override string FollowUpInspectAudioFN { get; } = "Sounds/a40";
 
-    protected override string ActionEffectInspectAudioFN { get; } = "Sounds/inspect-bucket";
+    //protected override string ActionEffectInspectAudioFN { get; } = "Sounds/inspect-bucket";
 
 
 

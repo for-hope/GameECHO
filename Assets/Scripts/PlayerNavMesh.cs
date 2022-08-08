@@ -10,8 +10,8 @@ public class PlayerNavMesh : MonoBehaviour
     private GameObject target;
     private CinemachineVirtualCamera objectCam;
     private CinemachineVirtualCamera playerCam;
-    private Camera mainCamera; 
-    private  GameObject transformCenter;
+    private Camera mainCamera;
+    private GameObject transformCenter;
     public delegate void OnReachedTargetDelegate();
     public OnReachedTargetDelegate OnReachedTarget;
 
@@ -23,7 +23,7 @@ public class PlayerNavMesh : MonoBehaviour
         mainCamera = GameObject.Find("MainCamera").GetComponent<Camera>();
         transformCenter = new GameObject("TransformCenter");
     }
-    
+
     private void Update()
     {
         if (target == null) return;
@@ -35,13 +35,19 @@ public class PlayerNavMesh : MonoBehaviour
         bool pathPending = navMeshAgent.pathPending;
         if (!pathPending)
         {
-            if(objectCam.Priority < playerCam.Priority) SwitchCamPriority();
-            if (navMeshAgent.remainingDistance <= 0.15f )
+            if (objectCam.Priority < playerCam.Priority) SwitchCamPriority();
+            Debug.Log("Remaining distance: " + navMeshAgent.remainingDistance + " Stopping distance: " + navMeshAgent.stoppingDistance);
+            if (navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance)
             {
-                if (objectCam.Priority > playerCam.Priority) SwitchCamPriority();
-                target = null;
-                if (OnReachedTarget != null) OnReachedTarget();
-                Debug.Log("Agent Stopped!!!!!!!!");
+                    Debug.Log("Agent Stopped!!!!!!!! 2");
+
+                if (navMeshAgent.velocity.sqrMagnitude == 0f)
+                {
+                    if (objectCam.Priority > playerCam.Priority) SwitchCamPriority();
+                    target = null;
+                    if (OnReachedTarget != null) OnReachedTarget();
+                    Debug.Log("Agent Stopped!!!!!!!!");
+                }
             }
         }
 
@@ -49,7 +55,7 @@ public class PlayerNavMesh : MonoBehaviour
 
 
     }
-    
+
 
     public void GoToTarget(GameObject target, OnReachedTargetDelegate onReachedTarget)
     {

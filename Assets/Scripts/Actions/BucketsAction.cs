@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class BucketsAction : VAction
@@ -15,10 +16,10 @@ public class BucketsAction : VAction
         get => "Sounds/a8";
     }
 
-    protected override string ActionEffectInspectAudioFN
-    {
-        get => "Sounds/inspect-bucket";
-    }
+    // protected override string ActionEffectInspectAudioFN
+    // {
+    //     get => "Sounds/inspect-bucket";
+    // }
 
 
     public new void Start()
@@ -39,9 +40,14 @@ public class BucketsAction : VAction
     public void Move()
     {
         Debug.Log("Moving Bucket");
-        gameObject.transform.position = new Vector3(gameObject.transform.position.x + 5, gameObject.transform.position.y, gameObject.transform.position.z);
+        //gameObject.transform.position = new Vector3(gameObject.transform.position.x + 5, gameObject.transform.position.y, gameObject.transform.position.z);
+
         AudioClip DialogAudio = Resources.Load<AudioClip>("Sounds/a37");
         SoundManager.Instance.Play(DialogAudio);
+        GameObject movedBuckets = Resources.FindObjectsOfTypeAll<GameObject>().Where(x => x.name == "Moved_Buckets").FirstOrDefault();
+        gameObject.SetActive(false);
+        movedBuckets.SetActive(true);
+     
     }
 
     public void Search()

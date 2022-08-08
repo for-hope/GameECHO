@@ -77,11 +77,16 @@ public class GameManager : MonoBehaviour
             commandsTextComponent.GetComponent<UnityEngine.UI.Text>().text = "";
             return;
         }
-        GameObject gameObject = GameObject.FindGameObjectWithTag(objectTag);
-
+      
+        GameObject gameObject = GameObject.FindGameObjectsWithTag(objectTag).Where(x => x.GetComponent<VAction>() != null).FirstOrDefault();
+  
         string commandsText = "Actions: \n";
         //VoiceObject vo = gameObject.GetComponent<VoiceObject>();
         VAction va = gameObject.GetComponent<VAction>();
+        if (va == null) {
+            Debug.Log("No VAction found on " + gameObject.GetInstanceID());
+       
+        }
         List<string> defaultCommands = va.GetVisibleCommands().Select(x => x.actionName).ToList();
         List<string> inspectedCommands = va.GetInvisibleCommands().Select(x => x.actionName).ToList();
         List<string> hiddenCommands = va.GetHiddenCommands().Select(x => x.actionName).ToList();
