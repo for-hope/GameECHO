@@ -31,11 +31,11 @@ public class MetalBoxAction : VAction
             cmdAction5,
             cmdAction6
         };
-        actions.Add(1, TryOpen);
-        actions.Add(2, UseKey);
-        actions.Add(3, TryBreak);
-        actions.Add(4, UseChair);
-        actions.Add(5, UseTable);
+        actions.Add(new ActionFlow(1, TryToOpen, "", "Sounds/open-metal_box", "Sounds/a28"));
+        actions.Add(new ActionFlow(2, UseKey, "", "", "Sounds/a32"));
+        actions.Add(new ActionFlow(3, TryToBreak, "", "", "Sounds/a35"));
+        actions.Add(new ActionFlow(4, UseChair, "", "Sounds/moving-chair", "Sounds/a34"));
+        actions.Add(new ActionFlow(5, UseTable, "", "Sounds/moving-table", "Sounds/a33"));
         base.Start();
 
     }
@@ -44,35 +44,27 @@ public class MetalBoxAction : VAction
 
 
 
-    public void TryOpen()
+    public void TryToOpen()
     {
         Debug.Log("trying to open electric box");
-        AudioClip DialogAudio = Resources.Load<AudioClip>("Sounds/a28");
-        SoundManager.Instance.Play(DialogAudio);
         cmds[1].isUsedOnce = true;
     }
 
     public void UseKey()
     {
         Debug.Log("trying to use key to open box");
-        AudioClip DialogAudio = Resources.Load<AudioClip>("Sounds/a32");
-        SoundManager.Instance.Play(DialogAudio);
         cmds[2].isUsedOnce = true;
     }
 
-    public void TryBreak()
+    public void TryToBreak()
     {
         Debug.Log("trying to break box");
-        AudioClip DialogAudio = Resources.Load<AudioClip>("Sounds/a35");
-        SoundManager.Instance.Play(DialogAudio);
         cmds[3].isUsedOnce = true;
     }
 
     public void UseChair()
     {
         Debug.Log("trying to use chair to reach the electric box");
-        AudioClip DialogAudio = Resources.Load<AudioClip>("Sounds/a34");
-        SoundManager.Instance.Play(DialogAudio);
         cmds[4].isUsedOnce = true;
         cmds[5].isUsedOnce = true;
         GameObject chairObject = GameObject.Find("Chair");
@@ -84,8 +76,6 @@ public class MetalBoxAction : VAction
     public void UseTable()
     {
         Debug.Log("trying to use table to reach the electric box");
-        AudioClip DialogAudio = Resources.Load<AudioClip>("Sounds/a33");
-        SoundManager.Instance.Play(DialogAudio);
         cmds[4].isUsedOnce = true;
         cmds[5].isUsedOnce = true;
         GameObject tableObject = GameObject.Find("Table");

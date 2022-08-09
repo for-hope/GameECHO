@@ -20,8 +20,8 @@ public class BedAction : VAction
         CommandAction cmdAction3 = new CommandAction(2, TAG, "Try to move the bed", "Try to Move");
 
 
-        actions.Add(1, LookUnder);
-        actions.Add(2, TryMove);
+        actions.Add(new ActionFlow(1, LookUnder, "", "Sounds/look-under-bed", "Sounds/a28"));
+        actions.Add(new ActionFlow(2, TryToMove, "", "Sounds/move-bed", "Sounds/a27"));
         cmds.Add(cmdAction);
         cmds.Add(cmdAction2);
         cmds.Add(cmdAction3);
@@ -33,19 +33,15 @@ public class BedAction : VAction
     public void LookUnder()
     {
         Debug.Log("looking under the bed");
-        AudioClip DialogAudio = Resources.Load<AudioClip>("Sounds/a28");
-        SoundManager.Instance.Play(DialogAudio);
         cmds[1].isUsedOnce = true;
 
     }
 
-    public void TryMove()
+    public void TryToMove()
     {
         Debug.Log("trying to move the bed");
-        AudioClip DialogAudio = Resources.Load<AudioClip>("Sounds/a27");
-        SoundManager.Instance.Play(DialogAudio);
         cmds[2].isUsedOnce = true;
-    
+
     }
 
 

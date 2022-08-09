@@ -30,8 +30,8 @@ public class BucketsAction : VAction
         cmds.Add(cmdAction);
         cmds.Add(cmdAction2);
         cmds.Add(cmdAction3);
-        actions.Add(1, Move);
-        actions.Add(2, Search);
+        actions.Add(new ActionFlow(1, Move, "Sounds/a37", "Sounds/move-buckets", ""));
+        actions.Add(new ActionFlow(2, Search, "Sounds/a38", "Sounds/search-buckets", ""));
         base.Start();
     }
 
@@ -40,21 +40,17 @@ public class BucketsAction : VAction
     public void Move()
     {
         Debug.Log("Moving Bucket");
-        //gameObject.transform.position = new Vector3(gameObject.transform.position.x + 5, gameObject.transform.position.y, gameObject.transform.position.z);
-
-        AudioClip DialogAudio = Resources.Load<AudioClip>("Sounds/a37");
-        SoundManager.Instance.Play(DialogAudio);
         GameObject movedBuckets = Resources.FindObjectsOfTypeAll<GameObject>().Where(x => x.name == "Moved_Buckets").FirstOrDefault();
-        gameObject.SetActive(false);
+        gameObject.transform.localScale = new Vector3(0, 0, 0);
         movedBuckets.SetActive(true);
-     
+        cmds[1].isUsedOnce = true;
+
     }
 
     public void Search()
     {
         Debug.Log("Searching Bucket");
-        AudioClip DialogAudio = Resources.Load<AudioClip>("Sounds/a38");
-        SoundManager.Instance.Play(DialogAudio);
+        cmds[2].isUsedOnce = true;
     }
 
 }

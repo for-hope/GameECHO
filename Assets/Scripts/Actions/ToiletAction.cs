@@ -27,26 +27,22 @@ public class ToiletAction : VAction
             cmdAction1,
             cmdAction2
         };
-        actions.Add(1, TryBreak);
-        actions.Add(2, TakeOutPipe);
+        actions.Add(new ActionFlow(1, TryToBreak, "", "", "Sounds/a18"));
+        actions.Add(new ActionFlow(2, TakeOutPipe, "Sounds/a19", "Sounds/take-out-pipe", ""));
         base.Start();
 
     }
 
 
-    public void TryBreak()
+    public void TryToBreak()
     {
         Debug.Log("Trying to break the toilet");
-        AudioClip DialogAudio = Resources.Load<AudioClip>("Sounds/a18");
-        SoundManager.Instance.Play(DialogAudio);
         cmds[1].isUsedOnce = true;
     }
 
     public void TakeOutPipe()
     {
         Debug.Log("Taking out the pipe");
-        AudioClip DialogAudio = Resources.Load<AudioClip>("Sounds/a19");
-        SoundManager.Instance.Play(DialogAudio);
         cmds[2].isUsedOnce = true;
         StartCoroutine(TakeOutPipeLateAction());
 

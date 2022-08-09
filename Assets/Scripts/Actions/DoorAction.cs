@@ -18,26 +18,24 @@ public class DoorAction : VAction
         cmds.Add(cmdAction);
         cmds.Add(cmdAction2);
         cmds.Add(cmdAction3);
-        actions.Add(1, TryOpen);
-        actions.Add(2, TryBreak);
+        actions.Add(new ActionFlow(1, TryToOpen, "", "Sounds/locked-door", "Sounds/a11"));
+        actions.Add(new ActionFlow(2, BreakWithPipe, "", "Sounds/slam-door", "Sounds/a12"));
         base.Start();
     }
 
 
 
-    public void TryOpen()
+    public void TryToOpen()
     {
         Debug.Log("Trying to open the door");
-        AudioClip DialogAudio = Resources.Load<AudioClip>("Sounds/a11");
-        SoundManager.Instance.Play(DialogAudio);
+
         cmds[1].isUsedOnce = true;
     }
 
-    public void TryBreak()
+    public void BreakWithPipe()
     {
         Debug.Log("Trying to break the door");
-        AudioClip DialogAudio = Resources.Load<AudioClip>("Sounds/a12");
-        SoundManager.Instance.Play(DialogAudio);
+
         cmds[2].isUsedOnce = true;
     }
 

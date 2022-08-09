@@ -13,8 +13,6 @@ public class TrashAction : VAction
     public void Move()
     {
         Debug.Log("Moving trash");
-        AudioClip DialogAudio = Resources.Load<AudioClip>("Sounds/a16");
-        SoundManager.Instance.Play(DialogAudio);
         gameObject.transform.position = new Vector3(gameObject.transform.position.x + 5, gameObject.transform.position.y, gameObject.transform.position.z);
 
         cmds[1].isUsedOnce = true;
@@ -23,8 +21,6 @@ public class TrashAction : VAction
     public void Search()
     {
         Debug.Log("Searching inside trash");
-        AudioClip DialogAudio = Resources.Load<AudioClip>("Sounds/a15");
-        SoundManager.Instance.Play(DialogAudio);
         cmds[2].isUsedOnce = true;
     }
 
@@ -38,8 +34,8 @@ public class TrashAction : VAction
         CommandAction cmdAction3 = new CommandAction(2, TAG, "Look inside the trash", "Look inside");
 
 
-        actions.Add(1, Move);
-        actions.Add(2, Search);
+        actions.Add(new ActionFlow(1, Move, "Sounds/a16", "Sounds/move-trash", ""));
+        actions.Add(new ActionFlow(2, Search, "", "Sounds/search-trash", "Sounds/a15"));
 
         cmds.Add(cmdAction);
         cmds.Add(cmdAction2);

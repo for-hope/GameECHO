@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,12 +15,71 @@ public class AudioAction
     public AudioActionType actionType;
     public string audioFN;
 
-    public AudioAction(AudioActionType actionType, string audioFN)
+    public int actionId = -1;
+
+    // public AudioAction(AudioActionType actionType, string audioFN)
+    // {
+    //     this.actionType = actionType;
+    //     this.audioFN = audioFN;
+    // }
+
+    public AudioAction(AudioActionType actionType, string audioFN, int actionId)
     {
         this.actionType = actionType;
         this.audioFN = audioFN;
+        this.actionId = actionId;
+
     }
 }
+
+public class ActionFlow
+{
+    public int commandID;
+    public System.Action action;
+    public string startAudioFilename;
+    public string actionAudioFilename;
+    public string followUpAudioFilename;
+
+    public Queue<AudioAction> audioQueue = new Queue<AudioAction>();
+
+    public ActionFlow(int id, System.Action action, string startAudioFilename, string actionAudioFilename, string followUpAudioFilename)
+    {
+        this.commandID = id;
+        this.action = action;
+        this.startAudioFilename = startAudioFilename;
+        this.actionAudioFilename = actionAudioFilename;
+        this.followUpAudioFilename = followUpAudioFilename;
+        AudioClip startAudioClip = Resources.Load<AudioClip>(this.startAudioFilename);
+        AudioClip actionAudioClip = Resources.Load<AudioClip>(this.actionAudioFilename);
+        AudioClip responseAudioClip = Resources.Load<AudioClip>(this.followUpAudioFilename);
+        audioQueue.Enqueue(new AudioAction(AudioActionType.Initial, this.startAudioFilename, this.commandID));
+        audioQueue.Enqueue(new AudioAction(AudioActionType.Action, this.actionAudioFilename, this.commandID));
+        audioQueue.Enqueue(new AudioAction(AudioActionType.FollowUp, this.followUpAudioFilename, this.commandID));
+
+    }
+
+    public override bool Equals(object obj)
+    {
+        return obj is ActionFlow flow &&
+               commandID == flow.commandID &&
+               EqualityComparer<Action>.Default.Equals(action, flow.action) &&
+               startAudioFilename == flow.startAudioFilename &&
+               actionAudioFilename == flow.actionAudioFilename &&
+               followUpAudioFilename == flow.followUpAudioFilename;
+    }
+
+    public override int GetHashCode()
+    {
+        int hashCode = -37182905;
+        hashCode = hashCode * -1521134295 + commandID.GetHashCode();
+        hashCode = hashCode * -1521134295 + EqualityComparer<Action>.Default.GetHashCode(action);
+        hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(startAudioFilename);
+        hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(actionAudioFilename);
+        hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(followUpAudioFilename);
+        return hashCode;
+    }
+}
+
 public class VAction : MonoBehaviour
 {
 
@@ -27,7 +87,7 @@ public class VAction : MonoBehaviour
     public bool inspect;
 
     protected List<CommandAction> cmds = new List<CommandAction>();
-    protected Dictionary<int, System.Action> actions = new Dictionary<int, System.Action>();
+    protected List<ActionFlow> actions = new List<ActionFlow>();
     protected PlayerNavMesh playerNavMesh;
     protected bool audioPlayed = false;
     protected bool reachedDestination = false;
@@ -37,13 +97,15 @@ public class VAction : MonoBehaviour
     protected virtual string FollowUpInspectAudioFN { get; } = "";
     private string inspectAudioFN;
 
-    private Queue<AudioAction> queuedAudioFiles = new Queue<AudioAction>();
+    //private Queue<AudioAction> queuedAudioFiles = new Queue<AudioAction>();
 
     private AudioAction currentAudioAction = null;
     public void TriggerAction(int commandId)
     {
         VAction action = GameObject.FindWithTag(TAG).GetComponent<VAction>();
-        action.actions[commandId]();
+        GoToTargetThen();
+        doAction(action.actions.Find(x => x.commandID == commandId));
+        //action.actions.Find(x => x.commandID == commandId).action();
     }
 
     public List<CommandAction> GetVisibleCommands()
@@ -97,35 +159,34 @@ public class VAction : MonoBehaviour
     {
         reachedDestination = true;
     }
-    public void ReadyThenInspect()
+    public void GoToTargetThen()
     {
         PlayerNavMesh.OnReachedTargetDelegate onReachedTarget = new PlayerNavMesh.OnReachedTargetDelegate(OnReachedTarget);
         playerNavMesh.GoToTarget(gameObject, onReachedTarget);
-        Inspect();
+
     }
 
     public void Inspect()
     {
-        Debug.Log("Inspecting Action! TAG: " + TAG); 
+        //INSPECT
+        Debug.Log("Inspected Action! TAG: " + TAG);
         inspect = true;
-        audioPlayed = true;
-        AudioClip DialogAudio = Resources.Load<AudioClip>(InitialInspectAudioFN);
-        SoundManager.Instance.Play(DialogAudio);
-        audioPlayed = false;
         GameManager.RevealHiddenCommandsOfAction(cmds);
     }
 
-    IEnumerator PlayAudioOnQueue()
+    IEnumerator PlayAudioOnQueue(Queue<AudioAction> audioActions)
     {
-        Debug.Log("Playing audio on q " + queuedAudioFiles.Count);
-        currentAudioAction = queuedAudioFiles.Dequeue();
+        audioPlayed = true;
+        Debug.Log("Playing audio on q " + audioActions.Count);
+        currentAudioAction = audioActions.Dequeue();
         if (currentAudioAction.actionType == AudioActionType.Action)
         {
             GameManager.Instance.putDownCamera(true);
         }
-        yield return new WaitForSeconds(1);
+        if (currentAudioAction.actionType != AudioActionType.Initial) yield return new WaitForSeconds(1);
 
         AudioClip DialogAudio = Resources.Load<AudioClip>(currentAudioAction.audioFN);
+
         SoundManager.Instance.Play(DialogAudio);
         audioPlayed = false;
 
@@ -134,16 +195,16 @@ public class VAction : MonoBehaviour
     public void Start()
     {
         inspect = false;
-        queuedAudioFiles.Enqueue(new AudioAction(AudioActionType.Action, inspectAudioFN));
-        queuedAudioFiles.Enqueue(new AudioAction(AudioActionType.FollowUp, FollowUpInspectAudioFN));
+        //queuedAudioFiles.Enqueue(new AudioAction(AudioActionType.Action, inspectAudioFN));
+        //queuedAudioFiles.Enqueue(new AudioAction(AudioActionType.FollowUp, FollowUpInspectAudioFN));
 
-
-        actions.Add(0, ReadyThenInspect);
+        actions.Add(new ActionFlow(0, Inspect, InitialInspectAudioFN, inspectAudioFN, FollowUpInspectAudioFN));
         GameManager.commandActions.AddRange(cmds);
     }
 
-    protected void doAction(string startAudio,string actionAudio, string responseAudio) {
-
+    protected void doAction(ActionFlow actionFlow)
+    {
+        StartCoroutine(PlayAudioOnQueue(actionFlow.audioQueue));
     }
 
 
@@ -151,16 +212,16 @@ public class VAction : MonoBehaviour
     {
         if (!SoundManager.Instance.EffectsSource.isPlaying && !audioPlayed && reachedDestination)
         {
+            ActionFlow actionFlow = actions.Find(x => x.commandID == currentAudioAction.actionId);
             if (currentAudioAction != null && currentAudioAction.actionType == AudioActionType.Action)
             {
                 Debug.Log("Action Audio Finished");
                 GameManager.Instance.putDownCamera(false);
+                if (currentAudioAction.actionId >= 0) actionFlow.action();
             }
-            if (queuedAudioFiles.Count != 0)
+            if (actionFlow.audioQueue.Count != 0)
             {
-                audioPlayed = true;
-                StartCoroutine(PlayAudioOnQueue());
-
+                StartCoroutine(PlayAudioOnQueue(actionFlow.audioQueue));
             }
         }
     }
