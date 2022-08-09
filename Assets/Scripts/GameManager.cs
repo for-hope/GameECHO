@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     Animator animator;
 
 
+    public static bool isVoiceInteractionEnabled = true;
     public bool ignoreLowScopeScores = true;
     public static EnvObjects currentExactEnvObject;
     public static List<EnvObjects> currentFrameEnvObjects;

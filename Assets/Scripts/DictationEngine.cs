@@ -8,10 +8,27 @@ using System.Linq;
 public class DictationEngine : MonoBehaviour
 {
     protected DictationRecognizer dictationRecognizer;
+    private bool dictationStarted = false;
     void Start()
     {
         Debug.Log("DictationEngine Start");
         StartDictationEngine();
+    }
+
+    void Update()
+    {
+        if (!GameManager.isVoiceInteractionEnabled && dictationStarted)
+        {
+            Debug.Log("DictationEngine Stopping...");
+            CloseDictationEngine();
+        }
+        else if (GameManager.isVoiceInteractionEnabled && !dictationStarted )
+        {
+            Debug.Log("DictationEngine Starting...");
+            StartDictationEngine();
+        }
+
+
     }
     private void DictationRecognizer_OnDictationHypothesis(string text)
     {
@@ -114,6 +131,7 @@ public class DictationEngine : MonoBehaviour
     }
     private void StartDictationEngine()
     {
+        dictationStarted = true;
         dictationRecognizer = new DictationRecognizer();
         dictationRecognizer.DictationHypothesis += DictationRecognizer_OnDictationHypothesis;
         dictationRecognizer.DictationResult += DictationRecognizer_OnDictationResult;
@@ -123,6 +141,7 @@ public class DictationEngine : MonoBehaviour
     }
     private void CloseDictationEngine()
     {
+        dictationStarted = false;
         if (dictationRecognizer != null)
         {
             dictationRecognizer.DictationHypothesis -= DictationRecognizer_OnDictationHypothesis;

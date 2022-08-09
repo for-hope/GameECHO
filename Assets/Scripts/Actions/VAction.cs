@@ -204,6 +204,8 @@ public class VAction : MonoBehaviour
 
     protected void doAction(ActionFlow actionFlow)
     {
+        GameManager.isVoiceInteractionEnabled = false;
+        Debug.Log("VOICE INTERACTION DISABLED");
         StartCoroutine(PlayAudioOnQueue(actionFlow.audioQueue));
     }
 
@@ -222,7 +224,11 @@ public class VAction : MonoBehaviour
             if (actionFlow.audioQueue.Count != 0)
             {
                 StartCoroutine(PlayAudioOnQueue(actionFlow.audioQueue));
+            } else if (!GameManager.isVoiceInteractionEnabled) {
+                GameManager.isVoiceInteractionEnabled = true;
+                Debug.Log("VOICE INTERACTION ENABLED");
             }
+            
         }
     }
 
