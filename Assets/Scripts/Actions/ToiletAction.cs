@@ -44,18 +44,18 @@ public class ToiletAction : VAction
     {
         Debug.Log("Taking out the pipe");
         cmds[2].isUsedOnce = true;
-        StartCoroutine(TakeOutPipeLateAction());
-
-
-    }
-
-    IEnumerator TakeOutPipeLateAction()
-    {
-        yield return new WaitForSeconds(5);
         GameObject pipeObject = GameObject.Find("Pipe");
         pipeObject.SetActive(false);
-        GameObject playerPipe = GameObject.Find("PlayerPipe");
-        playerPipe.SetActive(true);
+        //GameObject playerPipe = GameObject.Find("PlayerPipe");
+        //playerPipe.SetActive(true);
+
+
     }
+
+    // IEnumerator TakeOutPipeLateAction()
+    // {
+    //     yield return new WaitForSeconds(5);
+
+    // }
 
 }

@@ -60,8 +60,8 @@ public class CommandAction
         {"hanged_clothes", EnvObjects.HANGED_CLOTHES },
         {"light", EnvObjects.LIGHT },
         {"trash", EnvObjects.TRASH },
-        {"metal_box", EnvObjects.METAL_BOX }
-
+        {"metal_box", EnvObjects.METAL_BOX },
+        {"metal_door", EnvObjects.METAL_DOOR}
     };
 
     public override bool Equals(object obj)

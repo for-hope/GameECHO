@@ -17,6 +17,7 @@ TagManager:
   - TRASH
   - METAL_BOX
   - TOILET
+  - METAL_DOOR
   layers:
   - Default
   - TransparentFX

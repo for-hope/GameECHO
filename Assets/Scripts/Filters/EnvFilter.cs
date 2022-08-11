@@ -51,6 +51,8 @@ public enum EnvObjects
     HANGED_CLOTHES,
     LIGHT,
     TRASH,
-    METAL_BOX
+    METAL_BOX,
+
+    METAL_DOOR
 }
 

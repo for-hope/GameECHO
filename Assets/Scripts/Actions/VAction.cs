@@ -7,7 +7,9 @@ public enum AudioActionType
 {
     Initial,
     Action,
-    FollowUp
+    FollowUp,
+    NoAccess
+
 }
 public class AudioAction
 {
@@ -40,21 +42,31 @@ public class ActionFlow
     public string actionAudioFilename;
     public string followUpAudioFilename;
 
-    public Queue<AudioAction> audioQueue = new Queue<AudioAction>();
 
-    public ActionFlow(int id, System.Action action, string startAudioFilename, string actionAudioFilename, string followUpAudioFilename)
+    public List<int> accessCmds;
+    public string noAccessAudioFilename;
+
+    public Queue<AudioAction> audioQueue = new Queue<AudioAction>();
+    public Queue<AudioAction> noAccessAudioQueue = new Queue<AudioAction>();
+
+
+    public ActionFlow(int id, System.Action action, string startAudioFilename, string actionAudioFilename, string followUpAudioFilename, List<int> accessCmds = null, string noAccessAudioFilename = "")
     {
         this.commandID = id;
         this.action = action;
         this.startAudioFilename = startAudioFilename;
         this.actionAudioFilename = actionAudioFilename;
         this.followUpAudioFilename = followUpAudioFilename;
+        this.noAccessAudioFilename = noAccessAudioFilename;
         AudioClip startAudioClip = Resources.Load<AudioClip>(this.startAudioFilename);
         AudioClip actionAudioClip = Resources.Load<AudioClip>(this.actionAudioFilename);
         AudioClip responseAudioClip = Resources.Load<AudioClip>(this.followUpAudioFilename);
+        AudioClip noAccessAudioClip = Resources.Load<AudioClip>(this.noAccessAudioFilename);
+        this.accessCmds = accessCmds;
         audioQueue.Enqueue(new AudioAction(AudioActionType.Initial, this.startAudioFilename, this.commandID));
         audioQueue.Enqueue(new AudioAction(AudioActionType.Action, this.actionAudioFilename, this.commandID));
         audioQueue.Enqueue(new AudioAction(AudioActionType.FollowUp, this.followUpAudioFilename, this.commandID));
+        noAccessAudioQueue.Enqueue(new AudioAction(AudioActionType.NoAccess, this.noAccessAudioFilename, this.commandID));
 
     }
 
@@ -179,6 +191,7 @@ public class VAction : MonoBehaviour
         audioPlayed = true;
         Debug.Log("Playing audio on q " + audioActions.Count);
         currentAudioAction = audioActions.Dequeue();
+        if (currentAudioAction.actionType == AudioActionType.NoAccess) audioActions.Enqueue(currentAudioAction);
         if (currentAudioAction.actionType == AudioActionType.Action)
         {
             GameManager.Instance.putDownCamera(true);
@@ -186,7 +199,7 @@ public class VAction : MonoBehaviour
         if (currentAudioAction.actionType != AudioActionType.Initial) yield return new WaitForSeconds(1);
 
         AudioClip DialogAudio = Resources.Load<AudioClip>(currentAudioAction.audioFN);
-
+        Debug.Log("Playing audio " + currentAudioAction.audioFN);
         SoundManager.Instance.Play(DialogAudio);
         audioPlayed = false;
 
@@ -206,6 +219,34 @@ public class VAction : MonoBehaviour
     {
         GameManager.isVoiceInteractionEnabled = false;
         Debug.Log("VOICE INTERACTION DISABLED");
+        var hasAccess = actionFlow.accessCmds == null;
+        if (!hasAccess)
+        {
+            Debug.Log("Access cmds not null");
+            foreach (int accessCmdId in actionFlow.accessCmds)
+            {
+
+                if (cmds[accessCmdId].isUsedOnce)
+                {
+                    hasAccess = true;
+                    break;
+                }
+            }
+            if (!hasAccess)
+            {
+                StartCoroutine(PlayAudioOnQueue(actionFlow.noAccessAudioQueue));
+                return;
+            }
+
+
+
+        }
+
+
+
+
+        Debug.Log("ACCESS CONDITION TRUE");
+        cmds[actionFlow.commandID].isUsedOnce = true;
         StartCoroutine(PlayAudioOnQueue(actionFlow.audioQueue));
     }
 
@@ -221,14 +262,16 @@ public class VAction : MonoBehaviour
                 GameManager.Instance.putDownCamera(false);
                 if (currentAudioAction.actionId >= 0) actionFlow.action();
             }
-            if (actionFlow.audioQueue.Count != 0)
+            if (actionFlow.audioQueue.Count != 0 && currentAudioAction.actionType != AudioActionType.NoAccess)
             {
                 StartCoroutine(PlayAudioOnQueue(actionFlow.audioQueue));
-            } else if (!GameManager.isVoiceInteractionEnabled) {
+            }
+            else if (!GameManager.isVoiceInteractionEnabled)
+            {
                 GameManager.isVoiceInteractionEnabled = true;
                 Debug.Log("VOICE INTERACTION ENABLED");
             }
-            
+
         }
     }
 

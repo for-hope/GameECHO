@@ -83,6 +83,7 @@ public class GameManager : MonoBehaviour
   
         string commandsText = "Actions: \n";
         //VoiceObject vo = gameObject.GetComponent<VoiceObject>();
+        //Debug.Log("updateCommandsList " + objectTag);
         VAction va = gameObject.GetComponent<VAction>();
         if (va == null) {
             Debug.Log("No VAction found on " + gameObject.GetInstanceID());
