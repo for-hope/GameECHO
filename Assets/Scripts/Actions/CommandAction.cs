@@ -50,7 +50,7 @@ public class CommandAction
 
     public static Dictionary<string, EnvObjects> tagToEnvObj = new Dictionary<string, EnvObjects>()
     {
-        {"doors", EnvObjects.DOORS },
+        {"door", EnvObjects.DOOR },
         {"wall", EnvObjects.WALLS },
         {"buckets", EnvObjects.BUCKETS },
         {"chair", EnvObjects.CHAIR },

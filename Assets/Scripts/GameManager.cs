@@ -18,8 +18,8 @@ public class GameManager : MonoBehaviour
     public static EnvObjects currentExactEnvObject;
     public static List<EnvObjects> currentFrameEnvObjects;
     public static List<CommandAction> commandActions = new List<CommandAction>();
-   private Cinemachine.CinemachineVirtualCamera playerCam;
-     private Cinemachine.CinemachineVirtualCamera handCam;
+    private Cinemachine.CinemachineVirtualCamera playerCam;
+    private Cinemachine.CinemachineVirtualCamera handCam;
     // Start is called before the first frame update
     void Start()
     {
@@ -48,14 +48,18 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-       //check if animator is animating
+        //check if animator is animating
         if (animator.GetCurrentAnimatorStateInfo(0).IsName("PutDownCam") || animator.GetCurrentAnimatorStateInfo(0).IsName("PutUp"))
         {
-            if (playerCam.Priority > handCam.Priority) {
-                handCam.Priority = playerCam.Priority + 1; 
+            if (playerCam.Priority > handCam.Priority)
+            {
+                handCam.Priority = playerCam.Priority + 1;
             }
-        } else if (handCam != null) {
-            if (handCam.Priority > playerCam.Priority) {
+        }
+        else if (handCam != null)
+        {
+            if (handCam.Priority > playerCam.Priority)
+            {
                 playerCam.Priority = handCam.Priority - 1;
                 handCam.Priority = -1;
             }
@@ -75,30 +79,32 @@ public class GameManager : MonoBehaviour
 
         if (objectTag == "")
         {
-            commandsTextComponent.GetComponent<UnityEngine.UI.Text>().text = "";
+            commandsTextComponent.GetComponent<TMPro.TextMeshProUGUI>().text = "";
             return;
         }
-      
+
         GameObject gameObject = GameObject.FindGameObjectsWithTag(objectTag).Where(x => x.GetComponent<VAction>() != null).FirstOrDefault();
-  
-        string commandsText = "Actions: \n";
+
+        string commandsText = "<color=#ADD8E6><b>Actions:</b></color> \n";
         //VoiceObject vo = gameObject.GetComponent<VoiceObject>();
         //Debug.Log("updateCommandsList " + objectTag);
         VAction va = gameObject.GetComponent<VAction>();
-        if (va == null) {
+        if (va == null)
+        {
             Debug.Log("No VAction found on " + gameObject.GetInstanceID());
-       
+
         }
-        List<string> defaultCommands = va.GetVisibleCommands().Select(x => x.actionName).ToList();
-        List<string> inspectedCommands = va.GetInvisibleCommands().Select(x => x.actionName).ToList();
-        List<string> hiddenCommands = va.GetHiddenCommands().Select(x => x.actionName).ToList();
-        List<string> cmdList = new List<string>(va.inspect ? defaultCommands.Concat(inspectedCommands).ToList() : defaultCommands);
+        var defaultCommands = va.GetVisibleCommands();
+        var inspectedCommands = va.GetInvisibleCommands();
+        var hiddenCommands = va.GetHiddenCommands();
+        var cmdList = new List<CommandAction>(va.inspect ? defaultCommands.Concat(inspectedCommands).ToList() : defaultCommands);
         for (int i = 0; i < cmdList.Count; i++)
         {
-            commandsText += cmdList[i] + " \n";
+            var actionName = cmdList[i].isUsedOnce ? "<s>" + cmdList[i].actionName + "</s>" : cmdList[i].actionName;
+            commandsText += actionName + " \n";
         }
         commandsText += hiddenCommands.Count != 0 && va.inspect ? "+ " + hiddenCommands.Count + " Hidden" : "";
-        commandsTextComponent.GetComponent<UnityEngine.UI.Text>().text = commandsText;
+        commandsTextComponent.GetComponent<TMPro.TextMeshProUGUI>().text = commandsText;
     }
 
 

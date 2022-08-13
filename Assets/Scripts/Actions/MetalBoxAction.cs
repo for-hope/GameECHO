@@ -74,8 +74,8 @@ public class MetalBoxAction : VAction
         cmds[5].isUsedOnce = true;
         GameObject chairObject = GameObject.Find("Chair");
         //move the chair to the electric box
-        Vector3 newPos = new Vector3(gameObject.transform.position.x - 0.5f, chairObject.transform.position.y, gameObject.transform.position.z);
-        chairObject.transform.position = newPos;
+        Vector3 newPos = new Vector3(-2.0f, -2.0f, 7.0f);
+        chairObject.transform.localPosition = newPos;
     }
 
     public void UseTable()
@@ -85,8 +85,8 @@ public class MetalBoxAction : VAction
         cmds[5].isUsedOnce = true;
         GameObject tableObject = GameObject.Find("Table");
         //move the table to the electric box
-        Vector3 newPos = new Vector3(gameObject.transform.position.x - 3, tableObject.transform.position.y, gameObject.transform.position.z);
-        tableObject.transform.position = newPos;
+        Vector3 newPos = new Vector3(-2.8f, -2.0f, 6.8f);
+        tableObject.transform.localPosition = newPos;
 
     }
 

@@ -95,6 +95,11 @@ public class ActionFlow
 public class VAction : MonoBehaviour
 {
 
+    private List<string> alreadyUsedCommandSounds = new List<string>(){
+        "Sounds/already-did-it",
+        "Sounds/already-done-that",
+        "Sounds/i-did-that-already"
+    };
     protected string TAG;
     public bool inspect;
 
@@ -115,8 +120,20 @@ public class VAction : MonoBehaviour
     public void TriggerAction(int commandId)
     {
         VAction action = GameObject.FindWithTag(TAG).GetComponent<VAction>();
+        ActionFlow actionFlow = action.actions.Find(x => x.commandID == commandId);
+        var cmd = cmds.Find(x => x.id == actionFlow.commandID);
+        if (cmd.isUsedOnce)
+        {
+            Queue<AudioAction> audioQueue = new Queue<AudioAction>();
+            string randomVoiceLine = alreadyUsedCommandSounds[UnityEngine.Random.Range(0, alreadyUsedCommandSounds.Count)];
+            audioQueue.Enqueue(new AudioAction(AudioActionType.Initial, randomVoiceLine, actionFlow.commandID));
+            Debug.Log("Played " + randomVoiceLine);
+            StartCoroutine(PlayAudioOnQueue(audioQueue));
+            return;
+        }
+
         GoToTargetThen();
-        doAction(action.actions.Find(x => x.commandID == commandId));
+        doAction(actionFlow);
         //action.actions.Find(x => x.commandID == commandId).action();
     }
 

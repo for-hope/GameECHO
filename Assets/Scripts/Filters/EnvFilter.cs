@@ -41,7 +41,7 @@ public class EnvironmentFilter : MonoBehaviour
 
 public enum EnvObjects
 {
-    DOORS,
+    DOOR,
     WALLS,
     BUCKETS,
     CHAIR,
