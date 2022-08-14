@@ -64,6 +64,7 @@ public class MetalBoxAction : VAction
     public void TryToBreak()
     {
         Debug.Log("trying to break box");
+        GameManager.Instance.Lose();
         cmds[3].isUsedOnce = true;
     }
 

@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
     private PlayerInput _playerInput;
     private List<CommandAction> showList = new List<CommandAction>();
     private TMPro.TextMeshProUGUI hintText;
+    private bool isLostScreen = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -107,6 +108,12 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        if (isLostScreen && Keyboard.current.spaceKey.wasPressedThisFrame)
+        {
+            isLostScreen = false;
+            GameObject.Find("LostScreen").SetActive(false);
+        }
+
 
     }
 
@@ -114,6 +121,15 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(6);
         hintText.text = "";
+    }
+
+    public void Lose()
+    {
+
+        GameObject canvas = GameObject.Find("Canvas");
+
+        canvas.transform.GetChild(canvas.transform.childCount - 1).gameObject.SetActive(true);
+        isLostScreen = true;
     }
 
     public void putDownCamera(bool isPutDown)
