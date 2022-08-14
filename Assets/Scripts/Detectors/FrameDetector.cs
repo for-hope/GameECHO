@@ -35,17 +35,17 @@ public class FrameDetector : MonoBehaviour
             string tag = renderer.gameObject.tag;
             EnvObjects envObject = (EnvObjects)System.Enum.Parse(typeof(EnvObjects), tag);
             List<EnvObjects> envObjs = GameManager.currentFrameEnvObjects;
-            UnityEngine.UI.Text frameText = GameObject.Find("frameObjs").GetComponent<UnityEngine.UI.Text>();
+            //UnityEngine.UI.Text frameText = GameObject.Find("frameObjs").GetComponent<UnityEngine.UI.Text>();
             if (IsVisible(renderer))
             {
                 if (envObjs.Contains(envObject))
                 {
                   // renderer.material.color = renderer.material.color == Color.yellow ? Color.yellow : Color.green;
-                    if (!frameText.text.Contains(envObject.ToString())) frameText.text = frameText.text + "\n" + envObject.ToString();
+                    //if (!frameText.text.Contains(envObject.ToString())) frameText.text = frameText.text + "\n" + envObject.ToString();
                     rendererTags[renderer.GetInstanceID()] = envObject.ToString();
                     continue;   
                 };
-                frameText.text = frameText.text + "\n" + envObject.ToString();
+                //frameText.text = frameText.text + "\n" + envObject.ToString();
                 GameManager.currentFrameEnvObjects.Add(envObject);
                 rendererTags[renderer.GetInstanceID()] = envObject.ToString();
 
@@ -76,7 +76,7 @@ public class FrameDetector : MonoBehaviour
                 if (isBroken) continue;
                 GameManager.currentFrameEnvObjects.Remove(envObject);
                 string s = string.Join("\n", GameManager.currentFrameEnvObjects.ToArray());
-                frameText.text = "Frame Objects:\n" + s;
+                //frameText.text = "Frame Objects:\n" + s;
                 //Debug.Log(renderer.gameObject.name + "is not Visible");
             }
         }

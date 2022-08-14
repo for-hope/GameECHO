@@ -14,7 +14,8 @@ public class ScopeFilter
     {
         int scopeScore = LevenshteinDistance.Compute(cmdAction.phrase, text);
         if (scopeScore >= MIN_SCOPE_FILTER_SCORE && GameManager.Instance.ignoreLowScopeScores) return;
-        filteredCommands.Add(new KeyValuePair<CommandAction, int>(cmdAction, scopeScore));
+        filteredCommands[cmdAction] = scopeScore;
+        //filteredCommands.Add(new KeyValuePair<CommandAction, int>(cmdAction, scopeScore));
     }
 
     public KeyValuePair<CommandAction, int> BestScoreCommand()

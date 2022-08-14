@@ -39,20 +39,17 @@ public class CameraRay : MonoBehaviour
             string formattedName = name.ToLower().Split(' ').Select(word => word.First().ToString().ToUpper() + word.Substring(1)).Aggregate((a, b) => a + " " + b);
             objectText.GetComponent<UnityEngine.UI.Text>().text = formattedName;
             GameManager.updateCommandsList(gameObject.tag);
-            GameObject rayObjText = GameObject.Find("rayObj");
-            rayObjText.GetComponent<UnityEngine.UI.Text>().text = "RAY OBJECT:\n " + gameObject.tag;
-            //Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
-            //Debug.Log("Hit " + hit.collider.name + " - " + hit.distance + " - " + hit.collider.gameObject.tag);
+            //GameObject rayObjText = GameObject.Find("rayObj");
+            //rayObjText.GetComponent<UnityEngine.UI.Text>().text = "RAY OBJECT:\n " + gameObject.tag;
+
         }
         else
         {
             objectText.GetComponent<UnityEngine.UI.Text>().text = "";
             currentHitDistance = maxDistance;
             //GameManager.updateCommandsList("");
-            GameObject rayObjText = GameObject.Find("rayObj");
-            rayObjText.GetComponent<UnityEngine.UI.Text>().text = "RAY OBJECT:\n ";
-
-
+            //GameObject rayObjText = GameObject.Find("rayObj");
+            //rayObjText.GetComponent<UnityEngine.UI.Text>().text = "RAY OBJECT:\n ";
             //Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
 
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Text.RegularExpressions;
 using System.Linq;
+using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
@@ -20,6 +21,9 @@ public class GameManager : MonoBehaviour
     public static List<CommandAction> commandActions = new List<CommandAction>();
     private Cinemachine.CinemachineVirtualCamera playerCam;
     private Cinemachine.CinemachineVirtualCamera handCam;
+    private PlayerInput _playerInput;
+    private List<CommandAction> showList = new List<CommandAction>();
+    private TMPro.TextMeshProUGUI hintText;
     // Start is called before the first frame update
     void Start()
     {
@@ -27,6 +31,8 @@ public class GameManager : MonoBehaviour
         playerCam = GameObject.Find("PlayerFollowCamera").GetComponent<Cinemachine.CinemachineVirtualCamera>();
         handCam = GameObject.Find("HandCam").GetComponent<Cinemachine.CinemachineVirtualCamera>();
         currentFrameEnvObjects = new List<EnvObjects>();
+        _playerInput = GameObject.Find("PlayerCapsule").GetComponent<PlayerInput>();
+        hintText = GameObject.Find("CommandTextHint").GetComponent<TMPro.TextMeshProUGUI>();
     }
 
     // Initialize the singleton instance.
@@ -46,6 +52,7 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
+
     private void Update()
     {
         //check if animator is animating
@@ -64,6 +71,49 @@ public class GameManager : MonoBehaviour
                 handCam.Priority = -1;
             }
         }
+
+        //check if ESC is pressed with playerInput
+        if (Keyboard.current.escapeKey.wasPressedThisFrame)
+        {
+            Debug.Log("ESC pressed");
+            Application.Quit();
+        }
+
+        List<bool> FnPressed = new List<bool>(){
+            Keyboard.current.f1Key.wasPressedThisFrame,
+            Keyboard.current.f2Key.wasPressedThisFrame,
+            Keyboard.current.f3Key.wasPressedThisFrame,
+            Keyboard.current.f4Key.wasPressedThisFrame,
+            Keyboard.current.f5Key.wasPressedThisFrame,
+            Keyboard.current.f6Key.wasPressedThisFrame,
+            Keyboard.current.f7Key.wasPressedThisFrame,
+            Keyboard.current.f8Key.wasPressedThisFrame,
+            Keyboard.current.f9Key.wasPressedThisFrame,
+            Keyboard.current.f10Key.wasPressedThisFrame,
+            Keyboard.current.f11Key.wasPressedThisFrame,
+            Keyboard.current.f12Key.wasPressedThisFrame
+        };
+
+        for (int i = 0; i < FnPressed.Count; i++)
+        {
+            if (FnPressed[i])
+            {
+                if (showList.Count > i && !showList[i].isUsedOnce)
+                {
+                    hintText.text = "[ Hint: \"" + showList[i].phrase + "\" ]";
+                    StartCoroutine(resetHintText());
+                }
+
+            }
+        }
+
+
+    }
+
+    IEnumerator resetHintText()
+    {
+        yield return new WaitForSeconds(6);
+        hintText.text = "";
     }
 
     public void putDownCamera(bool isPutDown)
@@ -86,23 +136,19 @@ public class GameManager : MonoBehaviour
         GameObject gameObject = GameObject.FindGameObjectsWithTag(objectTag).Where(x => x.GetComponent<VAction>() != null).FirstOrDefault();
 
         string commandsText = "<color=#ADD8E6><b>Actions:</b></color> \n";
-        //VoiceObject vo = gameObject.GetComponent<VoiceObject>();
-        //Debug.Log("updateCommandsList " + objectTag);
         VAction va = gameObject.GetComponent<VAction>();
-        if (va == null)
-        {
-            Debug.Log("No VAction found on " + gameObject.GetInstanceID());
-
-        }
         var defaultCommands = va.GetVisibleCommands();
         var inspectedCommands = va.GetInvisibleCommands();
         var hiddenCommands = va.GetHiddenCommands();
         var cmdList = new List<CommandAction>(va.inspect ? defaultCommands.Concat(inspectedCommands).ToList() : defaultCommands);
+        GameManager.Instance.showList = new List<CommandAction>(cmdList);
         for (int i = 0; i < cmdList.Count; i++)
         {
-            var actionName = cmdList[i].isUsedOnce ? "<s>" + cmdList[i].actionName + "</s>" : cmdList[i].actionName;
+            var Fn = i + 1;
+            var actionName = cmdList[i].isUsedOnce ? "<s>" + "<color=#FDEB37>[F" + (Fn) + "]</color> " + cmdList[i].actionName + "</s>" : "<color=#FDEB37>[F" + (Fn) + "]</color> " + cmdList[i].actionName;
             commandsText += actionName + " \n";
         }
+
         commandsText += hiddenCommands.Count != 0 && va.inspect ? "+ " + hiddenCommands.Count + " Hidden" : "";
         commandsTextComponent.GetComponent<TMPro.TextMeshProUGUI>().text = commandsText;
     }
@@ -110,10 +156,7 @@ public class GameManager : MonoBehaviour
 
     public static void RevealHiddenCommandsOfAction(List<CommandAction> cmds)
     {
-        foreach (CommandAction cmd in cmds)
-        {
-            Debug.Log("Revealing hidden command: " + cmd.phrase);
-        }
+
 
         //iterate through the commands of GameManager.
         foreach (CommandAction gmCommand in commandActions)
