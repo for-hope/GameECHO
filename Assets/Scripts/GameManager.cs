@@ -114,7 +114,6 @@ public class GameManager : MonoBehaviour
             GameObject.Find("LostScreen").SetActive(false);
         }
 
-
     }
 
     IEnumerator resetHintText()
