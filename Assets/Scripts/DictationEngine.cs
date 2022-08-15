@@ -60,6 +60,10 @@ public class DictationEngine : MonoBehaviour
     {
 
         Debug.Log("Dictation result: " + text + " with confidence: " + confidence);
+        if (text.ToLower() == "okay" || text.ToLower() == "ok") {
+            GameManager.Instance.IntroScreen.SetActive(false);
+            return;
+        }
         List<CommandAction> cmdActions = GameManager.commandActions;
         ScopeFilter scopeFilter = new ScopeFilter();
 

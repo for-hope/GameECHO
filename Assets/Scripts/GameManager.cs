@@ -25,6 +25,8 @@ public class GameManager : MonoBehaviour
     private List<CommandAction> showList = new List<CommandAction>();
     private TMPro.TextMeshProUGUI hintText;
     private bool isLostScreen = false;
+    public GameObject IntroScreen;
+    public bool isIntroPlaying;
     // Start is called before the first frame update
     void Start()
     {
@@ -34,6 +36,12 @@ public class GameManager : MonoBehaviour
         currentFrameEnvObjects = new List<EnvObjects>();
         _playerInput = GameObject.Find("PlayerCapsule").GetComponent<PlayerInput>();
         hintText = GameObject.Find("CommandTextHint").GetComponent<TMPro.TextMeshProUGUI>();
+        var introSoundFN = Resources.Load<AudioClip>("Sounds/intro");
+        IntroScreen = GameObject.Find("IntroContainer").transform.GetChild(0).gameObject;
+        SoundManager.Instance.Play(introSoundFN);
+        isIntroPlaying = true;
+
+
     }
 
     // Initialize the singleton instance.
@@ -56,6 +64,11 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        if (!SoundManager.Instance.EffectsSource.isPlaying && isIntroPlaying)
+        {
+            isIntroPlaying = false;
+            IntroScreen.SetActive(true);
+        }
         //check if animator is animating
         if (animator.GetCurrentAnimatorStateInfo(0).IsName("PutDownCam") || animator.GetCurrentAnimatorStateInfo(0).IsName("PutUp"))
         {
