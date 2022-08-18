@@ -1,6 +1,7 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 
 public class MetalDoorAction : VAction
 {
@@ -17,7 +18,7 @@ public class MetalDoorAction : VAction
 
         actions.Add(new ActionFlow(1, Open, "Sounds/a42", "Sounds/open-metal-door", "Sounds/a43"));
         actions.Add(new ActionFlow(2, Break, "Sounds/a44", "", ""));
-        actions.Add(new ActionFlow(3, UsePipe, "Sounds/a45", "Sounds/use-pipe", "Sounds/a46"));
+        actions.Add(new ActionFlow(3, UsePipe, "Sounds/a45", "Sounds/use-pipe", "Sounds/a46", endAction: NextScene));
         cmds.Add(cmdAction);
         cmds.Add(cmdAction2);
         cmds.Add(cmdAction3);
@@ -47,9 +48,35 @@ public class MetalDoorAction : VAction
 
     }
 
+    private void NextScene()
+    {
 
+        Debug.Log("NextScene");
+        GameObject.Find("Fade").transform.GetChild(0).gameObject.SetActive(true);
+        StartCoroutine(TeleportPlayer());
 
+    }
 
+    IEnumerator TeleportPlayer()
+    {
+        yield return new WaitForSeconds(2);
+        var level2StartingObj = GameObject.Find("White Door");
+        playerNavMesh.GoToTarget(level2StartingObj, null);
+        GameObject playerObj = GameObject.Find("PlayerCapsule");
+        playerObj.SetActive(false);
+        playerObj.transform.position = new Vector3(-3.26f, -0.2f, -0.71f);
+        playerObj.SetActive(true);
+    }
+
+    private void onReachNextLevel()
+    {
+        Debug.Log("onReachNextLevel");
+
+    }
 
 
 }
+
+
+
+

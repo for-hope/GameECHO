@@ -42,6 +42,7 @@ public class ActionFlow
     public string actionAudioFilename;
     public string followUpAudioFilename;
 
+    public System.Action endAction;
 
     public List<int> accessCmds;
     public string noAccessAudioFilename;
@@ -50,7 +51,7 @@ public class ActionFlow
     public Queue<AudioAction> noAccessAudioQueue = new Queue<AudioAction>();
 
 
-    public ActionFlow(int id, System.Action action, string startAudioFilename, string actionAudioFilename, string followUpAudioFilename, List<int> accessCmds = null, string noAccessAudioFilename = "")
+    public ActionFlow(int id, System.Action action, string startAudioFilename, string actionAudioFilename, string followUpAudioFilename, List<int> accessCmds = null, string noAccessAudioFilename = "", System.Action endAction = null)
     {
         this.commandID = id;
         this.action = action;
@@ -58,6 +59,7 @@ public class ActionFlow
         this.actionAudioFilename = actionAudioFilename;
         this.followUpAudioFilename = followUpAudioFilename;
         this.noAccessAudioFilename = noAccessAudioFilename;
+        this.endAction = endAction;
         AudioClip startAudioClip = Resources.Load<AudioClip>(this.startAudioFilename);
         AudioClip actionAudioClip = Resources.Load<AudioClip>(this.actionAudioFilename);
         AudioClip responseAudioClip = Resources.Load<AudioClip>(this.followUpAudioFilename);
@@ -270,14 +272,23 @@ public class VAction : MonoBehaviour
 
     void Update()
     {
-        if (!SoundManager.Instance.EffectsSource.isPlaying && !audioPlayed && reachedDestination)
+        if (!SoundManager.Instance.EffectsSource.isPlaying && !audioPlayed && reachedDestination && currentAudioAction != null)
         {
             ActionFlow actionFlow = actions.Find(x => x.commandID == currentAudioAction.actionId);
-            if (currentAudioAction != null && currentAudioAction.actionType == AudioActionType.Action)
+            if (currentAudioAction.actionType == AudioActionType.Action)
             {
                 Debug.Log("Action Audio Finished");
                 GameManager.Instance.putDownCamera(false);
                 if (currentAudioAction.actionId >= 0) actionFlow.action();
+            }
+            if (currentAudioAction.actionType == AudioActionType.FollowUp)
+            {
+                Debug.Log("Follow Up Audio Finished");
+                if (actionFlow.endAction != null) {
+                    Debug.Log("Triggering end action");
+                    actionFlow.endAction();
+                }
+                currentAudioAction = null;
             }
             if (actionFlow.audioQueue.Count != 0 && currentAudioAction.actionType != AudioActionType.NoAccess)
             {

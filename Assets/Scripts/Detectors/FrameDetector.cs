@@ -50,7 +50,7 @@ public class FrameDetector : MonoBehaviour
                 rendererTags[renderer.GetInstanceID()] = envObject.ToString();
 
             }
-
+         
             if (!IsVisible(renderer) && GameManager.currentFrameEnvObjects.Contains(envObject))
             {
 

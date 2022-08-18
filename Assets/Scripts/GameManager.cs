@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
 
 
     public static GameManager Instance = null;
-    Animator animator;
+    public Animator animator;
 
 
     public static bool isVoiceInteractionEnabled = true;
@@ -146,7 +146,7 @@ public class GameManager : MonoBehaviour
 
     public void putDownCamera(bool isPutDown)
     {
-        Debug.Log("putDownCamera " + isPutDown);
+       
         animator.SetBool("putDown", isPutDown);
 
     }

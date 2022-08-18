@@ -22,7 +22,7 @@ public class DictationEngine : MonoBehaviour
             Debug.Log("DictationEngine Stopping...");
             CloseDictationEngine();
         }
-        else if (GameManager.isVoiceInteractionEnabled && !dictationStarted )
+        else if (GameManager.isVoiceInteractionEnabled && !dictationStarted)
         {
             Debug.Log("DictationEngine Starting...");
             StartDictationEngine();
@@ -60,7 +60,9 @@ public class DictationEngine : MonoBehaviour
     {
 
         Debug.Log("Dictation result: " + text + " with confidence: " + confidence);
-        if (text.ToLower() == "okay" || text.ToLower() == "ok") {
+        if (text.ToLower() == "okay" || text.ToLower() == "ok")
+        {
+
             GameManager.Instance.IntroScreen.SetActive(false);
             return;
         }
