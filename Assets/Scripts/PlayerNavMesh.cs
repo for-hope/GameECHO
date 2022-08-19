@@ -18,7 +18,7 @@ public class PlayerNavMesh : MonoBehaviour
     private void Start()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
-        objectCam = GameObject.Find("ObjectLookAtCamera (1)").GetComponent<CinemachineVirtualCamera>();
+        objectCam = GameObject.Find("ObjectLookAtCamera").GetComponent<CinemachineVirtualCamera>();
         playerCam = GameObject.Find("PlayerFollowCamera").GetComponent<CinemachineVirtualCamera>();
         mainCamera = GameObject.Find("MainCamera").GetComponent<Camera>();
         transformCenter = new GameObject("TransformCenter");
