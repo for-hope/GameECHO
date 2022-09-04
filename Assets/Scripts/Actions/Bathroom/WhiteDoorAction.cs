@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class OrangeDoorAction : VAction
+public class WhiteDoorAction : VAction
 {
 
     protected override string InitialInspectAudioFN { get; } = "Sounds/white-door-1a";

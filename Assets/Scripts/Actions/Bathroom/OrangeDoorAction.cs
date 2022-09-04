@@ -20,8 +20,8 @@ public class OrangeDoorAction : VAction
         CommandAction cmdAction3 = new CommandAction(2, TAG, "Break the orange door", "Break");
 
 
-        actions.Add(new ActionFlow(1, OpenWhiteDoor, "Sounds/orange-door-2a", "Sounds/locked-door", "Sounds/orange-door-2b"));
-        actions.Add(new ActionFlow(2, BreakWhiteDoor, "Sounds/orange-door-3a", "", ""));
+        actions.Add(new ActionFlow(1, OpenOrangeDoor, "Sounds/orange-door-2a", "Sounds/locked-door", "Sounds/orange-door-2b"));
+        actions.Add(new ActionFlow(2, BreakOrangeDoor, "Sounds/orange-door-3a", "", ""));
         cmds.Add(cmdAction);
         cmds.Add(cmdAction2);
         cmds.Add(cmdAction3);
