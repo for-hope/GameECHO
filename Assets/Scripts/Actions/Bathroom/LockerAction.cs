@@ -30,7 +30,6 @@ public class LockerAction : VAction
 
     public void OpenLocker()
     {
-        //TODO: Cut the wires near the orange door
         cmds[1].isUsedOnce = true;
 
     }

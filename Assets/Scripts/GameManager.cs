@@ -64,6 +64,7 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+
         if (!SoundManager.Instance.EffectsSource.isPlaying && isIntroPlaying)
         {
             isIntroPlaying = false;
@@ -146,7 +147,7 @@ public class GameManager : MonoBehaviour
 
     public void putDownCamera(bool isPutDown)
     {
-       
+
         animator.SetBool("putDown", isPutDown);
 
     }

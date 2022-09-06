@@ -5,9 +5,9 @@ using UnityEngine;
 public class AlarmAction : VAction
 {
 
-    protected override string InitialInspectAudioFN { get; } = "Sounds/aXX";
+    protected override string InitialInspectAudioFN { get; } = "Sounds/alarm-1a";
 
-    protected override string FollowUpInspectAudioFN { get; } = "Sounds/aXX";
+    protected override string FollowUpInspectAudioFN { get; } = "Sounds/alarm-1b";
 
 
 
@@ -24,7 +24,7 @@ public class AlarmAction : VAction
 
         cmds.Add(cmdAction);
 
-    
+
         base.Start();
     }
 
@@ -32,12 +32,12 @@ public class AlarmAction : VAction
 
     public void Dismantle()
     {
-        
+
         cmds[1].isUsedOnce = true;
 
     }
 
- 
+
 
 
 

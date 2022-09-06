@@ -32,17 +32,14 @@ public class MirrorAction : VAction
 
     public void BreakMirror()
     {
-        //TODO: Cut the wires near the orange door
+        GameObject.Find("Right Mirror").GetComponent<MeshDestroy>().DestroyMesh();
         cmds[1].isUsedOnce = true;
 
     }
 
     public void PickShards()
     {
-
-        //TODO: Cut the wires near the white door and LOSE
         cmds[2].isUsedOnce = true;
-
     }
 
 

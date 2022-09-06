@@ -18,6 +18,17 @@ TagManager:
   - TOILET
   - METAL_DOOR
   - DOOR
+  - SMALL_BATHROOM
+  - WIRES
+  - BOARD
+  - BRUSH
+  - LOCKER
+  - WHITE_DOOR
+  - ORANGE_DOOR
+  - MIRROR
+  - SINK
+  - TRASHCAN
+  - ALARM
   layers:
   - Default
   - TransparentFX

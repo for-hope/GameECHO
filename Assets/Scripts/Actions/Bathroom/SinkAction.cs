@@ -5,9 +5,9 @@ using UnityEngine;
 public class SinkAction : VAction
 {
 
-    protected override string InitialInspectAudioFN { get; } = "Sounds/aXX";
+    protected override string InitialInspectAudioFN { get; } = "Sounds/sink-1a";
 
-    protected override string FollowUpInspectAudioFN { get; } = "Sounds/aXX";
+    protected override string FollowUpInspectAudioFN { get; } = "Sounds/sink-1b";
 
 
 
@@ -15,7 +15,7 @@ public class SinkAction : VAction
     public new void Start()
     {
 
-        CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the Sink"); 
+        CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the Sink");
         CommandAction cmdAction2 = new CommandAction(1, TAG, "Destroy the sink", "Destroy");
 
         actions.Add(new ActionFlow(1, DestroySink, "Sounds/sink-2a", "", ""));
@@ -28,7 +28,7 @@ public class SinkAction : VAction
     }
 
 
-  public void DestroySink()
+    public void DestroySink()
     {
         cmds[1].isUsedOnce = true;
     }

@@ -53,6 +53,23 @@ public enum EnvObjects
     TRASH,
     METAL_BOX,
 
-    METAL_DOOR
+    METAL_DOOR,
+    SMALL_BATHROOM,
+    WIRES,
+    BOARD,
+    BRUSH,
+    LOCKER,
+    WHITE_DOOR,
+    ORANGE_DOOR,
+    MIRROR,
+    SINK,
+    TRASHCAN,
+    ALARM
+
+
+
+
+
+
 }
 

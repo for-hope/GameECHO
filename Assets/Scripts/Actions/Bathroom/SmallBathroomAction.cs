@@ -38,9 +38,13 @@ public class SmallBathroomAction : VAction
 
     public void CloseDoor()
     {
+        GameObject door = GameObject.Find("SB Door");
+        if (door != null)
+        {
+            door.transform.rotation = Quaternion.Euler(0, -90, 0);
+        }
 
         cmds[2].isUsedOnce = true;
-        //TODO: Close the door of the small bathroom
 
     }
 

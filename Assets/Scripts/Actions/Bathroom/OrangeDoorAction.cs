@@ -32,15 +32,12 @@ public class OrangeDoorAction : VAction
 
     public void OpenOrangeDoor()
     {
-        //TODO: Cut the wires near the orange door
         cmds[1].isUsedOnce = true;
 
     }
 
     public void BreakOrangeDoor()
     {
-
-        //TODO: Cut the wires near the white door and LOSE
         cmds[2].isUsedOnce = true;
 
     }

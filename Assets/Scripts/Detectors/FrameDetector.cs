@@ -32,6 +32,7 @@ public class FrameDetector : MonoBehaviour
        
         foreach (Renderer renderer in m_Renderers)
         {
+            if (renderer == null) return;
             string tag = renderer.gameObject.tag;
             EnvObjects envObject = (EnvObjects)System.Enum.Parse(typeof(EnvObjects), tag);
             List<EnvObjects> envObjs = GameManager.currentFrameEnvObjects;

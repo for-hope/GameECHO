@@ -19,7 +19,7 @@ public class BoardAction : VAction
         CommandAction cmdAction2 = new CommandAction(1, TAG, "Translate the writing in the Board", "Translate");
 
 
-        actions.Add(new ActionFlow(1, Translate, "Sounds/board-1b", "", ""));
+        actions.Add(new ActionFlow(1, Translate, "", "", "Sounds/board-2a"));
         cmds.Add(cmdAction);
         cmds.Add(cmdAction2);
         base.Start();
@@ -29,9 +29,7 @@ public class BoardAction : VAction
 
     public void Translate()
     {
-        //TODO: Cut the wires near the orange door
         cmds[1].isUsedOnce = true;
-
     }
 
 
