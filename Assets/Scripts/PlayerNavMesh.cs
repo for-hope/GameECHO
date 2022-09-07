@@ -36,17 +36,17 @@ public class PlayerNavMesh : MonoBehaviour
         if (!pathPending)
         {
             if (objectCam.Priority < playerCam.Priority) SwitchCamPriority();
-            Debug.Log("Remaining distance: " + navMeshAgent.remainingDistance + " Stopping distance: " + navMeshAgent.stoppingDistance);
+         //   Debug.Log("Remaining distance: " + navMeshAgent.remainingDistance + " Stopping distance: " + navMeshAgent.stoppingDistance);
             if (navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance)
             {
-                    Debug.Log("Agent Stopped!!!!!!!! 2");
+                   // Debug.Log("Agent Stopped!!!!!!!! 2");
 
                 if (navMeshAgent.velocity.sqrMagnitude == 0f)
                 {
                     if (objectCam.Priority > playerCam.Priority) SwitchCamPriority();
                     target = null;
                     if (OnReachedTarget != null) OnReachedTarget();
-                    Debug.Log("Agent Stopped!!!!!!!!");
+                  //  Debug.Log("Agent Stopped!!!!!!!!");
                 }
             }
         }

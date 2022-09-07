@@ -28,9 +28,13 @@ public class AlarmAction : VAction
         base.Start();
     }
 
+    private void InspectAlarm()
+    {
+        WiresAction.UnlockCommandsIfPossible();
+    }
 
 
-    public void Dismantle()
+    private void Dismantle()
     {
 
         cmds[1].isUsedOnce = true;

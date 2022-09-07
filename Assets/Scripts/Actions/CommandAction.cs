@@ -35,7 +35,7 @@ public class CommandAction
         this.isUnknown = visibility == Visibility.HIDDEN || visibility == Visibility.INVISIBLE;
     }
 
-        public CommandAction(int id, string context, string phrase)
+    public CommandAction(int id, string context, string phrase)
     {
         this.id = id;
         this.context = context;
@@ -61,7 +61,18 @@ public class CommandAction
         {"light", EnvObjects.LIGHT },
         {"trash", EnvObjects.TRASH },
         {"metal_box", EnvObjects.METAL_BOX },
-        {"metal_door", EnvObjects.METAL_DOOR}
+        {"metal_door", EnvObjects.METAL_DOOR},
+        {"small_bathroom", EnvObjects.SMALL_BATHROOM},
+        {"wires", EnvObjects.WIRES},
+        {"board", EnvObjects.BOARD},
+        {"brush", EnvObjects.BUCKETS},
+        {"locker", EnvObjects.LOCKER},
+        {"white_door", EnvObjects.WHITE_DOOR},
+        {"orange_door", EnvObjects.ORANGE_DOOR},
+        {"mirror", EnvObjects.MIRROR},
+        {"sink", EnvObjects.SINK},
+        {"trashcan", EnvObjects.TRASHCAN},
+        {"alarm", EnvObjects.ALARM}
     };
 
     public override bool Equals(object obj)

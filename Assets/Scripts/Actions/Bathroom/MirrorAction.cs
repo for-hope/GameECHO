@@ -34,11 +34,12 @@ public class MirrorAction : VAction
     {
         GameObject.Find("Right Mirror").GetComponent<MeshDestroy>().DestroyMesh();
         cmds[1].isUsedOnce = true;
-
+        GameManager.commandActions.Find(x => x.context == EnvObjects.MIRROR.ToString() && x.id == 2).visibility = Visibility.INVISIBLE;
     }
 
     public void PickShards()
     {
+        WiresAction.UnlockCommandsIfPossible();
         cmds[2].isUsedOnce = true;
     }
 

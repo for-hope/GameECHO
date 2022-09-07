@@ -60,18 +60,46 @@ public class DictationEngine : MonoBehaviour
     {
 
         Debug.Log("Dictation result: " + text + " with confidence: " + confidence);
+
+
+        //INTRO 
         if (text.ToLower() == "okay" || text.ToLower() == "ok")
         {
 
             GameManager.Instance.IntroScreen.SetActive(false);
             return;
         }
+        ////////////////////////////
+
+
         List<CommandAction> cmdActions = GameManager.commandActions;
         ScopeFilter scopeFilter = new ScopeFilter();
 
         bool cmdFound = false;
         for (int i = 0; i < cmdActions.Count; i++)
         {
+            // if ((int)CommandAction.tagToEnvObj[cmdActions[i].context.ToLower()] != GameManager.Instance.currentLevel)
+            //     continue;
+
+            switch (GameManager.Instance.currentLevel)
+            {
+                case 1:
+                    if (!Enum.IsDefined(typeof(Level1Objects), cmdActions[i].context.ToUpper()))
+                        continue;
+                    break;
+                case 2:
+                    if (!Enum.IsDefined(typeof(Level2Objects), cmdActions[i].context.ToUpper()))
+                        continue;
+                    break;
+                case 3:
+                    if (!Enum.IsDefined(typeof(Level3Objects), cmdActions[i].context.ToUpper()))
+                        continue;
+                    break;
+
+            }
+
+
+
             if (cmdActions[i].phrase.ToLower() == text.ToLower())
             {
                 GameManager.TriggerAction(cmdActions[i].id, cmdActions[i].context);
@@ -97,7 +125,12 @@ public class DictationEngine : MonoBehaviour
 
 
         var scopeFilteredCommandsList = scopeFilteredCommands.Keys.ToList();
+        foreach (var command in scopeFilteredCommandsList)
+        {
+            Debug.Log("[11BEST GUESS BASED ON STRING COMP] : " + command.phrase + " with score: " + scopeFilteredCommands[command]);
+        }
         var cmdBasedOnRay = EnvironmentFilter.filteredByEnv(scopeFilteredCommandsList);
+        Debug.Log("Cmds basded on ray" + cmdBasedOnRay[0].phrase);
         var cmdsBasedOnFrame = EnvironmentFilter.filterByFrameEnv(scopeFilteredCommandsList);
         IDictionary<CommandAction, int> cmdsBasedOnContext = AvailabilityFilter.filterByContext(scopeFilteredCommandsList);
         IDictionary<CommandAction, int> finalCommandsScores = new Dictionary<CommandAction, int>();
@@ -109,6 +142,7 @@ public class DictationEngine : MonoBehaviour
             //Environment Score MAX = 30
             if (cmdBasedOnRay.Contains(possibleCmd)) score += 20;
             var uniqueObjectsOnFrame = cmdsBasedOnFrame.Values.Distinct().Count();
+
             if (cmdsBasedOnFrame.Keys.ToList().Contains(possibleCmd)) score += (10 / uniqueObjectsOnFrame);
             //Context Score MAX = 30
             if (cmdsBasedOnContext.Keys.Contains(possibleCmd)) score += cmdsBasedOnContext[possibleCmd];

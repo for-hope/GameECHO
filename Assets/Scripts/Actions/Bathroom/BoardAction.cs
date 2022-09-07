@@ -30,6 +30,7 @@ public class BoardAction : VAction
     public void Translate()
     {
         cmds[1].isUsedOnce = true;
+        WiresAction.UnlockCommandsIfPossible();
     }
 
 

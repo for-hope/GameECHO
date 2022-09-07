@@ -5,9 +5,9 @@ using UnityEngine;
 public class TrashcanAction : VAction
 {
 
-    protected override string InitialInspectAudioFN { get; } = "Sounds/aXX";
+    protected override string InitialInspectAudioFN { get; } = "Sounds/trashcan-1a";
 
-    protected override string FollowUpInspectAudioFN { get; } = "Sounds/aXX";
+    protected override string FollowUpInspectAudioFN { get; } = "Sounds/trashcan-1b";
 
 
 

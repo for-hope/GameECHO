@@ -45,17 +45,14 @@ public class ToiletAction : VAction
         Debug.Log("Taking out the pipe");
         cmds[2].isUsedOnce = true;
         GameObject pipeObject = GameObject.Find("Pipe");
-        pipeObject.SetActive(false);
-        //GameObject playerPipe = GameObject.Find("PlayerPipe");
-        //playerPipe.SetActive(true);
+        if (pipeObject != null) pipeObject.SetActive(false);
+        GameManager.commandActions.Find(x => x.context == EnvObjects.DOOR.ToString() && x.id == 2).visibility = Visibility.INVISIBLE;
+        if (GameManager.commandActions.Find(x => x.context == EnvObjects.METAL_DOOR.ToString() && x.id == 2).isUsedOnce)
+        {
+
+            GameManager.commandActions.Find(x => x.context == EnvObjects.METAL_DOOR.ToString() && x.id == 3).visibility = Visibility.INVISIBLE;
+        }
 
 
     }
-
-    // IEnumerator TakeOutPipeLateAction()
-    // {
-    //     yield return new WaitForSeconds(5);
-
-    // }
-
 }

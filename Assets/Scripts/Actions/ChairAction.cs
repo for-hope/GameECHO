@@ -5,8 +5,8 @@ using UnityEngine;
 public class ChairAction : VAction
 {
 
-    protected override string FollowUpInspectAudioFN { get;} = "Sounds/a23";
-    
+    protected override string FollowUpInspectAudioFN { get; } = "Sounds/a23";
+
 
 
 
@@ -14,9 +14,15 @@ public class ChairAction : VAction
     {
         CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the chair");
         cmds.Add(cmdAction);
+        actions.Add(new ActionFlow(0, InspectChair, FollowUpInspectAudioFN, "", ""));
+
         base.Start();
     }
 
-
+    private void InspectChair()
+    {
+        Debug.Log("Inspecting the chair");
+        GameManager.commandActions.Find(x => x.context == EnvObjects.METAL_BOX.ToString() && x.id == 4).visibility = Visibility.INVISIBLE;
+    }
 
 }

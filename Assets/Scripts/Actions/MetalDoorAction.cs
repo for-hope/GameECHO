@@ -34,6 +34,11 @@ public class MetalDoorAction : VAction
 
     private void Break()
     {
+        if (GameManager.commandActions.Find(x => x.context == EnvObjects.TOILET.ToString() && x.id == 2).isUsedOnce)
+        {
+            GameManager.commandActions.Find(x => x.context == EnvObjects.METAL_DOOR.ToString() && x.id == 3).visibility = Visibility.INVISIBLE;
+
+        }
         return;
     }
 
@@ -54,6 +59,7 @@ public class MetalDoorAction : VAction
         Debug.Log("NextScene");
         GameObject.Find("Fade").transform.GetChild(0).gameObject.SetActive(true);
         StartCoroutine(TeleportPlayer());
+        GameManager.Instance.currentLevel = 2;
 
     }
 

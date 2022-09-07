@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance = null;
     public Animator animator;
 
-
+    public int currentLevel = 1;
     public static bool isVoiceInteractionEnabled = true;
     public bool ignoreLowScopeScores = true;
     public static EnvObjects currentExactEnvObject;
@@ -113,7 +113,7 @@ public class GameManager : MonoBehaviour
         {
             if (FnPressed[i])
             {
-                if (showList.Count > i && !showList[i].isUsedOnce)
+                if (showList.Count > i && !showList[i].isUsedOnce && showList[i].visibility != Visibility.HIDDEN)
                 {
                     hintText.text = "[ Hint: \"" + showList[i].phrase + "\" ]";
                     StartCoroutine(resetHintText());
@@ -169,16 +169,16 @@ public class GameManager : MonoBehaviour
         var defaultCommands = va.GetVisibleCommands();
         var inspectedCommands = va.GetInvisibleCommands();
         var hiddenCommands = va.GetHiddenCommands();
-        var cmdList = new List<CommandAction>(va.inspect ? defaultCommands.Concat(inspectedCommands).ToList() : defaultCommands);
+        var cmdList = new List<CommandAction>(va.inspect ? defaultCommands.Concat(inspectedCommands).Concat(hiddenCommands).ToList() : defaultCommands);
         GameManager.Instance.showList = new List<CommandAction>(cmdList);
         for (int i = 0; i < cmdList.Count; i++)
         {
             var Fn = i + 1;
             var actionName = cmdList[i].isUsedOnce ? "<s>" + "<color=#FDEB37>[F" + (Fn) + "]</color> " + cmdList[i].actionName + "</s>" : "<color=#FDEB37>[F" + (Fn) + "]</color> " + cmdList[i].actionName;
-            commandsText += actionName + " \n";
+            commandsText += cmdList[i].visibility == Visibility.HIDDEN ? "<color=#4f504e>[F" + Fn + "]</color> Hidden\n" : actionName + " \n";
         }
 
-        commandsText += hiddenCommands.Count != 0 && va.inspect ? "+ " + hiddenCommands.Count + " Hidden" : "";
+        //commandsText += hiddenCommands.Count != 0 && va.inspect ? "+ " + hiddenCommands.Count + " Hidden" : "";
         commandsTextComponent.GetComponent<TMPro.TextMeshProUGUI>().text = commandsText;
     }
 
@@ -221,6 +221,8 @@ public class GameManager : MonoBehaviour
         VAction action = go.GetComponent<VAction>();
         action.TriggerAction(id);
     }
+
+
 
 }
 

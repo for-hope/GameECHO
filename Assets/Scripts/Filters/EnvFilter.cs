@@ -10,10 +10,12 @@ public class EnvironmentFilter : MonoBehaviour
 
         foreach (CommandAction command in commandActions)
         {
+            Debug.Log("Key Given " + command.context.ToLower());
             EnvObjects envObject = CommandAction.tagToEnvObj[command.context.ToLower()];
 
             if (GameManager.currentExactEnvObject == envObject)
             {
+                Debug.Log("ENV OBJECT BASED ON RAY " + envObject);
                 filtered.Add(command);
             }
         }
@@ -30,6 +32,7 @@ public class EnvironmentFilter : MonoBehaviour
 
             if (GameManager.currentFrameEnvObjects.Contains(envObject))
             {
+                Debug.Log("ENV OBJECT IN FRAME " + envObject);
                 filtered.Add(command, envObject);
             }
 
@@ -37,7 +40,10 @@ public class EnvironmentFilter : MonoBehaviour
         }
         return filtered;
     }
+
+
 }
+
 
 public enum EnvObjects
 {
@@ -46,10 +52,10 @@ public enum EnvObjects
     BUCKETS,
     CHAIR,
     TABLE,
-    BED,
+    BED ,
     TOILET,
     HANGED_CLOTHES,
-    LIGHT,
+    LIGHT ,
     TRASH,
     METAL_BOX,
 
@@ -64,12 +70,46 @@ public enum EnvObjects
     MIRROR,
     SINK,
     TRASHCAN,
+    ALARM,
+
+}
+
+enum Level1Objects
+{
+
+    DOOR,
+    WALLS,
+    BUCKETS,
+    CHAIR,
+    TABLE,
+    BED,
+    TOILET,
+    HANGED_CLOTHES,
+    LIGHT,
+    TRASH,
+    METAL_BOX,
+
+    METAL_DOOR,
+}
+
+enum Level2Objects
+{
+    SMALL_BATHROOM,
+    WIRES,
+    BOARD,
+    BRUSH,
+    LOCKER,
+    WHITE_DOOR,
+    ORANGE_DOOR,
+    MIRROR,
+    SINK,
+    TRASHCAN,
     ALARM
+}
 
 
-
-
-
+enum Level3Objects
+{
 
 }
 

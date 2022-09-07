@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,8 +10,21 @@ public class WiresAction : VAction
 
     protected override string FollowUpInspectAudioFN { get; } = "Sounds/wires-1b";
 
+    private static bool boardTranslated = GameManager.commandActions.Find(x => x.context == EnvObjects.BOARD.ToString() && x.id == 1).isUsedOnce;
+    private static bool mirrorShardPicked = GameManager.commandActions.Find(x => x.context == EnvObjects.MIRROR.ToString() && x.id == 2).isUsedOnce;
+    private static bool alarmInspected = GameManager.commandActions.Find(x => x.context == EnvObjects.ALARM.ToString() && x.id == 0).isUsedOnce;
 
+    internal static void UnlockCommandsIfPossible()
+    {
+        if (WiresAction.unlockHiddenCommands)
+        {
+            GameManager.commandActions.Find(x => x.context == EnvObjects.WIRES.ToString() && x.id == 1).visibility = Visibility.INVISIBLE;
+            GameManager.commandActions.Find(x => x.context == EnvObjects.WIRES.ToString() && x.id == 2).visibility = Visibility.INVISIBLE;
 
+        }
+    }
+
+    public static bool unlockHiddenCommands = boardTranslated && mirrorShardPicked && alarmInspected;
 
     public new void Start()
     {
@@ -40,7 +54,7 @@ public class WiresAction : VAction
     public void CutWiresWhiteDoor()
     {
 
-        //TODO: Cut the wires near the white door and LOSE
+        GameManager.Instance.Lose();
         cmds[2].isUsedOnce = true;
 
     }

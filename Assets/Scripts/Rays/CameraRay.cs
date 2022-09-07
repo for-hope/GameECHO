@@ -29,8 +29,9 @@ public class CameraRay : MonoBehaviour
             currentHitDistance = hit.distance;
             GameObject gameObject = hit.collider.gameObject;
             string tag = gameObject.tag;
-        
+            //Debug.Log("DEBUG Hit: " + gameObject.name);
             GameManager.currentExactEnvObject = (EnvObjects)System.Enum.Parse(typeof(EnvObjects), tag);
+            //Debug.Log("++DEBUG Hit: " + GameManager.currentExactEnvObject);
 
 
 

@@ -33,7 +33,6 @@ public class SmallBathroomAction : VAction
     public void CheckExits()
     {
         cmds[1].isUsedOnce = true;
-
     }
 
     public void CloseDoor()
@@ -43,9 +42,7 @@ public class SmallBathroomAction : VAction
         {
             door.transform.rotation = Quaternion.Euler(0, -90, 0);
         }
-
         cmds[2].isUsedOnce = true;
-
     }
 
 

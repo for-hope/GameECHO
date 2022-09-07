@@ -28,7 +28,7 @@ public class DoorAction : VAction
     public void TryToOpen()
     {
         Debug.Log("Trying to open the door");
-
+        
         cmds[1].isUsedOnce = true;
     }
 
