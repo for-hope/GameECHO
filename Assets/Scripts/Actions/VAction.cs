@@ -197,7 +197,7 @@ public class VAction : MonoBehaviour
 
     }
 
-    public void Inspect()
+    public virtual void Inspect()
     {
         //INSPECT
         Debug.Log("Inspected Action! TAG: " + TAG);

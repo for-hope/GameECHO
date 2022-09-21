@@ -23,6 +23,8 @@ public class AlarmAction : VAction
         actions.Add(new ActionFlow(1, Dismantle, "Sounds/alarm-2a", "", ""));
 
         cmds.Add(cmdAction);
+        cmds.Add(cmdAction2);
+
 
 
         base.Start();

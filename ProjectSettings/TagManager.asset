@@ -29,6 +29,10 @@ TagManager:
   - SINK
   - TRASHCAN
   - ALARM
+  - FIREPLUG
+  - FIRE_EXTINGUISHER
+  - HALL_WINDOWS
+  - CLASSROOM
   layers:
   - Default
   - TransparentFX

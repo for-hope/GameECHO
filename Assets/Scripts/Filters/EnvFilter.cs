@@ -52,10 +52,10 @@ public enum EnvObjects
     BUCKETS,
     CHAIR,
     TABLE,
-    BED ,
+    BED,
     TOILET,
     HANGED_CLOTHES,
-    LIGHT ,
+    LIGHT,
     TRASH,
     METAL_BOX,
 
@@ -71,7 +71,10 @@ public enum EnvObjects
     SINK,
     TRASHCAN,
     ALARM,
-
+    FIREPLUG,
+    FIRE_EXTINGUISHER,
+    HALL_WINDOWS,
+    CLASSROOM,
 }
 
 enum Level1Objects
@@ -90,6 +93,7 @@ enum Level1Objects
     METAL_BOX,
 
     METAL_DOOR,
+
 }
 
 enum Level2Objects
@@ -110,6 +114,9 @@ enum Level2Objects
 
 enum Level3Objects
 {
-
+    FIREPLUG,
+    FIRE_EXTINGUISHER,
+    HALL_WINDOWS,
+    CLASSROOM,
 }
 

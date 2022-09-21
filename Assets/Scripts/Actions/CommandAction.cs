@@ -72,7 +72,11 @@ public class CommandAction
         {"mirror", EnvObjects.MIRROR},
         {"sink", EnvObjects.SINK},
         {"trashcan", EnvObjects.TRASHCAN},
-        {"alarm", EnvObjects.ALARM}
+        {"alarm", EnvObjects.ALARM},
+        {"fireplug", EnvObjects.FIREPLUG},
+        {"fire_extinguisher", EnvObjects.FIRE_EXTINGUISHER},
+        {"hall_windows", EnvObjects.HALL_WINDOWS},
+        {"classroom", EnvObjects.CLASSROOM},
     };
 
     public override bool Equals(object obj)
