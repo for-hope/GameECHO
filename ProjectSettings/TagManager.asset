@@ -33,6 +33,17 @@ TagManager:
   - FIRE_EXTINGUISHER
   - HALL_WINDOWS
   - CLASSROOM
+  - BLACKBOARD
+  - SCREEN
+  - CLASSROOM_DOOR
+  - CLOCK
+  - DESKS
+  - BACKPACKS
+  - NOTEBOOKS
+  - POSTERS
+  - BROOM
+  - SPEAKER
+  - CLASSROOM_WINDOWS
   layers:
   - Default
   - TransparentFX

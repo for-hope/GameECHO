@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ClassroomWindowAction : VAction
+public class NotebooksAction : VAction
 {
 
     protected override string InitialInspectAudioFN { get; } = "Sounds/notebook-1a";

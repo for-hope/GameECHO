@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BackpacksAction : VAction
+public class ClockAction : VAction
 {
 
     protected override string InitialInspectAudioFN { get; } = "Sounds/clock-1a";
@@ -34,17 +34,12 @@ public class BackpacksAction : VAction
 
 
 
-    private void Search()
+    private void TimeLeft()
     {
         cmds[1].isUsedOnce = true;
     }
 
-    private void WipeOff()
-    {
-        cmds[2].isUsedOnce = true;
-    }
-
-
+ 
 
 
 
