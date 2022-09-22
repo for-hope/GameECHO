@@ -11,11 +11,11 @@ public class ScreenAction : VAction
 
 
 
-
+    private GameObject screenText;
     public new void Start()
     {
 
-        CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the screen");
+        CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the screen", noAnimation: true);
         CommandAction cmdAction2 = new CommandAction(1, TAG, "What just played on the screen?", "What played?");
 
 
@@ -25,13 +25,19 @@ public class ScreenAction : VAction
 
         cmds.Add(cmdAction);
         cmds.Add(cmdAction2);
+        screenText = GameObject.Find("Screen_Canvas").transform.GetChild(0).gameObject;
 
 
         base.Start();
     }
 
 
+    public override void Inspect()
+    {
+        screenText.SetActive(true);
+        base.Inspect();
 
+    }
 
     private void WhatJustPlayed()
     {

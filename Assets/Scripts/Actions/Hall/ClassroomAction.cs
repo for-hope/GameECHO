@@ -20,11 +20,12 @@ public class ClassroomAction : VAction
         base.Start();
     }
 
-    public override void Inspect() {
+    public override void Inspect()
+    {
         base.Inspect();
-        //enter
+        playerNavMesh.GoToTarget(GameObject.Find("Classroom_Trashbox"), () => GameManager.Instance.currentLevel = 4);
     }
-    
+
 
 
 }

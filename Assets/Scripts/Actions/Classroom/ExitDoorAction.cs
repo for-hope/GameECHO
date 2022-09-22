@@ -15,8 +15,8 @@ public class ExitDoorAction : VAction
     public new void Start()
     {
 
-        CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the exit door");
-        CommandAction cmdAction2 = new CommandAction(1, TAG, "Force open the exit door with the broom", "Force Open", Visibility.HIDDEN);
+        CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the classroom door");
+        CommandAction cmdAction2 = new CommandAction(1, TAG, "Force open the classroom door with the broom", "Force Open", Visibility.HIDDEN);
         CommandAction cmdAction3 = new CommandAction(2, TAG, "Exit the classroom from the exit door and run away", "Run!");
 
 

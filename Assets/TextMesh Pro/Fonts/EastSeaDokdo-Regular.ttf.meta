@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: dde90074d046bb04291932064df3ac33
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - East Sea Dokdo
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: c5592909a24872e43a575d28510fe2af, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

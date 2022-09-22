@@ -75,6 +75,17 @@ public enum EnvObjects
     FIRE_EXTINGUISHER,
     HALL_WINDOWS,
     CLASSROOM,
+    BLACKBOARD,
+    SCREEN,
+    CLASSROOM_DOOR,
+    CLOCK,
+    DESKS,
+    BACKPACKS,
+    NOTEBOOKS,
+    POSTERS,
+    BROOM,
+    SPEAKER,
+    CLASSROOM_WINDOWS
 }
 
 enum Level1Objects
@@ -118,5 +129,19 @@ enum Level3Objects
     FIRE_EXTINGUISHER,
     HALL_WINDOWS,
     CLASSROOM,
+}
+
+enum Level4Objects
+{
+    BLACKBOARD,
+    SCREEN,
+    CLASSROOM_DOOR,
+    CLOCK,
+    BACKPACKS,
+    NOTEBOOKS,
+    POSTERS,
+    BROOM,
+    SPEAKER,
+    CLASSROOM_WINDOW
 }
 

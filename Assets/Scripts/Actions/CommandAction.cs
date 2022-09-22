@@ -18,6 +18,8 @@ public class CommandAction
     public bool isPossible = true;
     public bool isUnknown = false;
     public bool isJustLearnt = false;
+
+    public bool noAnimation = false;
     public Visibility visibility = Visibility.VISIBLE;
 
     public string actionName;
@@ -25,7 +27,7 @@ public class CommandAction
 
 
 
-    public CommandAction(int id, string context, string phrase, string actionName, Visibility visibility = Visibility.INVISIBLE, bool isPossible = true)
+    public CommandAction(int id, string context, string phrase, string actionName, Visibility visibility = Visibility.INVISIBLE, bool isPossible = true,bool noAnimation = false)
     {
         this.id = id;
         this.context = context;
@@ -33,15 +35,18 @@ public class CommandAction
         this.actionName = actionName;
         this.visibility = visibility;
         this.isUnknown = visibility == Visibility.HIDDEN || visibility == Visibility.INVISIBLE;
+        this.noAnimation = noAnimation;
+
     }
 
-    public CommandAction(int id, string context, string phrase)
+    public CommandAction(int id, string context, string phrase, bool noAnimation = false)
     {
         this.id = id;
         this.context = context;
         this.phrase = phrase;
         this.actionName = INSPECT_ACTION_NAME;
         this.visibility = Visibility.VISIBLE;
+        this.noAnimation = noAnimation;
     }
 
 
@@ -50,6 +55,7 @@ public class CommandAction
 
     public static Dictionary<string, EnvObjects> tagToEnvObj = new Dictionary<string, EnvObjects>()
     {
+
         {"door", EnvObjects.DOOR },
         {"wall", EnvObjects.WALLS },
         {"buckets", EnvObjects.BUCKETS },
@@ -77,6 +83,17 @@ public class CommandAction
         {"fire_extinguisher", EnvObjects.FIRE_EXTINGUISHER},
         {"hall_windows", EnvObjects.HALL_WINDOWS},
         {"classroom", EnvObjects.CLASSROOM},
+        {"blackboard", EnvObjects.BLACKBOARD},
+        {"screen", EnvObjects.SCREEN},
+        {"classroom_door", EnvObjects.CLASSROOM_DOOR},
+        {"clock", EnvObjects.CLOCK},
+        {"desks", EnvObjects.DESKS},
+        {"backpacks", EnvObjects.BACKPACKS},
+        {"notebooks", EnvObjects.NOTEBOOKS},
+        {"posters", EnvObjects.POSTERS},
+        {"broom", EnvObjects.BROOM},
+        {"speaker", EnvObjects.SPEAKER},
+        {"classroom_windows", EnvObjects.CLASSROOM_WINDOWS}
     };
 
     public override bool Equals(object obj)

@@ -165,6 +165,7 @@ public class GameManager : MonoBehaviour
         GameObject gameObject = GameObject.FindGameObjectsWithTag(objectTag).Where(x => x.GetComponent<VAction>() != null).FirstOrDefault();
 
         string commandsText = "<color=#ADD8E6><b>Actions:</b></color> \n";
+ 
         VAction va = gameObject.GetComponent<VAction>();
         var defaultCommands = va.GetVisibleCommands();
         var inspectedCommands = va.GetInvisibleCommands();
