@@ -195,6 +195,7 @@ public class VAction : MonoBehaviour
 
     public void OnReachedTarget()
     {
+        Debug.Log("Reached target");
         reachedDestination = true;
     }
     public void GoToTargetThen()

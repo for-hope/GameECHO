@@ -38,9 +38,7 @@ public class AlarmAction : VAction
 
     private void Dismantle()
     {
-
         cmds[1].isUsedOnce = true;
-
     }
 
 

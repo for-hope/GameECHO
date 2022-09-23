@@ -35,6 +35,8 @@ public class ScreenAction : VAction
     public override void Inspect()
     {
         screenText.SetActive(true);
+        DesksAction.UnlockCommandsIfPossible();
+
         base.Inspect();
 
     }

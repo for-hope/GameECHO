@@ -19,6 +19,12 @@ public class BroomAction : VAction
         base.Start();
     }
 
+    public override void Inspect()
+    {
+        base.Inspect();
+        GameManager.commandActions.Find(x => x.context == EnvObjects.CLASSROOM_DOOR.ToString() && x.id == 1).visibility = Visibility.INVISIBLE;
+
+    }
 
 
 

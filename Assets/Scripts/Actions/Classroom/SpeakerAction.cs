@@ -31,7 +31,12 @@ public class SpeakerAction : VAction
     }
 
 
+    public override void Inspect()
+    {
+        DesksAction.UnlockCommandsIfPossible();
 
+        base.Inspect();
+    }
 
     private void SpeakerSays()
     {

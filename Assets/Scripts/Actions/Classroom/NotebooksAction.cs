@@ -19,7 +19,7 @@ public class NotebooksAction : VAction
         CommandAction cmdAction2 = new CommandAction(1, TAG, "Read the notebooks with your name", "Read");
 
 
-        actions.Add(new ActionFlow(1, Read, "Sounds/notebooks-2a", "Sounds/read-notebooks", "notebooks-2b"));
+        actions.Add(new ActionFlow(1, Read, "Sounds/notebooks-2a", "Sounds/read-notebooks", "Sounds/notebooks-2b"));
 
         cmds.Add(cmdAction);
         cmds.Add(cmdAction2);
@@ -33,6 +33,8 @@ public class NotebooksAction : VAction
 
     private void Read()
     {
+        DesksAction.UnlockCommandsIfPossible();
+
         cmds[1].isUsedOnce = true;
     }
 
