@@ -15,15 +15,15 @@ public class ClassroomAction : VAction
     public new void Start()
     {
 
-        CommandAction cmdAction = new CommandAction(0, TAG, "Go to the classroom");
-
+        CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the classroom");
+        cmds.Add(cmdAction);
         base.Start();
     }
 
     public override void Inspect()
     {
         base.Inspect();
-        playerNavMesh.GoToTarget(GameObject.Find("Classroom_Trashbox"), () => GameManager.Instance.currentLevel = 4);
+        playerNavMesh.GoToTarget(GameObject.Find("Classroom_Trashbox"), () => GameManager.Instance.updateCurrentLevel(4));
     }
 
 

@@ -2,44 +2,48 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnvironmentFilter : MonoBehaviour
+public class EnvironmentFilter
 {
-    public static List<CommandAction> filteredByEnv(List<CommandAction> commandActions)
-    {
-        List<CommandAction> filtered = new List<CommandAction>();
 
+    private List<CommandAction> commandsBasedOnRaycast = new List<CommandAction>();
+    private List<CommandAction> commandsBasedOnFrame = new List<CommandAction>();
+    public int uniqueFrameObjectsCount = 0;
+    public void AddToFilter(List<CommandAction> commandActions)
+    {
+        //clear commandsBasedOnRaycast
+        commandsBasedOnRaycast = new List<CommandAction>();
+        commandsBasedOnFrame = new List<CommandAction>();
+        uniqueFrameObjectsCount = 0;
+        var uniqueEnvOjs = new HashSet<EnvObjects>();
         foreach (CommandAction command in commandActions)
         {
-            Debug.Log("Key Given " + command.context.ToLower());
+
             EnvObjects envObject = CommandAction.tagToEnvObj[command.context.ToLower()];
 
             if (GameManager.currentExactEnvObject == envObject)
             {
-                Debug.Log("ENV OBJECT BASED ON RAY " + envObject);
-                filtered.Add(command);
+                Debug.Log("OBJECT BASED ON RAY " + envObject);
+                commandsBasedOnRaycast.Add(command);
             }
-        }
-        return filtered;
-
-    }
-
-    public static Dictionary<CommandAction, EnvObjects> filterByFrameEnv(List<CommandAction> commandActions)
-    {
-        var filtered = new Dictionary<CommandAction, EnvObjects>();
-        foreach (CommandAction command in commandActions)
-        {
-            EnvObjects envObject = CommandAction.tagToEnvObj[command.context.ToLower()];
-
             if (GameManager.currentFrameEnvObjects.Contains(envObject))
             {
                 Debug.Log("ENV OBJECT IN FRAME " + envObject);
-                filtered.Add(command, envObject);
+                commandsBasedOnFrame.Add(command);
+                uniqueEnvOjs.Add(envObject);
             }
-
-
+            uniqueFrameObjectsCount = uniqueEnvOjs.Count;
         }
-        return filtered;
+
     }
+
+    public int CalculateScore(CommandAction command)
+    {
+        int score = 0;
+        if (commandsBasedOnRaycast.Contains(command)) score += 20;
+        if (commandsBasedOnFrame.Contains(command)) score += 10 / uniqueFrameObjectsCount;
+        return score;
+    }
+
 
 
 }
@@ -137,11 +141,12 @@ enum Level4Objects
     SCREEN,
     CLASSROOM_DOOR,
     CLOCK,
+    DESKS,
     BACKPACKS,
     NOTEBOOKS,
     POSTERS,
     BROOM,
     SPEAKER,
-    CLASSROOM_WINDOW
+    CLASSROOM_WINDOWS
 }
 

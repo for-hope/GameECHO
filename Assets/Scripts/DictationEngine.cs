@@ -1,16 +1,18 @@
 using UnityEngine;
 using UnityEngine.Windows.Speech;
-using System.Collections;
 using System.Collections.Generic;
-using System;
 using System.Linq;
 
 public class DictationEngine : MonoBehaviour
 {
     protected DictationRecognizer dictationRecognizer;
     private bool dictationStarted = false;
+    private GameObject micOn;
+    private GameObject micOff;
     void Start()
     {
+        micOn = GameObject.Find("MicOn");
+        micOff = GameObject.Find("MicOff");
         Debug.Log("DictationEngine Start");
         StartDictationEngine();
     }
@@ -56,110 +58,111 @@ public class DictationEngine : MonoBehaviour
                 break;
         }
     }
+
+
+    private bool processIntroCommands(string text)
+    {
+        if (text.ToLower() == "okay" || text.ToLower() == "ok")
+        {
+            GameManager.Instance.IntroScreen.SetActive(false);
+            return true;
+        }
+        return false;
+    }
+
+    private bool processCmdActions(string text, ScopeFilter scopeFilter)
+    {
+        List<CommandAction> cmdActions = GameManager.commandActions;
+        Debug.Log("Checking cmds against " + cmdActions.Count + " commands");
+        for (int i = 0; i < cmdActions.Count; i++)
+        {
+            Debug.Log("Checking " + cmdActions[i].phrase.ToLower() + " with " + text);
+            if (cmdActions[i].phrase.ToLower() == text.ToLower())
+            {
+                GameManager.TriggerAction(cmdActions[i].id, cmdActions[i].context);
+                return true;
+            }
+            scopeFilter.AddToFilter(cmdActions[i], text);
+        }
+        return false;
+    }
+
+    private List<CommandAction> possibleCommands(string text, ScopeFilter scopeFilter)
+    {
+
+        if (GameManager.Instance.predictorEnabled)
+        {
+
+            IDictionary<CommandAction, int> scopeFilteredCommands = scopeFilter.filteredCommands;
+            if (scopeFilteredCommands.Count == 0) return null; //DEFAULT FEEDBACK
+            var bestScore = scopeFilter.BestScoreCommand();
+            Debug.Log("[BEST GUESS BASED ON STRING COMP] : " + bestScore.Key.phrase + " with score: " + bestScore.Value);
+            return scopeFilteredCommands.Keys.ToList();
+
+        }
+        return null;
+    }
+
+
+    private CommandAction CalculateBestCommand(string text, ScopeFilter scopeFilter, EnvironmentFilter envFilter, ContextFilter contextFilter)
+    {
+        var scopeFilteredCommandsList = possibleCommands(text, scopeFilter);
+        //If no commands are found, return.
+        if (scopeFilteredCommandsList == null) return null;
+        //process commands through the filters
+        envFilter.AddToFilter(scopeFilteredCommandsList);
+        contextFilter.AddToFilter(scopeFilteredCommandsList);
+
+
+        IDictionary<CommandAction, int> finalCommandsScores = new Dictionary<CommandAction, int>();
+        Debug.Log("---- Calculating final score ----");
+        foreach (CommandAction possibleCmd in scopeFilteredCommandsList)
+        {
+            int score = 0; // MAX SCORE = 100
+            //Environment Score MAX = 30
+            score += envFilter.CalculateScore(possibleCmd);
+            //Context Score MAX = 30
+            score += contextFilter.CalculateScore(possibleCmd);
+            //Scope Score MAX = 40
+            score += scopeFilter.CalculateScore(possibleCmd);
+
+            finalCommandsScores.Add(new KeyValuePair<CommandAction, int>(possibleCmd, score));
+        }
+        var bestCommandWithScore = finalCommandsScores.OrderByDescending(x => x.Value).First();
+
+        CommandAction bestCommand = bestCommandWithScore.Key;
+        Debug.Log("========> Best Score Command: " + bestCommand.phrase + " with score: " + bestCommandWithScore.Value);
+
+        return bestCommand;
+    }
+
     private void DictationRecognizer_OnDictationResult(string text, ConfidenceLevel confidence)
     {
 
         Debug.Log("Dictation result: " + text + " with confidence: " + confidence);
+        //Check if text is an intro command.
+        if (processIntroCommands(text)) return;
+        //Initilize Filters.
+        var envFilter = new EnvironmentFilter();
+        var contextFilter = new ContextFilter();
+        var scopeFilter = new ScopeFilter();
+        //process text by checking if it is a command action.
+        if (processCmdActions(text, scopeFilter)) return;
 
-
-        //INTRO 
-        if (text.ToLower() == "okay" || text.ToLower() == "ok")
-        {
-
-            GameManager.Instance.IntroScreen.SetActive(false);
-            return;
-        }
-        ////////////////////////////
-
-
-        List<CommandAction> cmdActions = GameManager.commandActions;
-        ScopeFilter scopeFilter = new ScopeFilter();
-
-        bool cmdFound = false;
-        for (int i = 0; i < cmdActions.Count; i++)
-        {
-            // if ((int)CommandAction.tagToEnvObj[cmdActions[i].context.ToLower()] != GameManager.Instance.currentLevel)
-            //     continue;
-
-            switch (GameManager.Instance.currentLevel)
-            {
-                case 1:
-                    if (!Enum.IsDefined(typeof(Level1Objects), cmdActions[i].context.ToUpper()))
-                        continue;
-                    break;
-                case 2:
-                    if (!Enum.IsDefined(typeof(Level2Objects), cmdActions[i].context.ToUpper()))
-                        continue;
-                    break;
-                case 3:
-                    if (!Enum.IsDefined(typeof(Level3Objects), cmdActions[i].context.ToUpper()))
-                        continue;
-                    break;
-
-            }
-
-
-
-            if (cmdActions[i].phrase.ToLower() == text.ToLower())
-            {
-                GameManager.TriggerAction(cmdActions[i].id, cmdActions[i].context);
-                cmdFound = true;
-                break;
-            }
-            scopeFilter.Filter(cmdActions[i], text);
-        }
-
-        if (cmdFound) return;
-        IDictionary<CommandAction, int> scopeFilteredCommands = scopeFilter.filteredCommands;
-        //predict the command
+        //!COMMAND NOT FOUND, PREDICTING...
+        var startTime = Time.realtimeSinceStartup;
         Debug.Log("Command not found, Predicting...");
-        if (scopeFilteredCommands.Count == 0)
+        //Get possible commands from the scope filter and ignore commands with low string distance to the text.
+        var predictedCommand = CalculateBestCommand(text, scopeFilter, envFilter, contextFilter);
+        if (predictedCommand == null)
         {
-            Debug.Log("Command is not in the scope of the available commands");
+            Debug.Log("No command found");
+            //Trigger default feedback
             return;
         }
-        float startTime = Time.realtimeSinceStartup;
-        var bestScore = scopeFilter.BestScoreCommand();
-        Debug.Log("[BEST GUESS BASED ON STRING COMP] : " + bestScore.Key.phrase + " with score: " + bestScore.Value);
-
-
-
-        var scopeFilteredCommandsList = scopeFilteredCommands.Keys.ToList();
-        foreach (var command in scopeFilteredCommandsList)
-        {
-            Debug.Log("[11BEST GUESS BASED ON STRING COMP] : " + command.phrase + " with score: " + scopeFilteredCommands[command]);
-        }
-        var cmdBasedOnRay = EnvironmentFilter.filteredByEnv(scopeFilteredCommandsList);
-        Debug.Log("Cmds basded on ray" + cmdBasedOnRay[0].phrase);
-        var cmdsBasedOnFrame = EnvironmentFilter.filterByFrameEnv(scopeFilteredCommandsList);
-        IDictionary<CommandAction, int> cmdsBasedOnContext = AvailabilityFilter.filterByContext(scopeFilteredCommandsList);
-        IDictionary<CommandAction, int> finalCommandsScores = new Dictionary<CommandAction, int>();
-        Debug.Log("---- Calculating final score ----");
-        foreach (KeyValuePair<CommandAction, int> commandScore in scopeFilteredCommands)
-        {
-            CommandAction possibleCmd = commandScore.Key;
-            int score = 0; // MAX SCORE = 100
-            //Environment Score MAX = 30
-            if (cmdBasedOnRay.Contains(possibleCmd)) score += 20;
-            var uniqueObjectsOnFrame = cmdsBasedOnFrame.Values.Distinct().Count();
-
-            if (cmdsBasedOnFrame.Keys.ToList().Contains(possibleCmd)) score += (10 / uniqueObjectsOnFrame);
-            //Context Score MAX = 30
-            if (cmdsBasedOnContext.Keys.Contains(possibleCmd)) score += cmdsBasedOnContext[possibleCmd];
-            //Scope Score MAX = 40
-            score += Convert.ToInt32((ScopeFilter.MIN_SCOPE_FILTER_SCORE - commandScore.Value + 1) * 4);
-            //Debug.Log("Score after str " + score);
-
-            finalCommandsScores.Add(new KeyValuePair<CommandAction, int>(possibleCmd, score));
-        }
-        var maxCommand = finalCommandsScores.OrderByDescending(x => x.Value).First();
-        CommandAction finalCommand = maxCommand.Key;
-        Debug.Log("========> Final Command: " + finalCommand.phrase + " with score: " + maxCommand.Value);
         float endTime = Time.realtimeSinceStartup;
         Debug.Log("Time taken to predict: " + (endTime - startTime) + " seconds");
-
-        GameManager.TriggerAction(finalCommand.id, finalCommand.context);
-
+        GameManager.TriggerAction(predictedCommand.id, predictedCommand.context);
     }
     private void DictationRecognizer_OnDictationError(string error, int hresult)
     {
@@ -171,6 +174,8 @@ public class DictationEngine : MonoBehaviour
     }
     private void StartDictationEngine()
     {
+        micOn.SetActive(true);
+        micOff.SetActive(false);
         dictationStarted = true;
         dictationRecognizer = new DictationRecognizer();
         dictationRecognizer.DictationHypothesis += DictationRecognizer_OnDictationHypothesis;
@@ -181,6 +186,8 @@ public class DictationEngine : MonoBehaviour
     }
     private void CloseDictationEngine()
     {
+        micOn.SetActive(false);
+        micOff.SetActive(true);
         dictationStarted = false;
         if (dictationRecognizer != null)
         {

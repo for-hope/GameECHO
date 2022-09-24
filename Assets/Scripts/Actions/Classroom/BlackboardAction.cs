@@ -36,6 +36,7 @@ public class BlackboardAction : VAction
     public override void Inspect()
     {
         blackboardText.SetActive(true);
+        DesksAction.UnlockCommandsIfPossible();
         base.Inspect();
 
     }

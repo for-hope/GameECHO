@@ -59,12 +59,15 @@ public class MetalDoorAction : VAction
         Debug.Log("NextScene");
         GameObject.Find("Fade").transform.GetChild(0).gameObject.SetActive(true);
         StartCoroutine(TeleportPlayer());
-        GameManager.Instance.currentLevel = 2;
+        GameManager.Instance.updateCurrentLevel(2);
+        //GameManager.Instance.currentLevel = 2;
 
     }
 
     IEnumerator TeleportPlayer()
     {
+        GameObject.Find("Room2").transform.GetChild(0).gameObject.SetActive(true);
+
         yield return new WaitForSeconds(2);
         var level2StartingObj = GameObject.Find("White Door");
         playerNavMesh.GoToTarget(level2StartingObj, null);

@@ -187,7 +187,6 @@ public class VAction : MonoBehaviour
     void Awake()
     {
         TAG = gameObject.tag;
-        Debug.Log("Inpsecting file Sounds/inspect-" + TAG.ToLower());
         inspectAudioFN = "Sounds/inspect-" + TAG.ToLower();
         playerNavMesh = GameObject.Find("PlayerCapsule").GetComponent<PlayerNavMesh>();
 
@@ -241,7 +240,7 @@ public class VAction : MonoBehaviour
     {
         inspect = false;
         actions.Add(new ActionFlow(0, Inspect, InitialInspectAudioFN, inspectAudioFN, FollowUpInspectAudioFN));
-        GameManager.commandActions.AddRange(cmds);
+        GameManager.Instance.AddActionCommands(cmds);
     }
 
     protected void doAction(ActionFlow actionFlow)
@@ -297,6 +296,7 @@ public class VAction : MonoBehaviour
                 {
                     Debug.Log("Triggering end action");
                     actionFlow.endAction();
+                    actionFlow.endAction = null;
                 }
                 currentAudioAction = null;
             }

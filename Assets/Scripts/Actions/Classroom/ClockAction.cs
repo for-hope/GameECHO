@@ -14,20 +14,12 @@ public class ClockAction : VAction
 
     public new void Start()
     {
-
+        Debug.Log("ClockAction Start");
         CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the clock");
         CommandAction cmdAction2 = new CommandAction(1, TAG, "How much time do you have left", "Time left?");
-   
-
-
         actions.Add(new ActionFlow(1, TimeLeft, "Sounds/clock-2a", "", ""));
-      
-
         cmds.Add(cmdAction);
         cmds.Add(cmdAction2);
- 
-
-
         base.Start();
     }
 
@@ -39,7 +31,7 @@ public class ClockAction : VAction
         cmds[1].isUsedOnce = true;
     }
 
- 
+
 
 
 

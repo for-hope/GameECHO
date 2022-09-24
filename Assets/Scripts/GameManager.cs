@@ -1,24 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Text.RegularExpressions;
 using System.Linq;
 using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
 
-
-
+    private int LEVELS_COUNT = 4;
+    public int currentLevel = 1;
     public static GameManager Instance = null;
     public Animator animator;
 
-    public int currentLevel = 1;
+
     public static bool isVoiceInteractionEnabled = true;
     public bool ignoreLowScopeScores = true;
     public static EnvObjects currentExactEnvObject;
     public static List<EnvObjects> currentFrameEnvObjects;
     public static List<CommandAction> commandActions = new List<CommandAction>();
+    public static List<CommandAction> allCommandActions = new List<CommandAction>();
     private Cinemachine.CinemachineVirtualCamera playerCam;
     private Cinemachine.CinemachineVirtualCamera handCam;
     private PlayerInput _playerInput;
@@ -27,6 +27,7 @@ public class GameManager : MonoBehaviour
     private bool isLostScreen = false;
     public GameObject IntroScreen;
     public bool isIntroPlaying;
+    public bool predictorEnabled = true;
     // Start is called before the first frame update
     void Start()
     {
@@ -40,8 +41,15 @@ public class GameManager : MonoBehaviour
         IntroScreen = GameObject.Find("IntroContainer").transform.GetChild(0).gameObject;
         SoundManager.Instance.Play(introSoundFN);
         isIntroPlaying = true;
-
-
+        updateVoiceObjects();
+        if (currentLevel == 1)
+        {
+            GameObject.Find("Level4").transform.GetChild(0).gameObject.SetActive(false);
+            GameObject.Find("Level3").transform.GetChild(0).gameObject.SetActive(false);
+            GameObject.Find("GlobalLight").transform.GetChild(0).gameObject.SetActive(false);
+            //disable room 2 lighting
+            GameObject.Find("Room2").transform.GetChild(0).gameObject.SetActive(false);
+        }
     }
 
     // Initialize the singleton instance.
@@ -87,6 +95,12 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        if (Keyboard.current.spaceKey.wasPressedThisFrame)
+        {
+            Debug.Log("Space Pressed");
+            Debug.Log("Commands count " + commandActions.Count + " All Commands Length " + allCommandActions.Count);
+        }
+
         //check if ESC is pressed with playerInput
         if (Keyboard.current.escapeKey.wasPressedThisFrame)
         {
@@ -130,6 +144,27 @@ public class GameManager : MonoBehaviour
 
     }
 
+    public void updateCurrentLevel(int level)
+    {
+        currentLevel = level;
+        updateVoiceObjects();
+        filterVoiceCommandsPerLevel();
+        Debug.Log("Commands for current level: " + currentLevel + " are: " + commandActions.Count);
+        foreach (var command in commandActions)
+        {
+            Debug.Log(command.phrase);
+        }
+    }
+
+    private void updateVoiceObjects()
+    {
+        for (int i = 1; i <= LEVELS_COUNT; i++)
+        {
+            if (i != currentLevel) enableLevelVoiceObjects(i, false);
+            if (i == currentLevel) enableLevelVoiceObjects(i, true);
+        }
+    }
+
     IEnumerator resetHintText()
     {
         yield return new WaitForSeconds(6);
@@ -147,7 +182,7 @@ public class GameManager : MonoBehaviour
 
     public void putDownCamera(bool isPutDown)
     {
-
+        _playerInput.enabled = !isPutDown;
         animator.SetBool("putDown", isPutDown);
 
     }
@@ -210,6 +245,80 @@ public class GameManager : MonoBehaviour
         foreach (CommandAction gmCommand in commandActions)
         {
             Debug.Log("gmCommand: " + gmCommand.phrase + " just learnt" + gmCommand.isJustLearnt);
+        }
+
+    }
+
+    private List<string> levelObjectTags(int level)
+    {
+        List<string> tags = new List<string>();
+        switch (level)
+        {
+            case 1:
+                return System.Enum.GetValues(typeof(Level1Objects)).Cast<Level1Objects>().Select(v => v.ToString().ToLower()).ToList();
+            case 2:
+                return System.Enum.GetValues(typeof(Level2Objects)).Cast<Level2Objects>().Select(v => v.ToString().ToLower()).ToList();
+            case 3:
+                return System.Enum.GetValues(typeof(Level3Objects)).Cast<Level3Objects>().Select(v => v.ToString().ToLower()).ToList();
+            case 4:
+                return System.Enum.GetValues(typeof(Level4Objects)).Cast<Level4Objects>().Select(v => v.ToString().ToLower()).ToList();
+        }
+        return tags;
+    }
+
+    public void AddActionCommands(List<CommandAction> cmds)
+    {
+        Debug.Log("Adding " + cmds.Count + " cmds with context " + cmds[0].context);
+        allCommandActions.AddRange(cmds);
+        foreach (CommandAction cmd in cmds)
+        {
+            if (levelObjectTags(currentLevel).Contains(cmd.context.ToLower()))
+            {
+                commandActions.Add(cmd);
+
+            }
+
+        }
+
+    }
+    private void filterVoiceCommandsPerLevel()
+    {
+        Debug.Log("Filtering voice commands per level [All commands: " + allCommandActions.Count + "] | commands count before: " + commandActions.Count);
+        foreach (var command in allCommandActions)
+        {
+            Debug.Log("Command: " + command.context.ToLower());
+        }
+        commandActions = allCommandActions.Where(x => levelObjectTags(currentLevel).Contains(x.context.ToLower())).ToList();
+        Debug.Log("commands count after: " + commandActions.Count);
+    }
+    private void enableLevelVoiceObjects(int level, bool enable)
+    {
+
+        var values = System.Enum.GetValues(typeof(Level1Objects));
+        if (level == 2)
+        {
+            values = System.Enum.GetValues(typeof(Level2Objects));
+        }
+        else if (level == 3)
+        {
+            values = System.Enum.GetValues(typeof(Level3Objects));
+        }
+        else if (level == 4)
+        {
+            values = System.Enum.GetValues(typeof(Level4Objects));
+        }
+
+        foreach (var value in values)
+        {
+
+            var gameObjects = GameObject.FindGameObjectsWithTag(value.ToString());
+            for (int i = 0; i < gameObjects.Length; i++)
+            {
+                if (enable) gameObjects[i].layer = 6;
+                else gameObjects[i].layer = 0;
+            }
+
+
         }
 
     }

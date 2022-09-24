@@ -16,6 +16,7 @@ public class FireplugAction : VAction
     {
 
         CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the fireplug");
+        cmds.Add(cmdAction);
 
         base.Start();
     }

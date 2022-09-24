@@ -16,7 +16,7 @@ public class LockerAction : VAction
     {
 
         CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the locker");
-        CommandAction cmdAction2 = new CommandAction(1, TAG, "Open the lockers", "Open");
+        CommandAction cmdAction2 = new CommandAction(1, TAG, "Open the locker", "Open");
 
 
 
