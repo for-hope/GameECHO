@@ -6,31 +6,33 @@ using System.Linq;
 public class DictationEngine : MonoBehaviour
 {
     protected DictationRecognizer dictationRecognizer;
-    private bool dictationStarted = false;
+    private bool isDictationEnabled = false;
     private GameObject micOn;
     private GameObject micOff;
+
     void Start()
     {
         micOn = GameObject.Find("MicOn");
         micOff = GameObject.Find("MicOff");
         Debug.Log("DictationEngine Start");
+        isDictationEnabled = true;
         StartDictationEngine();
     }
-    
+
 
     void Update()
     {
-        if (!GameManager.isVoiceInteractionEnabled && dictationStarted)
+        isDictationEnabled = GameManager.isVoiceInteractionEnabled;
+        if (isDictationEnabled)
         {
-            Debug.Log("DictationEngine Stopping...");
-            CloseDictationEngine();
+            micOn.SetActive(true);
+            micOff.SetActive(false);
         }
-        else if (GameManager.isVoiceInteractionEnabled && !dictationStarted)
+        else
         {
-            Debug.Log("DictationEngine Starting...");
-            StartDictationEngine();
+            micOn.SetActive(false);
+            micOff.SetActive(true);
         }
-
 
     }
     private void DictationRecognizer_OnDictationHypothesis(string text)
@@ -141,6 +143,7 @@ public class DictationEngine : MonoBehaviour
     private void DictationRecognizer_OnDictationResult(string text, ConfidenceLevel confidence)
     {
 
+        if (!isDictationEnabled) return;
         Debug.Log("Dictation result: " + text + " with confidence: " + confidence);
         //Check if text is an intro command.
         if (processIntroCommands(text)) return;
@@ -176,9 +179,7 @@ public class DictationEngine : MonoBehaviour
     }
     private void StartDictationEngine()
     {
-        micOn.SetActive(true);
-        micOff.SetActive(false);
-        dictationStarted = true;
+        isDictationEnabled = true;
         dictationRecognizer = new DictationRecognizer();
         dictationRecognizer.DictationHypothesis += DictationRecognizer_OnDictationHypothesis;
         dictationRecognizer.DictationResult += DictationRecognizer_OnDictationResult;
@@ -188,9 +189,8 @@ public class DictationEngine : MonoBehaviour
     }
     private void CloseDictationEngine()
     {
-        micOn.SetActive(false);
-        micOff.SetActive(true);
-        dictationStarted = false;
+
+        isDictationEnabled = false;
         if (dictationRecognizer != null)
         {
             dictationRecognizer.DictationHypothesis -= DictationRecognizer_OnDictationHypothesis;

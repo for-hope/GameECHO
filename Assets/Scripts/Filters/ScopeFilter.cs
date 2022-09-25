@@ -5,7 +5,7 @@ using System.Linq;
 public class ScopeFilter
 {
 
-    public static int MIN_SCOPE_FILTER_SCORE = 17; //lower means consider only more accurate
+    public static int MIN_SCOPE_FILTER_SCORE = 13; //lower means consider only more accurate
     public IDictionary<CommandAction, int> filteredCommands = new Dictionary<CommandAction, int>();
 
 

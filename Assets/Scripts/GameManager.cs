@@ -31,6 +31,7 @@ public class GameManager : MonoBehaviour
     private bool isPaused = false;
     private GameObject pauseScreen;
     private GameObject startScreen;
+    public int targetFrameRate = 60;
     // Start is called before the first frame update
     void Start()
     {
@@ -64,6 +65,9 @@ public class GameManager : MonoBehaviour
     // Initialize the singleton instance.
     private void Awake()
     {
+        //Target FPS 60
+        QualitySettings.vSyncCount = 0;
+         Application.targetFrameRate = targetFrameRate;
         // If there is not already an instance of SoundManager, set it to this.
         if (Instance == null)
         {
@@ -147,6 +151,11 @@ public class GameManager : MonoBehaviour
             Debug.Log("Commands count " + commandActions.Count + " All Commands Length " + allCommandActions.Count);
         }
 
+        if (isPaused || startScreen.activeSelf) {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+
         //check if ESC is pressed with playerInput
         if (Keyboard.current.escapeKey.wasPressedThisFrame)
         {
@@ -160,6 +169,7 @@ public class GameManager : MonoBehaviour
             {
                 Pause();
             }
+      
             //Application.Quit();
         }
 

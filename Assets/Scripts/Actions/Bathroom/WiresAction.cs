@@ -63,10 +63,16 @@ public class WiresAction : VAction
         GameObject.Find("Orange Door").GetComponent<NavMeshObstacle>().enabled = false;
         GameObject.Find("GlobalLight").transform.GetChild(0).gameObject.SetActive(true);
         GameObject.Find("LightBlock").SetActive(false);
+        StartCoroutine(WaitAndGoToLevel3Target());
+
+
+    }
+
+    IEnumerator WaitAndGoToLevel3Target()
+    {
+        yield return new WaitForSeconds(1.5f);
         GameObject level3Object = GameObject.Find("Fire_Extinguisher");
         playerNavMesh.GoToTarget(level3Object, () => GameManager.Instance.updateCurrentLevel(3));
-
-
     }
 
     public void CutWiresWhiteDoor()
