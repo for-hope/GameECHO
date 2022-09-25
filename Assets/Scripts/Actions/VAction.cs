@@ -127,7 +127,7 @@ public class VAction : MonoBehaviour
     private AudioAction currentAudioAction = null;
     public void TriggerAction(int commandId)
     {
-        VAction action = GameObject.FindWithTag(TAG).GetComponent<VAction>();
+        VAction action = GameManager.Instance.FindGameObjectWithVAction(TAG).GetComponent<VAction>();
         ActionFlow actionFlow = action.actions.Find(x => x.commandID == commandId);
         var cmd = cmds.Find(x => x.id == actionFlow.commandID);
         if (cmd.isUsedOnce)

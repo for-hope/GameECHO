@@ -28,10 +28,17 @@ public class GameManager : MonoBehaviour
     public GameObject IntroScreen;
     public bool isIntroPlaying;
     public bool predictorEnabled = true;
+    private bool isPaused = false;
+    private GameObject pauseScreen;
+    private GameObject startScreen;
     // Start is called before the first frame update
     void Start()
     {
         animator = GameObject.Find("HandCamPrefab").GetComponent<Animator>();
+        pauseScreen = GameObject.Find("PauseScreen");
+        startScreen = GameObject.Find("StartScreen");
+
+        pauseScreen.SetActive(false);
         playerCam = GameObject.Find("PlayerFollowCamera").GetComponent<Cinemachine.CinemachineVirtualCamera>();
         handCam = GameObject.Find("HandCam").GetComponent<Cinemachine.CinemachineVirtualCamera>();
         currentFrameEnvObjects = new List<EnvObjects>();
@@ -50,7 +57,9 @@ public class GameManager : MonoBehaviour
             //disable room 2 lighting
             GameObject.Find("Room2").transform.GetChild(0).gameObject.SetActive(false);
         }
+        Pause();
     }
+
 
     // Initialize the singleton instance.
     private void Awake()
@@ -69,6 +78,43 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
+    private void Pause()
+    {
+        Debug.Log("Paused");
+        Time.timeScale = 0;
+        _playerInput.enabled = false;
+        SoundManager.Instance.EffectsSource.Pause();
+        SoundManager.Instance.MusicSource.Pause();
+        //show cursor
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        pauseScreen.SetActive(true);
+        isVoiceInteractionEnabled = false;
+        isPaused = true;
+    }
+
+    public void Quit()
+    {
+        Debug.Log("Quit");
+        Application.Quit();
+    }
+
+    public void Resume()
+    {
+        Debug.Log("Resumed");
+        if (startScreen.activeSelf) startScreen.SetActive(false);
+        _playerInput.enabled = true;
+        Time.timeScale = 1;
+        SoundManager.Instance.EffectsSource.UnPause();
+        SoundManager.Instance.MusicSource.UnPause();
+        Cursor.visible = false;
+        pauseScreen.SetActive(false);
+        //hide cursor
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        isVoiceInteractionEnabled = true;
+        isPaused = false;
+    }
 
     private void Update()
     {
@@ -105,7 +151,16 @@ public class GameManager : MonoBehaviour
         if (Keyboard.current.escapeKey.wasPressedThisFrame)
         {
             Debug.Log("ESC pressed");
-            Application.Quit();
+            if (startScreen.activeSelf) return;
+            if (isPaused)
+            {
+                Resume();
+            }
+            else
+            {
+                Pause();
+            }
+            //Application.Quit();
         }
 
         List<bool> FnPressed = new List<bool>(){
@@ -197,7 +252,7 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        GameObject gameObject = GameObject.FindGameObjectsWithTag(objectTag).Where(x => x.GetComponent<VAction>() != null).FirstOrDefault();
+        GameObject gameObject = GameManager.Instance.FindGameObjectWithVAction(objectTag);
 
         string commandsText = "<color=#ADD8E6><b>Actions:</b></color> \n";
         VAction va = gameObject.GetComponent<VAction>();
@@ -323,11 +378,15 @@ public class GameManager : MonoBehaviour
 
     }
 
+    public GameObject FindGameObjectWithVAction(string tag)
+    {
+        return GameObject.FindGameObjectsWithTag(tag.ToUpper()).Where(x => x.GetComponent<VAction>() != null).FirstOrDefault();
+    }
     public static void TriggerAction(int id, string context)
     {
         Debug.Log("TAG TO INSPECT " + context.ToUpper());
-        GameObject go = GameObject.FindGameObjectWithTag(context.ToUpper());
-        VAction action = go.GetComponent<VAction>();
+        GameObject gameObjectWithVAction = GameManager.Instance.FindGameObjectWithVAction(context.ToUpper());
+        VAction action = gameObjectWithVAction.GetComponent<VAction>();
         action.TriggerAction(id);
     }
 

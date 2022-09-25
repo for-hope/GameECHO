@@ -16,6 +16,7 @@ public class DictationEngine : MonoBehaviour
         Debug.Log("DictationEngine Start");
         StartDictationEngine();
     }
+    
 
     void Update()
     {
@@ -79,6 +80,7 @@ public class DictationEngine : MonoBehaviour
             Debug.Log("Checking " + cmdActions[i].phrase.ToLower() + " with " + text);
             if (cmdActions[i].phrase.ToLower() == text.ToLower())
             {
+                Debug.Log("Matched " + cmdActions[i].phrase.ToLower() + " with id and context" + cmdActions[i].id + " " + cmdActions[i].context);
                 GameManager.TriggerAction(cmdActions[i].id, cmdActions[i].context);
                 return true;
             }

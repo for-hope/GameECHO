@@ -59,14 +59,14 @@ public class DesksAction : VAction
     private void SitAndSleep()
     {
 
-
+        Debug.Log("SIT AND SLEEP");
         GameObject.Find("Fade").transform.GetChild(0).gameObject.SetActive(true);
         cmds[1].isUsedOnce = true;
     }
 
     private void endScene()
     {
-
+        Debug.Log("END SCENE");
 
         StartCoroutine(EndingScene());
     }
