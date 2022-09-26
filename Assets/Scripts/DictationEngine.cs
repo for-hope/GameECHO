@@ -9,6 +9,7 @@ public class DictationEngine : MonoBehaviour
     private bool isDictationEnabled = false;
     private GameObject micOn;
     private GameObject micOff;
+    private PerformanceLogger performanceLogger;
 
     void Start()
     {
@@ -17,6 +18,7 @@ public class DictationEngine : MonoBehaviour
         Debug.Log("DictationEngine Start");
         isDictationEnabled = true;
         StartDictationEngine();
+        performanceLogger = new PerformanceLogger();
     }
 
 
@@ -108,12 +110,16 @@ public class DictationEngine : MonoBehaviour
     }
 
 
-    private CommandAction CalculateBestCommand(string text, ScopeFilter scopeFilter, EnvironmentFilter envFilter, ContextFilter contextFilter)
+    private CommandAction CalculateBestCommand(string text, ScopeFilter scopeFilter, EnvironmentFilter envFilter, ContextFilter contextFilter, ref CommandLog commandLog)
     {
+
         var scopeFilteredCommandsList = possibleCommands(text, scopeFilter);
         //If no commands are found, return.
         if (scopeFilteredCommandsList == null) return null;
         //process commands through the filters
+        commandLog.numberOfCommandsConsidered = scopeFilteredCommandsList.Count;
+        commandLog.commandBasedOnScopeFilter = scopeFilter.BestScoreCommand().Key;
+        commandLog.commandPredictedScopeFilterScore = scopeFilter.BestScoreCommand().Value;
         envFilter.AddToFilter(scopeFilteredCommandsList);
         contextFilter.AddToFilter(scopeFilteredCommandsList);
 
@@ -135,8 +141,11 @@ public class DictationEngine : MonoBehaviour
         var bestCommandWithScore = finalCommandsScores.OrderByDescending(x => x.Value).First();
 
         CommandAction bestCommand = bestCommandWithScore.Key;
+        commandLog.commandPredictedContextFilterScore = contextFilter.getCommandScore(bestCommandWithScore.Key);
+        commandLog.commandPredictedEnvironmentFilterScore = envFilter.getCommandScore(bestCommandWithScore.Key);
+        commandLog.commandPredicted = bestCommand;
+        commandLog.commandPredictedScore = bestCommandWithScore.Value;
         Debug.Log("========> Best Score Command: " + bestCommand.phrase + " with score: " + bestCommandWithScore.Value);
-
         return bestCommand;
     }
 
@@ -151,22 +160,34 @@ public class DictationEngine : MonoBehaviour
         var envFilter = new EnvironmentFilter();
         var contextFilter = new ContextFilter();
         var scopeFilter = new ScopeFilter();
+        CommandLog commandLog = new CommandLog(text, confidence.ToString());
         //process text by checking if it is a command action.
-        if (processCmdActions(text, scopeFilter)) return;
+        if (processCmdActions(text, scopeFilter))
+        {
+            commandLog.isCorrectlyRecognized = true;
+            performanceLogger.AddToCommandLogs(commandLog);
+            return;
+        }
 
         //!COMMAND NOT FOUND, PREDICTING...
         var startTime = Time.realtimeSinceStartup;
+        commandLog.isCorrectlyRecognized = false;
         Debug.Log("Command not found, Predicting...");
         //Get possible commands from the scope filter and ignore commands with low string distance to the text.
-        var predictedCommand = CalculateBestCommand(text, scopeFilter, envFilter, contextFilter);
+        var predictedCommand = CalculateBestCommand(text, scopeFilter, envFilter, contextFilter, ref commandLog);
         if (predictedCommand == null)
         {
             Debug.Log("No command found");
+            commandLog.passedMinimumScopeFilter = false;
+            performanceLogger.AddToCommandLogs(commandLog);
             //Trigger default feedback
             return;
         }
         float endTime = Time.realtimeSinceStartup;
+        commandLog.passedMinimumScopeFilter = true;
+        commandLog.timeTakenToPredict = endTime - startTime;
         Debug.Log("Time taken to predict: " + (endTime - startTime) + " seconds");
+        performanceLogger.AddToCommandLogs(commandLog);
         GameManager.TriggerAction(predictedCommand.id, predictedCommand.context);
     }
     private void DictationRecognizer_OnDictationError(string error, int hresult)
@@ -175,6 +196,7 @@ public class DictationEngine : MonoBehaviour
     }
     private void OnApplicationQuit()
     {
+        performanceLogger.SaveToDisk();
         CloseDictationEngine();
     }
     private void StartDictationEngine()

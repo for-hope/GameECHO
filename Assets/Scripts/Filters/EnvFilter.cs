@@ -40,6 +40,14 @@ public class EnvironmentFilter
     {
         int score = 0;
         if (commandsBasedOnRaycast.Contains(command)) score += 20;
+        if (commandsBasedOnFrame.Contains(command)) score += Mathf.RoundToInt(20 / uniqueFrameObjectsCount);
+        return score;
+    }
+
+    public int getCommandScore(CommandAction command)
+    {
+        var score = 0;
+        if (commandsBasedOnRaycast.Contains(command)) score += 20;
         if (commandsBasedOnFrame.Contains(command)) score += 10 / uniqueFrameObjectsCount;
         return score;
     }

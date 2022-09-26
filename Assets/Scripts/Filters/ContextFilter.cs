@@ -28,4 +28,10 @@ public class ContextFilter
         return 0;
     }
 
+    public int getCommandScore(CommandAction command)
+    {
+        if (commandsBasedOnContext.ContainsKey(command)) return commandsBasedOnContext[command];
+        return 0;
+    }
+
 }

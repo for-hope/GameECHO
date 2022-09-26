@@ -66,8 +66,12 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         //Target FPS 60
-        QualitySettings.vSyncCount = 0;
-         Application.targetFrameRate = targetFrameRate;
+        if (targetFrameRate > 0)
+        {
+            QualitySettings.vSyncCount = 0;
+            Application.targetFrameRate = targetFrameRate;
+        }
+
         // If there is not already an instance of SoundManager, set it to this.
         if (Instance == null)
         {
@@ -151,7 +155,8 @@ public class GameManager : MonoBehaviour
             Debug.Log("Commands count " + commandActions.Count + " All Commands Length " + allCommandActions.Count);
         }
 
-        if (isPaused || startScreen.activeSelf) {
+        if (isPaused || startScreen.activeSelf)
+        {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
         }
@@ -169,7 +174,7 @@ public class GameManager : MonoBehaviour
             {
                 Pause();
             }
-      
+
             //Application.Quit();
         }
 
