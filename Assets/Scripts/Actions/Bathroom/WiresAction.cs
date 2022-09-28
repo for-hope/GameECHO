@@ -15,9 +15,9 @@ public class WiresAction : VAction
 
     internal static void UnlockCommandsIfPossible()
     {
-        bool boardTranslated = GameManager.commandActions.Find(x => x.context == EnvObjects.BOARD.ToString() && x.id == 1).isUsedOnce;
-        bool mirrorShardPicked = GameManager.commandActions.Find(x => x.context == EnvObjects.MIRROR.ToString() && x.id == 2).isUsedOnce;
-        bool alarmInspected = GameManager.commandActions.Find(x => x.context == EnvObjects.ALARM.ToString() && x.id == 0).isUsedOnce;
+        bool boardTranslated = GameManager.commandActions.Find(x => x.context.ToLower() == EnvObjects.BOARD.ToString().ToLower() && x.id == 1).isUsedOnce;
+        bool mirrorShardPicked = GameManager.commandActions.Find(x => x.context.ToLower() == EnvObjects.MIRROR.ToString().ToLower() && x.id == 2).isUsedOnce;
+        bool alarmInspected = GameManager.commandActions.Find(x => x.context.ToLower() == EnvObjects.ALARM.ToString().ToLower() && x.id == 0).isUsedOnce;
         bool unlockHiddenCommands = boardTranslated && mirrorShardPicked && alarmInspected;
         if (unlockHiddenCommands)
         {
@@ -36,7 +36,7 @@ public class WiresAction : VAction
         CommandAction cmdAction3 = new CommandAction(2, TAG, "Cut the wires near the white door", "Cut wires on white door", Visibility.HIDDEN);
 
 
-        actions.Add(new ActionFlow(1, CutWiresOrangeDoor, "Sounds/wires-2a", "Sounds/cut-wires", "Sounds/wires-2b"));
+        actions.Add(new ActionFlow(1, CutWiresOrangeDoor, "Sounds/wires-2a", "Sounds/cut-wires", "Sounds/wires-2b", endAction: GoToNextLevel));
         actions.Add(new ActionFlow(2, CutWiresWhiteDoor, "Sounds/wires-3a", "Sounds/cut-wires", "Sounds/wires-3b"));
         cmds.Add(cmdAction);
         cmds.Add(cmdAction2);
@@ -48,7 +48,6 @@ public class WiresAction : VAction
 
     public void CutWiresOrangeDoor()
     {
-        GoToNextLevel();
         cmds[1].isUsedOnce = true;
 
     }
@@ -58,7 +57,6 @@ public class WiresAction : VAction
         //Open bathroom door
         GameObject.Find("Level3").transform.GetChild(0).gameObject.SetActive(true);
         GameObject.Find("Level4").transform.GetChild(0).gameObject.SetActive(true);
-        
         GameObject.Find("Bathroom_Door_Open").transform.rotation = Quaternion.Euler(0, -120, 0);
         GameObject.Find("Orange Door").GetComponent<NavMeshObstacle>().enabled = false;
         GameObject.Find("GlobalLight").transform.GetChild(0).gameObject.SetActive(true);

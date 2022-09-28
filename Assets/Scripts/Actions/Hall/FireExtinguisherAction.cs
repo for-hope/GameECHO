@@ -29,7 +29,12 @@ public class FireExtinguisherAction : VAction
         base.Start();
     }
 
-
+    public override void Inspect()
+    {
+        //find command hallwindows
+        GameManager.commandActions.Find(x => x.context.ToLower() == EnvObjects.HALL_WINDOWS.ToString().ToLower() && x.id == 1).visibility = Visibility.INVISIBLE;
+        base.Inspect();
+    }
 
     private void Plug()
     {

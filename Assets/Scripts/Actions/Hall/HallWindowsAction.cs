@@ -16,7 +16,7 @@ public class HallWindowsAction : VAction
     {
 
         CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the hall windows");
-        CommandAction cmdAction2 = new CommandAction(1, TAG, "break the hall windows with the fire extinguisher", "Break");
+        CommandAction cmdAction2 = new CommandAction(1, TAG, "break the hall windows with the fire extinguisher", "Break", Visibility.HIDDEN);
 
 
 

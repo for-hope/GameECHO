@@ -24,31 +24,32 @@ public class GameManager : MonoBehaviour
     private PlayerInput _playerInput;
     private List<CommandAction> showList = new List<CommandAction>();
     private TMPro.TextMeshProUGUI hintText;
+    private GameObject instructionsWindow;
     private bool isLostScreen = false;
-    public GameObject IntroScreen;
-    public bool isIntroPlaying;
+    //public GameObject IntroScreen;
+    //public bool isIntroPlaying;
     public bool predictorEnabled = true;
-    private bool isPaused = false;
+    public bool isPaused = false;
     private GameObject pauseScreen;
-    private GameObject startScreen;
+    //private GameObject startScreen;
     public int targetFrameRate = 60;
+    private GameObject canvas;
+    public GameObject micOffFeedback;
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log("GameManager.Start()");
+        canvas = GameObject.Find("Canvas");
         animator = GameObject.Find("HandCamPrefab").GetComponent<Animator>();
-        pauseScreen = GameObject.Find("PauseScreen");
-        startScreen = GameObject.Find("StartScreen");
-
+        pauseScreen = canvas.transform.Find("PauseScreen").gameObject;
+        micOffFeedback = canvas.transform.Find("MicOffFeedback").gameObject;
+        instructionsWindow = pauseScreen.transform.Find("Instructions").gameObject;
         pauseScreen.SetActive(false);
         playerCam = GameObject.Find("PlayerFollowCamera").GetComponent<Cinemachine.CinemachineVirtualCamera>();
         handCam = GameObject.Find("HandCam").GetComponent<Cinemachine.CinemachineVirtualCamera>();
         currentFrameEnvObjects = new List<EnvObjects>();
         _playerInput = GameObject.Find("PlayerCapsule").GetComponent<PlayerInput>();
         hintText = GameObject.Find("CommandTextHint").GetComponent<TMPro.TextMeshProUGUI>();
-        var introSoundFN = Resources.Load<AudioClip>("Sounds/intro");
-        IntroScreen = GameObject.Find("IntroContainer").transform.GetChild(0).gameObject;
-        SoundManager.Instance.Play(introSoundFN);
-        isIntroPlaying = true;
         updateVoiceObjects();
         if (currentLevel == 1)
         {
@@ -58,7 +59,7 @@ public class GameManager : MonoBehaviour
             //disable room 2 lighting
             GameObject.Find("Room2").transform.GetChild(0).gameObject.SetActive(false);
         }
-        Pause();
+        DisablePlayerControls();
     }
 
 
@@ -86,7 +87,7 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    private void Pause()
+    public void Pause()
     {
         Debug.Log("Paused");
         Time.timeScale = 0;
@@ -107,10 +108,11 @@ public class GameManager : MonoBehaviour
         Application.Quit();
     }
 
+
     public void Resume()
     {
         Debug.Log("Resumed");
-        if (startScreen.activeSelf) startScreen.SetActive(false);
+
         _playerInput.enabled = true;
         Time.timeScale = 1;
         SoundManager.Instance.EffectsSource.UnPause();
@@ -124,14 +126,25 @@ public class GameManager : MonoBehaviour
         isPaused = false;
     }
 
+    public void DisablePlayerControls()
+    {
+        if (_playerInput != null)
+        {
+            _playerInput.enabled = false;
+        }
+    }
+
+    public void EnablePlayerControls()
+    {
+        if (_playerInput != null)
+        {
+            _playerInput.enabled = true;
+        }
+    }
+
     private void Update()
     {
 
-        if (!SoundManager.Instance.EffectsSource.isPlaying && isIntroPlaying)
-        {
-            isIntroPlaying = false;
-            IntroScreen.SetActive(true);
-        }
         //check if animator is animating
         if (animator.GetCurrentAnimatorStateInfo(0).IsName("PutDownCam") || animator.GetCurrentAnimatorStateInfo(0).IsName("PutUp"))
         {
@@ -149,13 +162,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        if (Keyboard.current.spaceKey.wasPressedThisFrame)
-        {
-            Debug.Log("Space Pressed");
-            Debug.Log("Commands count " + commandActions.Count + " All Commands Length " + allCommandActions.Count);
-        }
-
-        if (isPaused || startScreen.activeSelf)
+        if (isPaused)
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
@@ -165,7 +172,6 @@ public class GameManager : MonoBehaviour
         if (Keyboard.current.escapeKey.wasPressedThisFrame)
         {
             Debug.Log("ESC pressed");
-            if (startScreen.activeSelf) return;
             if (isPaused)
             {
                 Resume();
@@ -188,14 +194,24 @@ public class GameManager : MonoBehaviour
             Keyboard.current.f7Key.wasPressedThisFrame,
             Keyboard.current.f8Key.wasPressedThisFrame,
             Keyboard.current.f9Key.wasPressedThisFrame,
-            Keyboard.current.f10Key.wasPressedThisFrame,
-            Keyboard.current.f11Key.wasPressedThisFrame,
-            Keyboard.current.f12Key.wasPressedThisFrame
+        };
+
+
+        List<bool> numPressed = new List<bool>(){
+            Keyboard.current.digit1Key.wasPressedThisFrame,
+            Keyboard.current.digit2Key.wasPressedThisFrame,
+            Keyboard.current.digit3Key.wasPressedThisFrame,
+            Keyboard.current.digit4Key.wasPressedThisFrame,
+            Keyboard.current.digit5Key.wasPressedThisFrame,
+            Keyboard.current.digit6Key.wasPressedThisFrame,
+            Keyboard.current.digit7Key.wasPressedThisFrame,
+            Keyboard.current.digit8Key.wasPressedThisFrame,
+            Keyboard.current.digit9Key.wasPressedThisFrame,
         };
 
         for (int i = 0; i < FnPressed.Count; i++)
         {
-            if (FnPressed[i])
+            if (FnPressed[i] || numPressed[i])
             {
                 if (showList.Count > i && !showList[i].isUsedOnce && showList[i].visibility != Visibility.HIDDEN)
                 {
@@ -206,13 +222,25 @@ public class GameManager : MonoBehaviour
             }
         }
 
+
+
         if (isLostScreen && Keyboard.current.spaceKey.wasPressedThisFrame)
         {
             isLostScreen = false;
             GameObject.Find("LostScreen").SetActive(false);
         }
 
+        if (isVoiceInteractionEnabled) micOffFeedback.SetActive(false);
+
     }
+
+    public void ShowMutedFeedback()
+    {
+        micOffFeedback.SetActive(true);
+        StartCoroutine(resetMutedFeedback());
+    }
+
+
 
     public void updateCurrentLevel(int level)
     {
@@ -224,6 +252,15 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log(command.phrase);
         }
+    }
+
+    public void ShowInstructions()
+    {
+        instructionsWindow.SetActive(true);
+    }
+    public void HideInstructions()
+    {
+        instructionsWindow.SetActive(false);
     }
 
     private void updateVoiceObjects()
@@ -241,12 +278,18 @@ public class GameManager : MonoBehaviour
         hintText.text = "";
     }
 
+    IEnumerator resetMutedFeedback()
+    {
+        yield return new WaitForSeconds(2);
+        micOffFeedback.SetActive(false);
+    }
+
     public void Lose()
     {
 
         GameObject canvas = GameObject.Find("Canvas");
 
-        canvas.transform.GetChild(canvas.transform.childCount - 1).gameObject.SetActive(true);
+        canvas.transform.Find("LostScreen").gameObject.SetActive(true);
         isLostScreen = true;
     }
 

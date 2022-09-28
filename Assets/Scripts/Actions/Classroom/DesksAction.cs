@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class DesksAction : VAction
 {
@@ -48,7 +49,7 @@ public class DesksAction : VAction
                 validRules++;
             }
         }
-        bool unlockHiddenCommands = validRules >= 3;
+        bool unlockHiddenCommands = validRules >= 4;
         if (unlockHiddenCommands)
         {
             GameManager.commandActions.Find(x => x.context == EnvObjects.DESKS.ToString() && x.id == 1).visibility = Visibility.INVISIBLE;
@@ -56,9 +57,11 @@ public class DesksAction : VAction
     }
 
 
+
     private void SitAndSleep()
     {
-
+        //IntroManager.Instance.ShowEndingConfirmation(IntroManager.Ending.ESCAPE_BY_SLEEPING);
+        
         Debug.Log("SIT AND SLEEP");
         GameObject.Find("Fade").transform.GetChild(0).gameObject.SetActive(true);
         cmds[1].isUsedOnce = true;
@@ -67,7 +70,6 @@ public class DesksAction : VAction
     private void endScene()
     {
         Debug.Log("END SCENE");
-
         StartCoroutine(EndingScene());
     }
 
@@ -98,6 +100,9 @@ public class DesksAction : VAction
         player.transform.rotation = Quaternion.Euler(0, 90, 0);
         player.SetActive(true);
         GameObject.Find("Character").GetComponent<Animator>().SetBool("isEnding", true);
+        yield return new WaitForSeconds(15f);
+        SceneManager.LoadSceneAsync("EndScene");
+
     }
 
 

@@ -39,6 +39,7 @@ public class DictationEngine : MonoBehaviour
     }
     private void DictationRecognizer_OnDictationHypothesis(string text)
     {
+        if (!isDictationEnabled)  GameManager.Instance.ShowMutedFeedback();
         //Debug.Log("Dictation hypothesis: " + text);
         //Debug.Log(LevenshteinDistance.Compute("Hello world", text));
     }
@@ -47,19 +48,32 @@ public class DictationEngine : MonoBehaviour
         switch (completionCause)
         {
             case DictationCompletionCause.TimeoutExceeded:
+                Debug.Log("Dictation has timed out.");
+                break;
             case DictationCompletionCause.PauseLimitExceeded:
+                Debug.LogError("Dictation pause limit exceeded");
+                break;
             case DictationCompletionCause.Canceled:
+                Debug.LogError("Dictation cancelled");
+                break;
             case DictationCompletionCause.Complete:
                 // Restart required
                 CloseDictationEngine();
                 StartDictationEngine();
                 break;
             case DictationCompletionCause.UnknownError:
+                Debug.LogError("Dictation unknown error");
+                break;
             case DictationCompletionCause.AudioQualityFailure:
+                Debug.LogError("Dictation audio quality failure");
+                break;
             case DictationCompletionCause.MicrophoneUnavailable:
+                Debug.LogError("Dictation microphone unavailable");
+                break;
             case DictationCompletionCause.NetworkFailure:
                 // Error
                 CloseDictationEngine();
+                Debug.LogError("Dictation error: " + completionCause);
                 break;
         }
     }
@@ -67,12 +81,18 @@ public class DictationEngine : MonoBehaviour
 
     private bool processIntroCommands(string text)
     {
-        if (text.ToLower() == "okay" || text.ToLower() == "ok")
+        if (text == "okay" || text == "ok") text = "okay";
+        var activeIntroCommand = IntroManager.Instance.activeIntroCommand;
+        if (activeIntroCommand == null) return false;
+        Debug.Log("ACTIVE INTRO COMMAND: " + activeIntroCommand.playerResponse);
+        Debug.Log("Text from dictation: " + text);
+        if (activeIntroCommand.playerResponse.ToLower() == text)
         {
-            GameManager.Instance.IntroScreen.SetActive(false);
+            IntroManager.Instance.NextCommand();
             return true;
         }
         return false;
+
     }
 
     private bool processCmdActions(string text, ScopeFilter scopeFilter)
@@ -149,13 +169,28 @@ public class DictationEngine : MonoBehaviour
         return bestCommand;
     }
 
+    // private bool processEndingConfirmation(string text)
+    // {
+    //     if (IntroManager.Instance.endingToConfirm == null) return false;
+    //     if (text == "yes" || text == "yeah" || text == "yep" || text == "yup" || text == "sure" || text == "okay" || text == "ok")
+    //     {
+    //         IntroManager.Instance.EndingConfirmation(true);
+    //         return true;
+    //     } else if (text == "no" || text == "nope" || text == "nah" || text == "no thanks")
+    //     {
+    //         IntroManager.Instance.EndingConfirmation(false);
+    //         return true;
+    //     }
+    //     return false;
+    // }
     private void DictationRecognizer_OnDictationResult(string text, ConfidenceLevel confidence)
     {
 
         if (!isDictationEnabled) return;
         Debug.Log("Dictation result: " + text + " with confidence: " + confidence);
         //Check if text is an intro command.
-        if (processIntroCommands(text)) return;
+        //if (processIntroCommands(text)) return;
+        if (processIntroCommands(text.ToLower()) || IntroManager.Instance.isIntroActive) return;
         //Initilize Filters.
         var envFilter = new EnvironmentFilter();
         var contextFilter = new ContextFilter();
@@ -180,6 +215,7 @@ public class DictationEngine : MonoBehaviour
             Debug.Log("No command found");
             commandLog.passedMinimumScopeFilter = false;
             performanceLogger.AddToCommandLogs(commandLog);
+            DefaultVoiceFallback.Instance.PlayFallbackVoice();
             //Trigger default feedback
             return;
         }

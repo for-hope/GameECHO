@@ -14,6 +14,9 @@ public class CommandLog
     public int commandPredictedScopeFilterScore = 0;
     public int commandPredictedContextFilterScore = 0;
     public int commandPredictedEnvironmentFilterScore = 0;
+    public string predictedPhrase = "";
+
+    public string predictedPhraseBasedOnScope = "";
 
     public float timeTakenToPredict = 0;
 
@@ -38,9 +41,6 @@ public class PerformanceLogger
     public int totalPassedMinimumScopeFilter = 0;
     public int totalCommandsPredicted = 0;
 
-    public string predictedPhrase = "";
-
-    public string predictedPhraseBasedOnScope = "";
 
     public float averagePredictionScore = 0;
     public float averageScopeFilterScore = 0;
@@ -51,6 +51,7 @@ public class PerformanceLogger
 
     [SerializeField]
     public List<CommandLog> commandLogs = new List<CommandLog>();
+    public List<CommandLog> commandLogsPredicted = new List<CommandLog>();
 
 
     public void AddToCommandLogs(CommandLog commandLog)
@@ -63,8 +64,9 @@ public class PerformanceLogger
         {
             totalCommandsPredicted++;
             if (commandLog.commandPredicted == commandLog.commandBasedOnScopeFilter) totalCommandsPredictedCByScopeOnly++;
-            predictedPhrase = commandLog.commandPredicted.phrase;
-            predictedPhraseBasedOnScope = commandLog.commandBasedOnScopeFilter.phrase;
+            commandLog.predictedPhrase = commandLog.commandPredicted.phrase;
+            commandLog.predictedPhraseBasedOnScope = commandLog.commandBasedOnScopeFilter.phrase;
+            commandLogsPredicted.Add(commandLog);
         }
         SaveToDisk();
     }
@@ -96,7 +98,7 @@ public class PerformanceLogger
         CalculateAverageScores();
         string json = JsonUtility.ToJson(this);
         //save or replace to disk
-        System.IO.File.WriteAllText(Application.dataPath + "/PerformanceLog.json", json);
+        System.IO.File.WriteAllText(Application.persistentDataPath + "/PerformanceLog.json", json);
 
 
     }
