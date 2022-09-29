@@ -135,7 +135,6 @@ public class VAction : MonoBehaviour
             Queue<AudioAction> audioQueue = new Queue<AudioAction>();
             string randomVoiceLine = alreadyUsedCommandSounds[UnityEngine.Random.Range(0, alreadyUsedCommandSounds.Count)];
             audioQueue.Enqueue(new AudioAction(AudioActionType.Initial, randomVoiceLine, actionFlow.commandID));
-            Debug.Log("Played " + randomVoiceLine);
             StartCoroutine(PlayAudioOnQueue(audioQueue));
             return;
         }
@@ -207,7 +206,6 @@ public class VAction : MonoBehaviour
     public virtual void Inspect()
     {
         //INSPECT
-        Debug.Log("Inspected Action! TAG: " + TAG);
         inspect = true;
         GameManager.RevealHiddenCommandsOfAction(cmds);
     }
@@ -215,13 +213,11 @@ public class VAction : MonoBehaviour
     IEnumerator PlayAudioOnQueue(Queue<AudioAction> audioActions)
     {
         audioPlayed = true;
-        Debug.Log("Playing audio on q " + audioActions.Count);
         currentAudioAction = audioActions.Dequeue();
         if (currentAudioAction.actionType == AudioActionType.NoAccess) audioActions.Enqueue(currentAudioAction);
         CommandAction cmd = cmds.Find(x => x.id == currentAudioAction.actionId);
         ActionFlow actionFlow = actions.Find(x => x.commandID == currentAudioAction.actionId);
 
-        Debug.Log("NO ANIMATION? " + cmd.noAnimation);
         if (currentAudioAction.actionType == AudioActionType.Action && !cmd.noAnimation)
         {
             GameManager.Instance.putDownCamera(true);
@@ -230,7 +226,6 @@ public class VAction : MonoBehaviour
         if (currentAudioAction.actionType != AudioActionType.Initial) yield return new WaitForSeconds(1);
 
         AudioClip DialogAudio = Resources.Load<AudioClip>(currentAudioAction.audioFN);
-        Debug.Log("Playing audio " + currentAudioAction.audioFN);
         SoundManager.Instance.Play(DialogAudio);
         audioPlayed = false;
 
@@ -250,7 +245,6 @@ public class VAction : MonoBehaviour
         var hasAccess = actionFlow.accessCmds == null;
         if (!hasAccess)
         {
-            Debug.Log("Access cmds not null");
             foreach (int accessCmdId in actionFlow.accessCmds)
             {
 
@@ -270,7 +264,6 @@ public class VAction : MonoBehaviour
 
 
 
-        Debug.Log("ACCESS CONDITION TRUE");
         cmds[actionFlow.commandID].isUsedOnce = true;
         StartCoroutine(PlayAudioOnQueue(actionFlow.audioQueue));
     }
@@ -285,16 +278,13 @@ public class VAction : MonoBehaviour
 
             if (currentAudioAction.actionType == AudioActionType.Action && !cmd.noAnimation)
             {
-                Debug.Log("Action Audio Finished");
                 GameManager.Instance.putDownCamera(false);
                 if (currentAudioAction.actionId >= 0) actionFlow.action();
             }
             if (currentAudioAction.actionType == AudioActionType.FollowUp)
             {
-                Debug.Log("Follow Up Audio Finished");
                 if (actionFlow.endAction != null)
                 {
-                    Debug.Log("Triggering end action");
                     actionFlow.endAction();
                     actionFlow.endAction = null;
                 }

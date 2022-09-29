@@ -32,14 +32,12 @@ public class TrashcanAction : VAction
 
     public void WhatsInside()
     {
-        Debug.Log("What's inside trashcan");
         cmds[1].isUsedOnce = true;
 
     }
 
     public void EmptyTrashcan()
     {
-        Debug.Log("trying to move the bed");
         cmds[2].isUsedOnce = true;
 
     }

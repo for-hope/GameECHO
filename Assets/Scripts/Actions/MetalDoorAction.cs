@@ -56,11 +56,9 @@ public class MetalDoorAction : VAction
     private void NextScene()
     {
 
-        Debug.Log("NextScene");
         GameObject.Find("Fade").transform.GetChild(0).gameObject.SetActive(true);
         StartCoroutine(TeleportPlayer());
         GameManager.Instance.updateCurrentLevel(2);
-        //GameManager.Instance.currentLevel = 2;
 
     }
 

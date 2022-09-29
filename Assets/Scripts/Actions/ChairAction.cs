@@ -21,7 +21,6 @@ public class ChairAction : VAction
 
     private void InspectChair()
     {
-        Debug.Log("Inspecting the chair");
         GameManager.commandActions.Find(x => x.context == EnvObjects.METAL_BOX.ToString() && x.id == 4).visibility = Visibility.INVISIBLE;
     }
 

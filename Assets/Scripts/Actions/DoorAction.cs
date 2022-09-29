@@ -27,14 +27,12 @@ public class DoorAction : VAction
 
     public void TryToOpen()
     {
-        Debug.Log("Trying to open the door");
         
         cmds[1].isUsedOnce = true;
     }
 
     public void BreakWithPipe()
     {
-        Debug.Log("Trying to break the door");
 
         cmds[2].isUsedOnce = true;
     }

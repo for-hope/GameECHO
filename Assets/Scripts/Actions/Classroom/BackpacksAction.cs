@@ -14,7 +14,6 @@ public class BackpacksAction : VAction
 
     public new void Start()
     {
-        Debug.Log("BackpacksAction Start");
         CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the backpacks");
         CommandAction cmdAction2 = new CommandAction(1, TAG, "Search the backpacks", "Search");
         actions.Add(new ActionFlow(1, Search, "Sounds/backpacks-2a", "Sounds/search-backpack", "Sounds/backpacks-2b"));

@@ -98,7 +98,7 @@ public class PerformanceLogger
         CalculateAverageScores();
         string json = JsonUtility.ToJson(this);
         //save or replace to disk
-        System.IO.File.WriteAllText(Application.persistentDataPath + "/PerformanceLog.json", json);
+        System.IO.File.WriteAllText(Application.dataPath + "/PerformanceLog.json", json);
 
 
     }

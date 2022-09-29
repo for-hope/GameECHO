@@ -39,7 +39,6 @@ public class BucketsAction : VAction
 
     public void Move()
     {
-        Debug.Log("Moving Bucket");
         GameObject movedBuckets = Resources.FindObjectsOfTypeAll<GameObject>().Where(x => x.name == "Moved_Buckets").FirstOrDefault();
         gameObject.transform.localScale = new Vector3(0, 0, 0);
         movedBuckets.SetActive(true);
@@ -49,7 +48,6 @@ public class BucketsAction : VAction
 
     public void Search()
     {
-        Debug.Log("Searching Bucket");
         cmds[2].isUsedOnce = true;
     }
 

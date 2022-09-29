@@ -32,14 +32,14 @@ public class BedAction : VAction
 
     public void LookUnder()
     {
-        Debug.Log("looking under the bed");
+
         cmds[1].isUsedOnce = true;
 
     }
 
     public void TryToMove()
     {
-        Debug.Log("trying to move the bed");
+
         cmds[2].isUsedOnce = true;
 
     }

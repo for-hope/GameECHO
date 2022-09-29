@@ -65,8 +65,6 @@ public class IntroManager : MonoBehaviour
     }
     void Start()
     {
-
-        Debug.Log("IntroManager Start");
         introScreen = GameObject.Find("Canvas").transform.Find("Intro").gameObject;
         introScreen.SetActive(true);
         introTextObject = GameObject.Find("IntroText");
@@ -103,7 +101,6 @@ public class IntroManager : MonoBehaviour
 
     void StartCommand()
     {
-        Debug.Log("StartCommand");
         isIntroAudioPlaying = false;
         activeIntroCommand = introCommands.Dequeue();
         introTextObject.GetComponent<TMPro.TextMeshProUGUI>().text = activeIntroCommand.hint;
@@ -111,7 +108,6 @@ public class IntroManager : MonoBehaviour
 
     public void NextCommand()
     {
-        Debug.Log("NextCommand");
         activeIntroCommand = null;
         introTextObject.GetComponent<TMPro.TextMeshProUGUI>().text = "";
         if (introCommands.Count == 0)

@@ -22,12 +22,12 @@ public class EnvironmentFilter
 
             if (GameManager.currentExactEnvObject == envObject)
             {
-                Debug.Log("OBJECT BASED ON RAY " + envObject);
+               // Debug.Log("OBJECT BASED ON RAY " + envObject);
                 commandsBasedOnRaycast.Add(command);
             }
             if (GameManager.currentFrameEnvObjects.Contains(envObject))
             {
-                Debug.Log("ENV OBJECT IN FRAME " + envObject);
+             //   Debug.Log("ENV OBJECT IN FRAME " + envObject);
                 commandsBasedOnFrame.Add(command);
                 uniqueEnvOjs.Add(envObject);
             }

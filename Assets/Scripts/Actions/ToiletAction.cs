@@ -36,13 +36,11 @@ public class ToiletAction : VAction
 
     public void TryToBreak()
     {
-        Debug.Log("Trying to break the toilet");
         cmds[1].isUsedOnce = true;
     }
 
     public void TakeOutPipe()
     {
-        Debug.Log("Taking out the pipe");
         cmds[2].isUsedOnce = true;
         GameObject pipeObject = GameObject.Find("Pipe");
         if (pipeObject != null) pipeObject.SetActive(false);

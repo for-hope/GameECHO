@@ -8,7 +8,6 @@ public class StartMenuManager : MonoBehaviour
     private GameObject instructionsWindow;
     void Start()
     {
-        Debug.Log("StartMenuManager.Start()");
         instructionsWindow = this.transform.Find("Instructions").gameObject;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;

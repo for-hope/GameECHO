@@ -41,7 +41,6 @@ public class DefaultVoiceFallback : MonoBehaviour
 
     public void PlayFallbackVoice()
     {
-        Debug.Log("Playing fallback voice");
         GameManager.isVoiceInteractionEnabled = false;
         inProgress = true;
         string path = RandomResponse();

@@ -18,8 +18,6 @@ public class TrackObject : MonoBehaviour
     {
         if (objectToTrack != null)
         {
-            Debug.Log("Make camera look at objectToTrack");
-
             mainCam.transform.LookAt(objectToTrack.transform);
         }
     }

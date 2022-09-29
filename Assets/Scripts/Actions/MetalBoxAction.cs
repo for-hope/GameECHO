@@ -17,7 +17,7 @@ public class MetalBoxAction : VAction
     {
         CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the metal box");
         CommandAction cmdAction2 = new CommandAction(1, TAG, "Try to open the metal box", "Try to open");
-        CommandAction cmdAction3 = new CommandAction(2, TAG, "Use key to open the metal box", "Use key");
+        CommandAction cmdAction3 = new CommandAction(2, TAG, "Use a key to open the metal box", "Use a key");
         CommandAction cmdAction4 = new CommandAction(3, TAG, "Try to Break the metal box", "Try to Break");
         CommandAction cmdAction5 = new CommandAction(4, TAG, "Use the chair to reach the metal box", "Use Chair", Visibility.HIDDEN);
         CommandAction cmdAction6 = new CommandAction(5, TAG, "Use the table to reach the metal box", "Use Table", Visibility.HIDDEN);
@@ -51,26 +51,23 @@ public class MetalBoxAction : VAction
 
     public void TryToOpen()
     {
-        Debug.Log("trying to open electric box");
+       
         cmds[1].isUsedOnce = true;
     }
 
     public void UseKey()
     {
-        Debug.Log("trying to use key to open box");
         cmds[2].isUsedOnce = true;
     }
 
     public void TryToBreak()
     {
-        Debug.Log("trying to break box");
         GameManager.Instance.Lose();
         cmds[3].isUsedOnce = true;
     }
 
     public void UseChair()
     {
-        Debug.Log("trying to use chair to reach the electric box");
         cmds[4].isUsedOnce = true;
         cmds[5].isUsedOnce = true;
         GameObject chairObject = GameObject.Find("Chair");
@@ -81,7 +78,6 @@ public class MetalBoxAction : VAction
 
     public void UseTable()
     {
-        Debug.Log("trying to use table to reach the electric box");
         cmds[4].isUsedOnce = true;
         cmds[5].isUsedOnce = true;
         GameObject tableObject = GameObject.Find("Table");

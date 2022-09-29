@@ -247,7 +247,6 @@ public class GameManager : MonoBehaviour
         currentLevel = level;
         updateVoiceObjects();
         filterVoiceCommandsPerLevel();
-        Debug.Log("Commands for current level: " + currentLevel + " are: " + commandActions.Count);
         foreach (var command in commandActions)
         {
             Debug.Log(command.phrase);
@@ -355,11 +354,6 @@ public class GameManager : MonoBehaviour
 
         }
 
-        foreach (CommandAction gmCommand in commandActions)
-        {
-            Debug.Log("gmCommand: " + gmCommand.phrase + " just learnt" + gmCommand.isJustLearnt);
-        }
-
     }
 
     private List<string> levelObjectTags(int level)
@@ -381,7 +375,6 @@ public class GameManager : MonoBehaviour
 
     public void AddActionCommands(List<CommandAction> cmds)
     {
-        Debug.Log("Adding " + cmds.Count + " cmds with context " + cmds[0].context);
         allCommandActions.AddRange(cmds);
         foreach (CommandAction cmd in cmds)
         {
@@ -396,13 +389,7 @@ public class GameManager : MonoBehaviour
     }
     private void filterVoiceCommandsPerLevel()
     {
-        Debug.Log("Filtering voice commands per level [All commands: " + allCommandActions.Count + "] | commands count before: " + commandActions.Count);
-        foreach (var command in allCommandActions)
-        {
-            Debug.Log("Command: " + command.context.ToLower());
-        }
         commandActions = allCommandActions.Where(x => levelObjectTags(currentLevel).Contains(x.context.ToLower())).ToList();
-        Debug.Log("commands count after: " + commandActions.Count);
     }
     private void enableLevelVoiceObjects(int level, bool enable)
     {
@@ -442,7 +429,7 @@ public class GameManager : MonoBehaviour
     }
     public static void TriggerAction(int id, string context)
     {
-        Debug.Log("TAG TO INSPECT " + context.ToUpper());
+
         GameObject gameObjectWithVAction = GameManager.Instance.FindGameObjectWithVAction(context.ToUpper());
         VAction action = gameObjectWithVAction.GetComponent<VAction>();
         action.TriggerAction(id);

@@ -12,7 +12,6 @@ public class TrashAction : VAction
 
     public void Move()
     {
-        Debug.Log("Moving trash");
         gameObject.transform.position = new Vector3(gameObject.transform.position.x + 5, gameObject.transform.position.y, gameObject.transform.position.z);
 
         cmds[1].isUsedOnce = true;
@@ -20,7 +19,6 @@ public class TrashAction : VAction
 
     public void Search()
     {
-        Debug.Log("Searching inside trash");
         cmds[2].isUsedOnce = true;
     }
 
