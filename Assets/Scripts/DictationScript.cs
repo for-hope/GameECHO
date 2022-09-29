@@ -4,46 +4,81 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.InputSystem;
 
-public class DictationEngine : MonoBehaviour
+public class DictationScript : MonoBehaviour
 {
-    public DictationRecognizer dictationRecognizer;
-
+    private GameObject canvas;
     private GameObject micOn;
     private GameObject micOff;
     private PerformanceLogger performanceLogger;
-    public static DictationEngine Instance;
+    private DictationRecognizer m_DictationRecognizer;
+
+
 
     void Start()
     {
-        //set InitialSilenceTimeoutSeconds to infinity so that the dictation recognizer doesn't stop listening
-
-        micOn = GameObject.Find("MicOn");
-        micOff = GameObject.Find("MicOff");
-        Debug.Log("DictationEngine Start");
+        canvas = GameObject.Find("Canvas");
+        micOn = canvas.transform.Find("MicOn").gameObject;
+        micOff = canvas.transform.Find("MicOff").gameObject;
         GameManager.isVoiceInteractionEnabled = true;
-        StartDictationEngine();
         performanceLogger = new PerformanceLogger();
+        m_DictationRecognizer = new DictationRecognizer();
+        m_DictationRecognizer.DictationResult += (text, confidence) =>
+        {
+            Debug.LogFormat("Dictation result: {0}", text);
+            DictationRecognizer_OnDictationResult(text, confidence);
+        };
+
+        m_DictationRecognizer.DictationHypothesis += (text) =>
+        {
+            Debug.LogFormat("Dictation hypothesis: {0}", text);
+            if (!GameManager.isVoiceInteractionEnabled) GameManager.Instance.ShowMutedFeedback();
+
+        };
+
+        m_DictationRecognizer.DictationComplete += (completionCause) =>
+        {
+            if (completionCause != DictationCompletionCause.Complete)
+            {
+                Debug.LogErrorFormat("Dictation completed unsuccessfully: {0}.", completionCause);
+
+            }
+            Restart();
+        };
+
+        m_DictationRecognizer.DictationError += (error, hresult) =>
+        {
+            Debug.LogErrorFormat("Dictation error: {0}; HResult = {1}.", error, hresult);
+        };
+
+        m_DictationRecognizer.Start();
     }
 
-    void Awake()
+    void Restart()
     {
-        // If there is not already an instance of SoundManager, set it to this.
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        //If an instance already exists, destroy whatever this object is to enforce the singleton.
-        else if (Instance != this)
-        {
-            Destroy(gameObject);
-        }
-        //Set SoundManager to DontDestroyOnLoad so that it won't be destroyed when reloading our scene.
-        DontDestroyOnLoad(gameObject);
+        //restart gameobject
+        GameManager.isVoiceInteractionEnabled = false;
+        m_DictationRecognizer.Stop();
+        m_DictationRecognizer.Dispose();
+        m_DictationRecognizer = null;
+        Destroy(this.gameObject);
+        GameObject go = new GameObject("DictationManager");
+        go.AddComponent<DictationScript>();
     }
+
+    void OnDestroy()
+    {
+        if (m_DictationRecognizer != null)
+        {
+            m_DictationRecognizer.Stop();
+            m_DictationRecognizer.Dispose();
+            m_DictationRecognizer = null;
+        }
+    }
+
     void Update()
     {
 
-        if (GameManager.isVoiceInteractionEnabled && dictationRecognizer.Status == SpeechSystemStatus.Running)
+        if (GameManager.isVoiceInteractionEnabled && m_DictationRecognizer.Status == SpeechSystemStatus.Running)
         {
             micOn.SetActive(true);
             micOff.SetActive(false);
@@ -53,95 +88,6 @@ public class DictationEngine : MonoBehaviour
             micOn.SetActive(false);
             micOff.SetActive(true);
         }
-
-        if (Keyboard.current.rKey.wasPressedThisFrame)
-        {
-            Debug.Log("r key pressed: Restarting");
-            Restart();
-        }
-        if (Keyboard.current.tKey.wasPressedThisFrame)
-        {
-            Debug.Log("STATUS: " + dictationRecognizer.Status);
-        }
-
-        if (dictationRecognizer.Status == SpeechSystemStatus.Failed)
-        {
-            Debug.Log("DictationRecognizer Failed Status: " + dictationRecognizer.Status);
-        }
-
-    }
-    private void DictationRecognizer_OnDictationHypothesis(string text)
-    {
-        if (!GameManager.isVoiceInteractionEnabled) GameManager.Instance.ShowMutedFeedback();
-        Debug.Log("Dictation hypothesis: " + text);
-        //Debug.Log(LevenshteinDistance.Compute("Hello world", text));
-    }
-    private void DictationRecognizer_OnDictationComplete(DictationCompletionCause completionCause)
-    {
-        switch (completionCause)
-        {
-            case DictationCompletionCause.TimeoutExceeded:
-                Debug.Log("Dictation has timed out.");
-                // Restart required
-                Restart();
-                break;
-
-            case DictationCompletionCause.PauseLimitExceeded:
-                Debug.LogError("Dictation pause limit exceeded");
-                // Restart required
-                Restart();
-                break;
-            case DictationCompletionCause.Canceled:
-                Debug.LogError("Dictation cancelled");
-                // Restart required
-                Restart();
-                break;
-            case DictationCompletionCause.Complete:
-                // Restart required
-                Debug.Log("Dictation complete");
-                if (dictationRecognizer != null) dictationRecognizer.Start();
-                // CloseDictationEngine();
-                // StartDictationEngine();
-                break;
-            case DictationCompletionCause.UnknownError:
-                Debug.LogError("Dictation unknown error");
-                // Restart required
-                Restart();
-                break;
-            case DictationCompletionCause.AudioQualityFailure:
-                Debug.LogError("Dictation audio quality failure");
-                // Restart required
-                Restart();
-                break;
-            case DictationCompletionCause.MicrophoneUnavailable:
-                Debug.LogError("Dictation microphone unavailable");
-                Restart();
-                break;
-            case DictationCompletionCause.NetworkFailure:
-                // Error
-                Debug.LogError("Dictation error: " + completionCause);
-                // Restart required
-                Restart();
-
-                break;
-            default:
-                Debug.LogError("Dictation error: " + completionCause);
-                // Restart required
-                Restart();
-                break;
-        }
-    }
-
-    private void Restart()
-    {
-        Debug.Log("Restarting");
-        if (dictationRecognizer != null) StartDictationEngine();
-        if (dictationRecognizer.Status == SpeechSystemStatus.Running)
-        {
-            dictationRecognizer.Stop();
-            dictationRecognizer.Dispose();
-        }
-        dictationRecognizer.Start();
 
     }
 
@@ -277,40 +223,10 @@ public class DictationEngine : MonoBehaviour
         performanceLogger.AddToCommandLogs(commandLog);
         GameManager.TriggerAction(predictedCommand.id, predictedCommand.context);
     }
-    private void DictationRecognizer_OnDictationError(string error, int hresult)
-    {
-        Debug.Log("Dictation error: " + error);
-        Restart();
-    }
     private void OnApplicationQuit()
     {
         performanceLogger.SaveToDisk();
-        CloseDictationEngine();
-        dictationRecognizer.Dispose();
-    }
-    private void StartDictationEngine()
-    {
-        Debug.Log("Starting Dictation Engine");
-        dictationRecognizer = new DictationRecognizer();
-        dictationRecognizer.DictationHypothesis += DictationRecognizer_OnDictationHypothesis;
-        dictationRecognizer.DictationResult += DictationRecognizer_OnDictationResult;
-        dictationRecognizer.DictationComplete += DictationRecognizer_OnDictationComplete;
-        dictationRecognizer.DictationError += DictationRecognizer_OnDictationError;
-        dictationRecognizer.Start();
-    }
-    private void CloseDictationEngine()
-    {
-        Debug.Log("Closing Dictation Engine");
-        if (dictationRecognizer != null)
-        {
-            dictationRecognizer.DictationHypothesis -= DictationRecognizer_OnDictationHypothesis;
-            dictationRecognizer.DictationComplete -= DictationRecognizer_OnDictationComplete;
-            dictationRecognizer.DictationResult -= DictationRecognizer_OnDictationResult;
-            dictationRecognizer.DictationError -= DictationRecognizer_OnDictationError;
-            if (dictationRecognizer.Status == SpeechSystemStatus.Running)
-            {
-                dictationRecognizer.Stop();
-            }
-        }
+        m_DictationRecognizer.Stop();
+        m_DictationRecognizer.Dispose();
     }
 }

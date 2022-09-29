@@ -1363,7 +1363,7 @@ Transform:
   - {fileID: 404320045}
   - {fileID: 133316267}
   m_Father: {fileID: 7160593040320519472}
-  m_RootOrder: 128
+  m_RootOrder: 127
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &34384141
 GameObject:
@@ -3489,7 +3489,7 @@ Transform:
   - {fileID: 1787858827}
   - {fileID: 1326482171}
   m_Father: {fileID: 7160593040320519472}
-  m_RootOrder: 130
+  m_RootOrder: 129
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &133316266
 GameObject:
@@ -19186,13 +19186,13 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 792560625}
-  m_LocalRotation: {x: 0, y: 0.49242353, z: 0, w: 0.8703557}
+  m_LocalRotation: {x: -0, y: 0.49242353, z: -0, w: 0.8703557}
   m_LocalPosition: {x: 0, y: 0, z: -1.081}
-  m_LocalScale: {x: 0.009999999, y: 0.01, z: 0.009999999}
+  m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_Children:
   - {fileID: 957515129}
-  m_Father: {fileID: 7160593040320519472}
-  m_RootOrder: 127
+  m_Father: {fileID: 817362958}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 59, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -19793,6 +19793,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 387547029}
+  - {fileID: 792560626}
   m_Father: {fileID: 7160593040320519472}
   m_RootOrder: 126
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -23068,7 +23069,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _textMeshPro: {fileID: 957515131}
   stringArray:
-  - Sophie no sleep ! ! !
+  - 'OPEN YOUR EYES ! ! !  Zzz... Zzz.. '
   timeBtwnChars: 0.3
   timeBtwnWords: 0.4
 --- !u!114 &957515131
@@ -23091,14 +23092,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'OPEN YOUR EYES ! ! !
-
-
-    Zzz...
-
-    Zzz...
-
-'
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f0beb2941c7d94b4f9222b5228e67079, type: 2}
   m_sharedMaterial: {fileID: -7635577367611286992, guid: f0beb2941c7d94b4f9222b5228e67079,
@@ -27608,7 +27602,7 @@ Transform:
   - {fileID: 985700910}
   - {fileID: 1398357642}
   m_Father: {fileID: 7160593040320519472}
-  m_RootOrder: 129
+  m_RootOrder: 128
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1188430772
 PrefabInstance:
@@ -34534,7 +34528,7 @@ PrefabInstance:
     - target: {fileID: 8055754588855743196, guid: f9e2efca22a3bef4fb7b76ea7af380a3,
         type: 3}
       propertyPath: m_RootOrder
-      value: 131
+      value: 130
       objectReference: {fileID: 0}
     - target: {fileID: 8055754588855743196, guid: f9e2efca22a3bef4fb7b76ea7af380a3,
         type: 3}
@@ -35024,7 +35018,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1459454855}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 19.05, y: 0.612, z: -0.92}
+  m_LocalPosition: {x: 19.226, y: 0.612, z: -0.73}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 346243698}
@@ -45728,7 +45722,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1903256790}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7978f015798bc374ab5faca9ed79c138, type: 3}
+  m_Script: {fileID: 11500000, guid: 97291214dde7bce44b73eac97f5a3364, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &1903256792
@@ -50112,7 +50106,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Sophie no sleep ! ! !
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0650f689607e6b44d90befd64b7f6da2, type: 2}
   m_sharedMaterial: {fileID: -2977171302718020301, guid: 0650f689607e6b44d90befd64b7f6da2,
@@ -71460,7 +71454,6 @@ Transform:
   - {fileID: 1219787308}
   - {fileID: 1373267991}
   - {fileID: 817362958}
-  - {fileID: 792560626}
   - {fileID: 26499370}
   - {fileID: 1184475920}
   - {fileID: 132857701}

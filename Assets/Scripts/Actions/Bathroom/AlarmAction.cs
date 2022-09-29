@@ -32,6 +32,7 @@ public class AlarmAction : VAction
 
     private void InspectAlarm()
     {
+        cmds[0].isUsedOnce = true;
         WiresAction.UnlockCommandsIfPossible();
     }
 
