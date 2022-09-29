@@ -46,8 +46,9 @@ public class DictationEngine : MonoBehaviour
         if (Keyboard.current.rKey.wasPressedThisFrame)
         {
             Debug.Log("r key pressed: Restarting");
-            CloseDictationEngine();
-            StartDictationEngine();
+            dictationRecognizer.Stop();
+            dictationRecognizer.Dispose();
+            dictationRecognizer.Start();
         }
         if (Keyboard.current.tKey.wasPressedThisFrame)
         {
@@ -92,7 +93,7 @@ public class DictationEngine : MonoBehaviour
             case DictationCompletionCause.Complete:
                 // Restart required
                 Debug.Log("Dictation complete");
-                if(dictationRecognizer != null) dictationRecognizer.Start();
+                if (dictationRecognizer != null) dictationRecognizer.Start();
                 // CloseDictationEngine();
                 // StartDictationEngine();
                 break;
@@ -293,8 +294,6 @@ public class DictationEngine : MonoBehaviour
         Debug.Log("Starting Dictation Engine");
         GameManager.isVoiceInteractionEnabled = true;
         dictationRecognizer = new DictationRecognizer();
-        dictationRecognizer.AutoSilenceTimeoutSeconds = float.PositiveInfinity;
-        dictationRecognizer.InitialSilenceTimeoutSeconds = float.PositiveInfinity;
         dictationRecognizer.DictationHypothesis += DictationRecognizer_OnDictationHypothesis;
         dictationRecognizer.DictationResult += DictationRecognizer_OnDictationResult;
         dictationRecognizer.DictationComplete += DictationRecognizer_OnDictationComplete;
