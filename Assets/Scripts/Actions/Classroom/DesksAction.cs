@@ -98,6 +98,7 @@ public class DesksAction : VAction
         player.transform.rotation = Quaternion.Euler(0, 90, 0);
         player.SetActive(true);
         GameObject.Find("Character").GetComponent<Animator>().SetBool("isEnding", true);
+        DictationEngine.Instance.SaveAndClose();
         yield return new WaitForSeconds(15f);
         SceneManager.LoadSceneAsync("EndScene");
 

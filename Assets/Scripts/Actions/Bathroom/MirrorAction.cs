@@ -39,8 +39,9 @@ public class MirrorAction : VAction
 
     public void PickShards()
     {
-        WiresAction.UnlockCommandsIfPossible();
         cmds[2].isUsedOnce = true;
+        WiresAction.UnlockCommandsIfPossible();
+
     }
 
 

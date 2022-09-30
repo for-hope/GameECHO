@@ -1,5 +1,6 @@
-using System.Collections;
+
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 [System.Serializable]
 public class CommandLog
@@ -33,7 +34,7 @@ public class CommandLog
 
 
 }
-[System.Serializable]
+
 public class PerformanceLogger
 {
     public int totalVoiceInputs = 0;
@@ -53,6 +54,8 @@ public class PerformanceLogger
     public List<CommandLog> commandLogs = new List<CommandLog>();
     public List<CommandLog> commandLogsPredicted = new List<CommandLog>();
 
+    private string dirPath = Application.streamingAssetsPath + "/Plogs";
+
 
     public void AddToCommandLogs(CommandLog commandLog)
     {
@@ -68,7 +71,7 @@ public class PerformanceLogger
             commandLog.predictedPhraseBasedOnScope = commandLog.commandBasedOnScopeFilter.phrase;
             commandLogsPredicted.Add(commandLog);
         }
-        SaveToDisk();
+        //save to disk async
     }
 
     private void CalculateAverageScores()
@@ -85,21 +88,29 @@ public class PerformanceLogger
             averageContextFilterScore += cl.commandPredictedContextFilterScore;
             averageEnvironmentFilterScore += cl.commandPredictedEnvironmentFilterScore;
         }
-        averagePredictionScore /= predictedCommands.Count;
-        averageScopeFilterScore /= predictedCommands.Count;
-        averageContextFilterScore /= predictedCommands.Count;
-        averageEnvironmentFilterScore /= predictedCommands.Count;
+        if (predictedCommands.Count > 0)
+        {
+            averagePredictionScore /= predictedCommands.Count;
+            averageScopeFilterScore /= predictedCommands.Count;
+            averageContextFilterScore /= predictedCommands.Count;
+            averageEnvironmentFilterScore /= predictedCommands.Count;
+        }
 
     }
 
     public void SaveToDisk()
     {
         //convert fields to json
+        if (Directory.Exists(dirPath) == false)
+        {
+            Directory.CreateDirectory(dirPath);
+        }
         CalculateAverageScores();
         string json = JsonUtility.ToJson(this);
+        string jsonFile = dirPath + "/" + "PerformanceLog.json";
         //save or replace to disk
-        System.IO.File.WriteAllText(Application.dataPath + "/PerformanceLog.json", json);
-
-
+        StreamWriter writer = new StreamWriter(jsonFile, false);
+        writer.Write(json);
+        writer.Close();
     }
 }

@@ -19,6 +19,7 @@ public class WiresAction : VAction
         bool mirrorShardPicked = GameManager.commandActions.Find(x => x.context.ToLower() == EnvObjects.MIRROR.ToString().ToLower() && x.id == 2).isUsedOnce;
         bool alarmInspected = GameManager.commandActions.Find(x => x.context.ToLower() == EnvObjects.ALARM.ToString().ToLower() && x.id == 0).isUsedOnce;
         bool unlockHiddenCommands = boardTranslated && mirrorShardPicked && alarmInspected;
+        Debug.Log("Unlocking commands if possible " + unlockHiddenCommands);
         if (unlockHiddenCommands)
         {
             GameManager.commandActions.Find(x => x.context == EnvObjects.WIRES.ToString() && x.id == 1).visibility = Visibility.INVISIBLE;
@@ -26,7 +27,11 @@ public class WiresAction : VAction
         }
     }
 
-
+    public override void Inspect()
+    {
+        base.Inspect();
+        UnlockCommandsIfPossible();
+    }
 
     public new void Start()
     {

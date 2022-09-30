@@ -23,6 +23,7 @@ public class DictationEngine : MonoBehaviour
         GameManager.isVoiceInteractionEnabled = true;
         StartDictationEngine();
         performanceLogger = new PerformanceLogger();
+        InvokeRepeating("LogStatus", 5f, float.PositiveInfinity);
     }
 
     void Awake()
@@ -74,7 +75,6 @@ public class DictationEngine : MonoBehaviour
     {
         if (!GameManager.isVoiceInteractionEnabled) GameManager.Instance.ShowMutedFeedback();
         Debug.Log("Dictation hypothesis: " + text);
-        //Debug.Log(LevenshteinDistance.Compute("Hello world", text));
     }
     private void DictationRecognizer_OnDictationComplete(DictationCompletionCause completionCause)
     {
@@ -135,7 +135,7 @@ public class DictationEngine : MonoBehaviour
     private void Restart()
     {
         Debug.Log("Restarting");
-        if (dictationRecognizer != null) StartDictationEngine();
+        if (dictationRecognizer == null) StartDictationEngine();
         if (dictationRecognizer.Status == SpeechSystemStatus.Running)
         {
             dictationRecognizer.Stop();
@@ -237,6 +237,7 @@ public class DictationEngine : MonoBehaviour
 
     private void DictationRecognizer_OnDictationResult(string text, ConfidenceLevel confidence)
     {
+        if (!GameManager.isVoiceInteractionEnabled || dictationRecognizer.Status != SpeechSystemStatus.Running) return;
 
         Debug.Log("Dictation result: " + text + " with confidence: " + confidence);
         //Check if text is an intro command.
@@ -256,7 +257,7 @@ public class DictationEngine : MonoBehaviour
         }
 
         //!COMMAND NOT FOUND, PREDICTING...
-        var startTime = Time.realtimeSinceStartup;
+        //var startTime = Time.realtimeSinceStartup;
         commandLog.isCorrectlyRecognized = false;
         Debug.Log("Command not found, Predicting...");
         //Get possible commands from the scope filter and ignore commands with low string distance to the text.
@@ -270,11 +271,12 @@ public class DictationEngine : MonoBehaviour
             //Trigger default feedback
             return;
         }
-        float endTime = Time.realtimeSinceStartup;
+        //float endTime = Time.realtimeSinceStartup;
         commandLog.passedMinimumScopeFilter = true;
-        commandLog.timeTakenToPredict = endTime - startTime;
-        Debug.Log("Time taken to predict: " + (endTime - startTime) + " seconds");
+        //commandLog.timeTakenToPredict = endTime - startTime;
+        //Debug.Log("Time taken to predict: " + (endTime - startTime) + " seconds");
         performanceLogger.AddToCommandLogs(commandLog);
+        Debug.Log("Predicted command: " + predictedCommand.phrase);
         GameManager.TriggerAction(predictedCommand.id, predictedCommand.context);
     }
     private void DictationRecognizer_OnDictationError(string error, int hresult)
@@ -282,16 +284,20 @@ public class DictationEngine : MonoBehaviour
         Debug.Log("Dictation error: " + error);
         Restart();
     }
-    private void OnApplicationQuit()
+    public void SaveAndClose()
     {
         performanceLogger.SaveToDisk();
         CloseDictationEngine();
         dictationRecognizer.Dispose();
     }
+    private void OnApplicationQuit()
+    {
+        SaveAndClose();
+    }
     private void StartDictationEngine()
     {
         Debug.Log("Starting Dictation Engine");
-        dictationRecognizer = new DictationRecognizer();
+        dictationRecognizer = new DictationRecognizer(ConfidenceLevel.Rejected, DictationTopicConstraint.Dictation);
         dictationRecognizer.DictationHypothesis += DictationRecognizer_OnDictationHypothesis;
         dictationRecognizer.DictationResult += DictationRecognizer_OnDictationResult;
         dictationRecognizer.DictationComplete += DictationRecognizer_OnDictationComplete;
@@ -312,5 +318,10 @@ public class DictationEngine : MonoBehaviour
                 dictationRecognizer.Stop();
             }
         }
+    }
+
+    private void LogStatus()
+    {
+        Debug.Log(dictationRecognizer.Status);
     }
 }
