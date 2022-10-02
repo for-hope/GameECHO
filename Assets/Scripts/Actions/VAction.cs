@@ -127,9 +127,11 @@ public class VAction : MonoBehaviour
     private AudioAction currentAudioAction = null;
     public void TriggerAction(int commandId)
     {
-        VAction action = GameManager.Instance.FindGameObjectWithVAction(TAG).GetComponent<VAction>();
-        ActionFlow actionFlow = action.actions.Find(x => x.commandID == commandId);
+        Debug.Log("!!TriggerAction: " + commandId);
+        //VAction action = GameManager.Instance.FindGameObjectWithVAction(TAG).GetComponent<VAction>();
+        ActionFlow actionFlow = this.actions.Find(x => x.commandID == commandId);
         var cmd = cmds.Find(x => x.id == actionFlow.commandID);
+        Debug.Log("!!TriggerAction1: " + cmd.isPossible);
         if (cmd.isUsedOnce)
         {
             Queue<AudioAction> audioQueue = new Queue<AudioAction>();
@@ -139,7 +141,7 @@ public class VAction : MonoBehaviour
             return;
         }
 
-        GoToTargetThen();
+        //GoToTargetThen();
         doAction(actionFlow);
         //action.actions.Find(x => x.commandID == commandId).action();
     }
@@ -240,8 +242,7 @@ public class VAction : MonoBehaviour
 
     protected void doAction(ActionFlow actionFlow)
     {
-        GameManager.isVoiceInteractionEnabled = false;
-        Debug.Log("VOICE INTERACTION DISABLED");
+        Debug.Log("Doing action");
         var hasAccess = actionFlow.accessCmds == null;
         if (!hasAccess)
         {
@@ -254,14 +255,11 @@ public class VAction : MonoBehaviour
                     break;
                 }
             }
-            if (!hasAccess)
-            {
-                StartCoroutine(PlayAudioOnQueue(actionFlow.noAccessAudioQueue));
-                return;
-            }
+
+            StartCoroutine(PlayAudioOnQueue(actionFlow.noAccessAudioQueue));
+            return;
+
         }
-
-
 
 
         cmds[actionFlow.commandID].isUsedOnce = true;
@@ -281,24 +279,26 @@ public class VAction : MonoBehaviour
                 GameManager.Instance.putDownCamera(false);
                 if (currentAudioAction.actionId >= 0) actionFlow.action();
             }
+
             if (currentAudioAction.actionType == AudioActionType.FollowUp)
             {
                 if (actionFlow.endAction != null)
                 {
                     actionFlow.endAction();
                     actionFlow.endAction = null;
+
+
                 }
+
+                StartCoroutine(DictationInputManager.StartRecording());
                 currentAudioAction = null;
             }
             if (actionFlow.audioQueue.Count != 0 && currentAudioAction.actionType != AudioActionType.NoAccess)
             {
                 StartCoroutine(PlayAudioOnQueue(actionFlow.audioQueue));
             }
-            else if (!GameManager.isVoiceInteractionEnabled)
-            {
-                GameManager.isVoiceInteractionEnabled = true;
-                Debug.Log("VOICE INTERACTION ENABLED");
-            }
+            if (currentAudioAction.actionType == AudioActionType.NoAccess) StartCoroutine(DictationInputManager.StartRecording());
+
 
         }
     }

@@ -10,14 +10,15 @@ public class ZzzLog : MonoBehaviour
     {
 
         //check if its developement build
-        if (Application.isEditor || Debug.isDebugBuild)
+       //if (Application.isEditor || Debug.isDebugBuild)
+       if (true)
         {
             Debug.Log("Development build");
         }
         else
         {
             //destroy
-            Destroy(this);
+            //Destroy(this);
         }
         Debug.Log("Started up logging.");
     }

@@ -3,6 +3,7 @@ using UnityEngine.Windows.Speech;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.InputSystem;
+using System.Threading.Tasks;
 
 public class DictationEngine : MonoBehaviour
 {
@@ -23,7 +24,6 @@ public class DictationEngine : MonoBehaviour
         GameManager.isVoiceInteractionEnabled = true;
         StartDictationEngine();
         performanceLogger = new PerformanceLogger();
-        InvokeRepeating("LogStatus", 5f, float.PositiveInfinity);
     }
 
     void Awake()
@@ -75,9 +75,11 @@ public class DictationEngine : MonoBehaviour
     {
         if (!GameManager.isVoiceInteractionEnabled) GameManager.Instance.ShowMutedFeedback();
         Debug.Log("Dictation hypothesis: " + text);
+        return;
     }
     private void DictationRecognizer_OnDictationComplete(DictationCompletionCause completionCause)
     {
+        Debug.Log("Dictation complete: " + completionCause);
         switch (completionCause)
         {
             case DictationCompletionCause.TimeoutExceeded:
@@ -99,6 +101,10 @@ public class DictationEngine : MonoBehaviour
             case DictationCompletionCause.Complete:
                 // Restart required
                 Debug.Log("Dictation complete");
+                if (dictationRecognizer.Status == SpeechSystemStatus.Running)
+                {
+                    dictationRecognizer.Stop();
+                }
                 if (dictationRecognizer != null) dictationRecognizer.Start();
                 // CloseDictationEngine();
                 // StartDictationEngine();
@@ -139,7 +145,7 @@ public class DictationEngine : MonoBehaviour
         if (dictationRecognizer.Status == SpeechSystemStatus.Running)
         {
             dictationRecognizer.Stop();
-            dictationRecognizer.Dispose();
+
         }
         dictationRecognizer.Start();
 
@@ -235,10 +241,9 @@ public class DictationEngine : MonoBehaviour
     }
 
 
-    private void DictationRecognizer_OnDictationResult(string text, ConfidenceLevel confidence)
+    void ProcessResult(string text, ConfidenceLevel confidence)
     {
         if (!GameManager.isVoiceInteractionEnabled || dictationRecognizer.Status != SpeechSystemStatus.Running) return;
-
         Debug.Log("Dictation result: " + text + " with confidence: " + confidence);
         //Check if text is an intro command.
         //if (processIntroCommands(text)) return;
@@ -247,7 +252,7 @@ public class DictationEngine : MonoBehaviour
         var envFilter = new EnvironmentFilter();
         var contextFilter = new ContextFilter();
         var scopeFilter = new ScopeFilter();
-        CommandLog commandLog = new CommandLog(text, confidence.ToString());
+        CommandLog commandLog = new CommandLog(text);
         //process text by checking if it is a command action.
         if (processCmdActions(text, scopeFilter))
         {
@@ -278,6 +283,15 @@ public class DictationEngine : MonoBehaviour
         performanceLogger.AddToCommandLogs(commandLog);
         Debug.Log("Predicted command: " + predictedCommand.phrase);
         GameManager.TriggerAction(predictedCommand.id, predictedCommand.context);
+        Restart();
+    }
+
+    private void DictationRecognizer_OnDictationResult(string text, ConfidenceLevel confidence)
+    {
+        new Task(() =>
+        {
+            ProcessResult(text, confidence);
+        }).Start();
     }
     private void DictationRecognizer_OnDictationError(string error, int hresult)
     {
@@ -318,10 +332,5 @@ public class DictationEngine : MonoBehaviour
                 dictationRecognizer.Stop();
             }
         }
-    }
-
-    private void LogStatus()
-    {
-        Debug.Log(dictationRecognizer.Status);
     }
 }

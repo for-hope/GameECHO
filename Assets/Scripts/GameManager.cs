@@ -14,9 +14,10 @@ public class GameManager : MonoBehaviour
 
 
     public static bool isVoiceInteractionEnabled = true;
+    public bool voiceInteractionEnabled = true;
     public bool ignoreLowScopeScores = true;
     public static EnvObjects currentExactEnvObject;
-    public static List<EnvObjects> currentFrameEnvObjects;
+    public static List<EnvObjects> currentFrameEnvObjects = new List<EnvObjects>();
     public static List<CommandAction> commandActions = new List<CommandAction>();
     public static List<CommandAction> allCommandActions = new List<CommandAction>();
     private Cinemachine.CinemachineVirtualCamera playerCam;
@@ -98,7 +99,8 @@ public class GameManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         pauseScreen.SetActive(true);
-        isVoiceInteractionEnabled = false;
+        voiceInteractionEnabled = DictationInputManager.IsListening;
+        StartCoroutine(DictationInputManager.StopRecording());
         isPaused = true;
     }
 
@@ -122,7 +124,11 @@ public class GameManager : MonoBehaviour
         //hide cursor
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        isVoiceInteractionEnabled = true;
+        //isVoiceInteractionEnabled = true;
+        if (voiceInteractionEnabled)
+        {
+            StartCoroutine(DictationInputManager.StartRecording());
+        }
         isPaused = false;
     }
 
@@ -230,7 +236,7 @@ public class GameManager : MonoBehaviour
             GameObject.Find("LostScreen").SetActive(false);
         }
 
-        if (isVoiceInteractionEnabled) micOffFeedback.SetActive(false);
+        if (DictationInputManager.IsListening) micOffFeedback.SetActive(false);
 
     }
 
@@ -429,7 +435,7 @@ public class GameManager : MonoBehaviour
     }
     public static void TriggerAction(int id, string context)
     {
-
+        Debug.Log("Triggering action " + id + " on " + context);
         GameObject gameObjectWithVAction = GameManager.Instance.FindGameObjectWithVAction(context.ToUpper());
         VAction action = gameObjectWithVAction.GetComponent<VAction>();
         action.TriggerAction(id);

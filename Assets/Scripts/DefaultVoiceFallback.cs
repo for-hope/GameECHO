@@ -30,7 +30,8 @@ public class DefaultVoiceFallback : MonoBehaviour
         if (!SoundManager.Instance.EffectsSource.isPlaying)
         {
             inProgress = false;
-            GameManager.isVoiceInteractionEnabled = true;
+            //GameManager.isVoiceInteractionEnabled = true;
+            StartCoroutine(DictationInputManager.StartRecording());
         }
     }
     private string RandomResponse()
@@ -41,7 +42,7 @@ public class DefaultVoiceFallback : MonoBehaviour
 
     public void PlayFallbackVoice()
     {
-        GameManager.isVoiceInteractionEnabled = false;
+        //GameManager.isVoiceInteractionEnabled = false;
         inProgress = true;
         string path = RandomResponse();
         AudioClip clip = Resources.Load<AudioClip>(path);

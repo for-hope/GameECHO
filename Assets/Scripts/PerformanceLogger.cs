@@ -6,7 +6,6 @@ using UnityEngine;
 public class CommandLog
 {
     public string outputText;
-    public string confidenceLevel;
     public bool isCorrectlyRecognized;
     public bool passedMinimumScopeFilter;
     public CommandAction commandBasedOnScopeFilter;
@@ -24,10 +23,9 @@ public class CommandLog
     public int numberOfCommandsConsidered;
 
     //constructor
-    public CommandLog(string outputText, string confidenceLevel)
+    public CommandLog(string outputText)
     {
         this.outputText = outputText;
-        this.confidenceLevel = confidenceLevel;
     }
 
 

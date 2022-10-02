@@ -89,11 +89,9 @@ public class IntroManager : MonoBehaviour
             if (!SoundManager.Instance.EffectsSource.isPlaying && isIntroAudioPlaying && !GameManager.Instance.isPaused)
             {
                 Debug.Log("Intro audio finished");
-                GameManager.isVoiceInteractionEnabled = true;
+                //GameManager.isVoiceInteractionEnabled = true;
                 StartCommand();
             }
-            if (SoundManager.Instance.EffectsSource.isPlaying) GameManager.isVoiceInteractionEnabled = false;
-
         }
 
 
@@ -101,6 +99,7 @@ public class IntroManager : MonoBehaviour
 
     void StartCommand()
     {
+        StartCoroutine(DictationInputManager.StartRecording());
         isIntroAudioPlaying = false;
         activeIntroCommand = introCommands.Dequeue();
         introTextObject.GetComponent<TMPro.TextMeshProUGUI>().text = activeIntroCommand.hint;
@@ -124,6 +123,7 @@ public class IntroManager : MonoBehaviour
     {
         isIntroActive = false;
         introScreen.SetActive(false);
+        StartCoroutine(DictationInputManager.StartRecording());
     }
 
 
