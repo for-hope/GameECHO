@@ -14,22 +14,6 @@ public class MeshDestroy : MonoBehaviour
     public float ExplodeForce = 0;
     public bool destroyOnce = false;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (Keyboard.current.dKey.wasPressedThisFrame)
- 
-        {
-            DestroyMesh();
-        }
-    }
-
     public void DestroyMesh()
     {
         var originalMesh = GetComponent<MeshFilter>().mesh;
