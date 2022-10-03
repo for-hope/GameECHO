@@ -18,7 +18,7 @@ public class ZzzLog : MonoBehaviour
         else
         {
             //destroy
-            //Destroy(this);
+            Destroy(this);
         }
         Debug.Log("Started up logging.");
     }
