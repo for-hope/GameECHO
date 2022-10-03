@@ -10,8 +10,8 @@ public class ZzzLog : MonoBehaviour
     {
 
         //check if its developement build
-       //if (Application.isEditor || Debug.isDebugBuild)
-       if (true)
+       if (Application.isEditor || Debug.isDebugBuild)
+       //if (true)
         {
             Debug.Log("Development build");
         }

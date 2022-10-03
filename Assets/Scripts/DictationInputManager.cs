@@ -143,7 +143,8 @@ public class DictationInputManager : MonoBehaviour
 
         while (isTransitioning)
         {
-            Debug.Log("Waiting for transition to complete.");
+            //log only if developement build
+            Debug.Assert(Debug.isDebugBuild, "DictationInputManager is transitioning between states. Please wait for transition to complete.");
             yield return null;
         }
 
@@ -152,13 +153,13 @@ public class DictationInputManager : MonoBehaviour
 
         if (PhraseRecognitionSystem.Status == SpeechSystemStatus.Running)
         {
-            Debug.Log("PhraseRecognitionSystem.Shutdown()");
+
             PhraseRecognitionSystem.Shutdown();
         }
 
         while (PhraseRecognitionSystem.Status == SpeechSystemStatus.Running)
         {
-            Debug.Log("PhraseRecognitionSystem IS RUNNING!");
+            Debug.Assert(Debug.isDebugBuild, "PhraseRecognitionSystem IS RUNNING!");
             yield return null;
         }
 
@@ -168,19 +169,19 @@ public class DictationInputManager : MonoBehaviour
 
         while (dictationRecognizer.Status == SpeechSystemStatus.Failed)
         {
-            Debug.Log("Dictation recognizer failed to start!");
+            Debug.Assert(Debug.isDebugBuild, "Dictation recognizer failed to start!");
             yield break;
         }
 
         while (dictationRecognizer.Status == SpeechSystemStatus.Stopped)
         {
-            Debug.Log("Dictation recognizer is stopped. Waiting...");
+            Debug.Assert(Debug.isDebugBuild, "Dictation recognizer is stopped. Waiting...");
             yield return null;
         }
 
         // Start recording from the microphone.
         dictationAudioClip = Microphone.Start(DeviceName, false, recordingTime, samplingRate);
-        Debug.Log("Dictation audio clip name" + DeviceName);
+
         textSoFar = new StringBuilder();
         isTransitioning = false;
 #else
@@ -197,7 +198,7 @@ public class DictationInputManager : MonoBehaviour
 #if UNITY_WSA || UNITY_STANDALONE_WIN || UNITY_EDITOR
         if (!IsListening || isTransitioning)
         {
-            Debug.LogWarning("Unable to stop recording");
+            Debug.Assert(Debug.isDebugBuild, "Unable to stop recording");
             yield break;
         }
 
@@ -250,7 +251,7 @@ public class DictationInputManager : MonoBehaviour
 
         textSoFar.Append(text);
         dictationResult = textSoFar.ToString();
-        Debug.LogFormat("Dictation result: {0}", dictationResult);
+        //  Debug.LogFormat("Dictation result: {0}", dictationResult);
         VoiceInputHandler.Instance.RaiseDictationResult(text);
     }
 
