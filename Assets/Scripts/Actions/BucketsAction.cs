@@ -30,8 +30,8 @@ public class BucketsAction : VAction
         cmds.Add(cmdAction);
         cmds.Add(cmdAction2);
         cmds.Add(cmdAction3);
-        actions.Add(new ActionFlow(1, Move, "Sounds/a37", "Sounds/move-buckets", ""));
-        actions.Add(new ActionFlow(2, Search, "Sounds/a38", "Sounds/search-buckets", ""));
+        actions.Add(new ActionFlow(1, Move, "Sounds/a37", "Sounds/move-buckets", "Sounds/a36"));
+        actions.Add(new ActionFlow(2, Search, "Sounds/a38", "Sounds/search-buckets", "Sounds/buckets-3b"));
         base.Start();
     }
 

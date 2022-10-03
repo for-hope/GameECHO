@@ -110,7 +110,6 @@ public class VAction : MonoBehaviour
     };
     protected string TAG;
     public bool inspect;
-
     protected List<CommandAction> cmds = new List<CommandAction>();
     protected List<ActionFlow> actions = new List<ActionFlow>();
     protected PlayerNavMesh playerNavMesh;
@@ -127,11 +126,11 @@ public class VAction : MonoBehaviour
     private AudioAction currentAudioAction = null;
     public void TriggerAction(int commandId)
     {
-        Debug.Log("!!TriggerAction: " + commandId);
+
         //VAction action = GameManager.Instance.FindGameObjectWithVAction(TAG).GetComponent<VAction>();
         ActionFlow actionFlow = this.actions.Find(x => x.commandID == commandId);
         var cmd = cmds.Find(x => x.id == actionFlow.commandID);
-        Debug.Log("!!TriggerAction1: " + cmd.isPossible);
+        VActionManager.Instance.currentVAction = this;
         if (cmd.isUsedOnce)
         {
             Queue<AudioAction> audioQueue = new Queue<AudioAction>();
@@ -141,9 +140,8 @@ public class VAction : MonoBehaviour
             return;
         }
 
-        //GoToTargetThen();
+        GoToTargetThen();
         doAction(actionFlow);
-        //action.actions.Find(x => x.commandID == commandId).action();
     }
 
     public List<CommandAction> GetVisibleCommands()
@@ -195,7 +193,7 @@ public class VAction : MonoBehaviour
 
     public void OnReachedTarget()
     {
-        Debug.Log("Reached target");
+        Debug.Log("Navmesh: Reached target");
         reachedDestination = true;
     }
     public void GoToTargetThen()
@@ -207,32 +205,32 @@ public class VAction : MonoBehaviour
 
     public virtual void Inspect()
     {
-        //INSPECT
         inspect = true;
         GameManager.RevealHiddenCommandsOfAction(cmds);
     }
 
     IEnumerator PlayAudioOnQueue(Queue<AudioAction> audioActions)
     {
-        audioPlayed = true;
+        Debug.Log("PlayAudioOnQueue");
+
         currentAudioAction = audioActions.Dequeue();
+        Debug.Log("PlayAudioOnQueue: " + currentAudioAction.audioFN);
+        VActionManager.Instance.currentAudioActionType = currentAudioAction.actionType;
         if (currentAudioAction.actionType == AudioActionType.NoAccess) audioActions.Enqueue(currentAudioAction);
         CommandAction cmd = cmds.Find(x => x.id == currentAudioAction.actionId);
         ActionFlow actionFlow = actions.Find(x => x.commandID == currentAudioAction.actionId);
 
-        if (currentAudioAction.actionType == AudioActionType.Action && !cmd.noAnimation)
-        {
-            GameManager.Instance.putDownCamera(true);
-        }
+        if (currentAudioAction.actionType == AudioActionType.Action && !cmd.noAnimation) GameManager.Instance.putDownCamera(true);
         if (currentAudioAction.actionType == AudioActionType.Action && cmd.noAnimation && currentAudioAction.actionId >= 0) actionFlow.action();
         if (currentAudioAction.actionType != AudioActionType.Initial) yield return new WaitForSeconds(1);
 
         AudioClip DialogAudio = Resources.Load<AudioClip>(currentAudioAction.audioFN);
         SoundManager.Instance.Play(DialogAudio);
-        audioPlayed = false;
-
+        audioPlayed = true;
+        VActionManager.Instance.audioPlayed = true;
 
     }
+
     public void Start()
     {
         inspect = false;
@@ -242,7 +240,7 @@ public class VAction : MonoBehaviour
 
     protected void doAction(ActionFlow actionFlow)
     {
-        Debug.Log("Doing action");
+
         var hasAccess = actionFlow.accessCmds == null;
         if (!hasAccess)
         {
@@ -261,46 +259,60 @@ public class VAction : MonoBehaviour
 
         }
 
-
         cmds[actionFlow.commandID].isUsedOnce = true;
         StartCoroutine(PlayAudioOnQueue(actionFlow.audioQueue));
     }
 
-
-    void Update()
+    private void NextInAudioQueue()
     {
-        if (!SoundManager.Instance.EffectsSource.isPlaying && !audioPlayed && reachedDestination && currentAudioAction != null)
-        {
-            ActionFlow actionFlow = actions.Find(x => x.commandID == currentAudioAction.actionId);
-            CommandAction cmd = cmds.Find(x => x.id == currentAudioAction.actionId);
+        ActionFlow actionFlow = actions.Find(x => x.commandID == currentAudioAction.actionId);
+        if (actionFlow.audioQueue.Count == 0) OnAudioQueueEnded();
+        else if (currentAudioAction.actionType != AudioActionType.NoAccess) StartCoroutine(PlayAudioOnQueue(actionFlow.audioQueue));
 
-            if (currentAudioAction.actionType == AudioActionType.Action && !cmd.noAnimation)
-            {
-                GameManager.Instance.putDownCamera(false);
-                if (currentAudioAction.actionId >= 0) actionFlow.action();
-            }
+        if (currentAudioAction.actionType == AudioActionType.NoAccess) StartCoroutine(DictationInputManager.StartRecording());
 
-            if (currentAudioAction.actionType == AudioActionType.FollowUp)
-            {
-                if (actionFlow.endAction != null)
-                {
-                    actionFlow.endAction();
-                    actionFlow.endAction = null;
-
-
-                }
-
-                StartCoroutine(DictationInputManager.StartRecording());
-                currentAudioAction = null;
-            }
-            if (actionFlow.audioQueue.Count != 0 && currentAudioAction.actionType != AudioActionType.NoAccess)
-            {
-                StartCoroutine(PlayAudioOnQueue(actionFlow.audioQueue));
-            }
-            if (currentAudioAction.actionType == AudioActionType.NoAccess) StartCoroutine(DictationInputManager.StartRecording());
-
-
-        }
     }
+
+    public void OnAudioQueueEnded()
+    {
+        Debug.Log("Audio queue ended");
+        ActionFlow actionFlow = actions.Find(x => x.commandID == currentAudioAction.actionId);
+        if (actionFlow.endAction != null)
+        {
+            actionFlow.endAction();
+            actionFlow.endAction = null;
+        }
+        StartCoroutine(DictationInputManager.StartRecording());
+        currentAudioAction = null;
+    }
+
+    public void OnInitialAudioEnd()
+    {
+        Debug.Log("Initial audio ended");
+        NextInAudioQueue();
+
+    }
+
+    public void OnActionEnd()
+    {
+        Debug.Log("Action ended");
+        ActionFlow actionFlow = actions.Find(x => x.commandID == currentAudioAction.actionId);
+        GameManager.Instance.putDownCamera(false);
+        if (currentAudioAction.actionId >= 0) actionFlow.action();
+        NextInAudioQueue();
+    }
+    public void OnFollowUpEnd()
+    {
+        Debug.Log("Follow up ended");
+        NextInAudioQueue();
+    }
+
+    public void OnNoAccessEnd()
+    {
+        Debug.Log("No access ended");
+        NextInAudioQueue();
+    }
+
+
 
 }

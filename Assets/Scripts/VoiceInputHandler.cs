@@ -10,7 +10,7 @@ public class VoiceInputHandler : MonoBehaviour
 
     private GameObject micOn;
     private AudioClip micOnClip;
-    
+
     private GameObject micOff;
     private AudioClip micOffClip;
     private PerformanceLogger performanceLogger;
@@ -20,7 +20,7 @@ public class VoiceInputHandler : MonoBehaviour
     {
         //set InitialSilenceTimeoutSeconds to infinity so that the dictation recognizer doesn't stop listening
         var canvas = GameObject.Find("Canvas");
-        micOn =  canvas.transform.Find("MicOn").gameObject;
+        micOn = canvas.transform.Find("MicOn").gameObject;
         micOff = canvas.transform.Find("MicOff").gameObject;
         micOnClip = Resources.Load<AudioClip>("Sounds/UI/start-mic");
         micOffClip = Resources.Load<AudioClip>("Sounds/UI/stop-mic");
@@ -48,13 +48,13 @@ public class VoiceInputHandler : MonoBehaviour
 
         if (DictationInputManager.IsListening && !micOn.activeSelf)
         {
-            SoundManager.Instance.Play(micOnClip);
+            SoundManager.Instance.PlayUI(micOnClip);
             micOn.SetActive(true);
             micOff.SetActive(false);
         }
         else if (!DictationInputManager.IsListening && !micOff.activeSelf)
         {
-            SoundManager.Instance.Play(micOffClip);
+            SoundManager.Instance.PlayUI(micOffClip);
             micOn.SetActive(false);
             micOff.SetActive(true);
         }
@@ -71,6 +71,14 @@ public class VoiceInputHandler : MonoBehaviour
                 Debug.Log("Starting Dictation");
                 StartCoroutine(DictationInputManager.StartRecording());
             }
+        }
+
+        if (Keyboard.current.rKey.wasPressedThisFrame)
+        {
+            var d = DictationInputManager.Instance.gameObject;
+            Destroy(d);
+            var go = new GameObject("DictationInputManager");
+            go.AddComponent<DictationInputManager>();
         }
 
     }
@@ -145,8 +153,6 @@ public class VoiceInputHandler : MonoBehaviour
         commandLog.commandPredictedScopeFilterScore = scopeFilter.BestScoreCommand().Value;
         envFilter.AddToFilter(scopeFilteredCommandsList);
         contextFilter.AddToFilter(scopeFilteredCommandsList);
-
-
         IDictionary<CommandAction, int> finalCommandsScores = new Dictionary<CommandAction, int>();
         Debug.Log("---- Calculating final score ----");
         foreach (CommandAction possibleCmd in scopeFilteredCommandsList)
@@ -172,10 +178,6 @@ public class VoiceInputHandler : MonoBehaviour
         return bestCommand;
     }
 
-    private bool Tester() {
-        GameManager.TriggerAction(0, "TABLE");
-        return true;
-    }
 
     private IEnumerator ProcessResult(string text)
     {
@@ -183,7 +185,6 @@ public class VoiceInputHandler : MonoBehaviour
         Debug.Log("Dictation result: " + text);
         //Check if text is an intro command.
         if (ProcessIntroCommands(text) || IntroManager.Instance.isIntroActive) yield break;
-        if (Tester()) yield break;
         //Initilize Filters.
         var envFilter = new EnvironmentFilter();
         var contextFilter = new ContextFilter();

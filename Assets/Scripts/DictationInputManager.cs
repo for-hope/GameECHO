@@ -131,7 +131,7 @@ public class DictationInputManager : MonoBehaviour
     /// <param name="autoSilenceTimeout">The time length in seconds before dictation recognizer session ends due to lack of audio input.</param>
     /// <param name="recordingTime">Length in seconds for the manager to listen.</param>
     /// <returns></returns>
-    public static IEnumerator StartRecording(float initialSilenceTimeout = float.PositiveInfinity, float autoSilenceTimeout = float.PositiveInfinity, int recordingTime = 120)
+    public static IEnumerator StartRecording(float initialSilenceTimeout = 10f, float autoSilenceTimeout = 10f, int recordingTime = 60)
     {
         Debug.Log("Starting dictation recognizer.");
 #if UNITY_WSA || UNITY_STANDALONE_WIN || UNITY_EDITOR
