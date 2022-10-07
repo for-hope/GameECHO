@@ -99,7 +99,7 @@ public class IntroManager : MonoBehaviour
 
     void StartCommand()
     {
-        StartCoroutine(DictationInputManager.StartRecording());
+        VoiceInputHandler.Instance.EnableRecognizer();
         isIntroAudioPlaying = false;
         activeIntroCommand = introCommands.Dequeue();
         introTextObject.GetComponent<TMPro.TextMeshProUGUI>().text = activeIntroCommand.hint;
@@ -123,7 +123,7 @@ public class IntroManager : MonoBehaviour
     {
         isIntroActive = false;
         introScreen.SetActive(false);
-        StartCoroutine(DictationInputManager.StartRecording());
+        VoiceInputHandler.Instance.EnableRecognizer();
     }
 
 

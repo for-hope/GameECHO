@@ -39,8 +39,7 @@ public class PerformanceLogger
     public int totalCorrectlyRecognized = 0;
     public int totalPassedMinimumScopeFilter = 0;
     public int totalCommandsPredicted = 0;
-
-
+    public int playtimeInSeconds = 0;
     public float averagePredictionScore = 0;
     public float averageScopeFilterScore = 0;
     public float averageContextFilterScore = 0;
@@ -104,6 +103,7 @@ public class PerformanceLogger
             Directory.CreateDirectory(dirPath);
         }
         CalculateAverageScores();
+        playtimeInSeconds = (int)Time.timeSinceLevelLoad;
         string json = JsonUtility.ToJson(this);
         string jsonFile = dirPath + "/" + "PerformanceLog.json";
         //save or replace to disk

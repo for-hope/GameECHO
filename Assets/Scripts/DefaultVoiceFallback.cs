@@ -30,8 +30,7 @@ public class DefaultVoiceFallback : MonoBehaviour
         if (!SoundManager.Instance.EffectsSource.isPlaying)
         {
             inProgress = false;
-            //GameManager.isVoiceInteractionEnabled = true;
-            StartCoroutine(DictationInputManager.StartRecording());
+            VoiceInputHandler.Instance.ProcessEnd();
         }
     }
     private string RandomResponse()

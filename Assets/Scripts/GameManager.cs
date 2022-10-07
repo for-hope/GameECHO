@@ -99,8 +99,7 @@ public class GameManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         pauseScreen.SetActive(true);
-        voiceInteractionEnabled = DictationInputManager.IsListening;
-        StartCoroutine(DictationInputManager.StopRecording());
+        VoiceInputHandler.Instance.DisableRecognizer(setFlag: false);
         isPaused = true;
     }
 
@@ -127,7 +126,7 @@ public class GameManager : MonoBehaviour
         //isVoiceInteractionEnabled = true;
         if (voiceInteractionEnabled)
         {
-            StartCoroutine(DictationInputManager.StartRecording());
+            VoiceInputHandler.Instance.EnableRecognizer();
         }
         isPaused = false;
     }
@@ -236,7 +235,7 @@ public class GameManager : MonoBehaviour
             GameObject.Find("LostScreen").SetActive(false);
         }
 
-        if (DictationInputManager.IsListening) micOffFeedback.SetActive(false);
+        if (GameManager.Instance.voiceInteractionEnabled) micOffFeedback.SetActive(false);
 
     }
 

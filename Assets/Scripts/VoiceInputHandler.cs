@@ -10,11 +10,13 @@ public class VoiceInputHandler : MonoBehaviour
 
     private GameObject micOn;
     private AudioClip micOnClip;
-
+    public VoiceProcessor voiceProcessor;
     private GameObject micOff;
     private AudioClip micOffClip;
     private PerformanceLogger performanceLogger;
     public static VoiceInputHandler Instance;
+
+    public GameObject VoiceRecognitionObject;
 
     void Start()
     {
@@ -24,7 +26,7 @@ public class VoiceInputHandler : MonoBehaviour
         micOff = canvas.transform.Find("MicOff").gameObject;
         micOnClip = Resources.Load<AudioClip>("Sounds/UI/start-mic");
         micOffClip = Resources.Load<AudioClip>("Sounds/UI/stop-mic");
-        //GameManager.isVoiceInteractionEnabled = true;
+        GameManager.isVoiceInteractionEnabled = true;
         performanceLogger = new PerformanceLogger();
     }
 
@@ -46,13 +48,13 @@ public class VoiceInputHandler : MonoBehaviour
     void Update()
     {
 
-        if (DictationInputManager.IsListening && !micOn.activeSelf)
+        if (GameManager.Instance.voiceInteractionEnabled && !micOn.activeSelf)
         {
             SoundManager.Instance.PlayUI(micOnClip);
             micOn.SetActive(true);
             micOff.SetActive(false);
         }
-        else if (!DictationInputManager.IsListening && !micOff.activeSelf)
+        else if (!GameManager.Instance.voiceInteractionEnabled && !micOff.activeSelf)
         {
             SoundManager.Instance.PlayUI(micOffClip);
             micOn.SetActive(false);
@@ -61,15 +63,17 @@ public class VoiceInputHandler : MonoBehaviour
 
         if (Keyboard.current.mKey.wasPressedThisFrame)
         {
-            if (DictationInputManager.IsListening)
+            if (GameManager.Instance.voiceInteractionEnabled)
             {
                 Debug.Log("Stopping Dictation");
-                StartCoroutine(DictationInputManager.StopRecording());
+                DisableRecognizer();
+
             }
             else
             {
                 Debug.Log("Starting Dictation");
-                StartCoroutine(DictationInputManager.StartRecording());
+                EnableRecognizer();
+
             }
         }
 
@@ -108,7 +112,7 @@ public class VoiceInputHandler : MonoBehaviour
             IntroManager.Instance.NextCommand();
             return true;
         }
-        if (IntroManager.Instance.isActiveAndEnabled) StartCoroutine(DictationInputManager.StartRecording());
+        EnableRecognizer();
         return false;
     }
 
@@ -178,13 +182,35 @@ public class VoiceInputHandler : MonoBehaviour
         return bestCommand;
     }
 
+    public void DisableRecognizer(bool setFlag = true)
+    {
+        Debug.Log("Disabling Dictation");
+        if (setFlag) GameManager.Instance.voiceInteractionEnabled = false;
+        if (!voiceProcessor.IsRecording) return;
+        voiceProcessor.StopRecording();
+    }
 
+    public void EnableRecognizer(bool setFlag = true)
+    {
+        Debug.Log("Enabling Dictation");
+        if (setFlag) GameManager.Instance.voiceInteractionEnabled = true;
+        if (voiceProcessor.IsRecording) return;
+        voiceProcessor.StartRecording();
+    }
+
+    public void ProcessEnd()
+    {
+        EnableRecognizer();
+
+    }
     private IEnumerator ProcessResult(string text)
     {
-        StartCoroutine(DictationInputManager.StopRecording());
+
+        DisableRecognizer();
         Debug.Log("Dictation result: " + text);
         //Check if text is an intro command.
         if (ProcessIntroCommands(text) || IntroManager.Instance.isIntroActive) yield break;
+
         //Initilize Filters.
         var envFilter = new EnvironmentFilter();
         var contextFilter = new ContextFilter();
@@ -233,6 +259,7 @@ public class VoiceInputHandler : MonoBehaviour
 
     public void RaiseDictationResult(string text)
     {
+        Debug.Log("Dictation result: " + text);
         if (text == "") return;
         Debug.LogFormat("Dictation result: {0}", text);
         StartCoroutine(ProcessResult(text));

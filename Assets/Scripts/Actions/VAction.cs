@@ -250,13 +250,17 @@ public class VAction : MonoBehaviour
                 if (cmds[accessCmdId].isUsedOnce)
                 {
                     hasAccess = true;
+                    actionFlow.accessCmds = null;
                     break;
                 }
             }
 
+        }
+
+        if (!hasAccess)
+        {
             StartCoroutine(PlayAudioOnQueue(actionFlow.noAccessAudioQueue));
             return;
-
         }
 
         cmds[actionFlow.commandID].isUsedOnce = true;
@@ -268,8 +272,9 @@ public class VAction : MonoBehaviour
         ActionFlow actionFlow = actions.Find(x => x.commandID == currentAudioAction.actionId);
         if (actionFlow.audioQueue.Count == 0) OnAudioQueueEnded();
         else if (currentAudioAction.actionType != AudioActionType.NoAccess) StartCoroutine(PlayAudioOnQueue(actionFlow.audioQueue));
-
-        if (currentAudioAction.actionType == AudioActionType.NoAccess) StartCoroutine(DictationInputManager.StartRecording());
+        Debug.Log("ActionType: " + currentAudioAction);
+        Debug.Log("VoiceInputHandler: " + VoiceInputHandler.Instance);
+        if (currentAudioAction.actionType == AudioActionType.NoAccess) VoiceInputHandler.Instance.EnableRecognizer();
 
     }
 
@@ -282,7 +287,7 @@ public class VAction : MonoBehaviour
             actionFlow.endAction();
             actionFlow.endAction = null;
         }
-        StartCoroutine(DictationInputManager.StartRecording());
+        VoiceInputHandler.Instance.EnableRecognizer();
         currentAudioAction = null;
     }
 
