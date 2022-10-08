@@ -270,11 +270,16 @@ public class VAction : MonoBehaviour
     private void NextInAudioQueue()
     {
         ActionFlow actionFlow = actions.Find(x => x.commandID == currentAudioAction.actionId);
-        if (actionFlow.audioQueue.Count == 0) OnAudioQueueEnded();
-        else if (currentAudioAction.actionType != AudioActionType.NoAccess) StartCoroutine(PlayAudioOnQueue(actionFlow.audioQueue));
+        if (actionFlow.audioQueue.Count == 0)
+        {
+
+            OnAudioQueueEnded();
+            return;
+        }
         Debug.Log("ActionType: " + currentAudioAction);
         Debug.Log("VoiceInputHandler: " + VoiceInputHandler.Instance);
-        if (currentAudioAction.actionType == AudioActionType.NoAccess) VoiceInputHandler.Instance.EnableRecognizer();
+        if (currentAudioAction.actionType != AudioActionType.NoAccess) { StartCoroutine(PlayAudioOnQueue(actionFlow.audioQueue)); }
+        else VoiceInputHandler.Instance.EnableRecognizer();
 
     }
 
@@ -288,6 +293,7 @@ public class VAction : MonoBehaviour
             actionFlow.endAction = null;
         }
         VoiceInputHandler.Instance.EnableRecognizer();
+        Debug.Log("D-ActionType: " + currentAudioAction);
         currentAudioAction = null;
     }
 

@@ -26,7 +26,7 @@ public class VoiceInputHandler : MonoBehaviour
         micOff = canvas.transform.Find("MicOff").gameObject;
         micOnClip = Resources.Load<AudioClip>("Sounds/UI/start-mic");
         micOffClip = Resources.Load<AudioClip>("Sounds/UI/stop-mic");
-        GameManager.isVoiceInteractionEnabled = true;
+        GameManager.isVoiceInteractionEnabled = false;
         performanceLogger = new PerformanceLogger();
     }
 
@@ -87,18 +87,7 @@ public class VoiceInputHandler : MonoBehaviour
 
     }
 
-    private void Restart()
-    {
-        Debug.Log("Not Restarting");
-        // if (dictationRecognizer == null) StartDictationEngine();
-        // if (dictationRecognizer.Status == SpeechSystemStatus.Running)
-        // {
-        //     dictationRecognizer.Stop();
 
-        // }
-        // dictationRecognizer.Start();
-
-    }
 
 
     private bool ProcessIntroCommands(string text)
@@ -107,26 +96,27 @@ public class VoiceInputHandler : MonoBehaviour
         if (text == "okay" || text == "ok") text = "okay";
         var activeIntroCommand = IntroManager.Instance.activeIntroCommand;
         if (activeIntroCommand == null) return false;
-        if (activeIntroCommand.playerResponse.ToLower() == text)
+        if (text.Contains(activeIntroCommand.playerResponse.ToLower()))
         {
             IntroManager.Instance.NextCommand();
             return true;
         }
         EnableRecognizer();
+        //if (IntroManager.Instance.isActiveAndEnabled) StartCoroutine(DictationInputManager.StartRecording());
         return false;
     }
 
-    private bool ProcessCommandActions(string text, ScopeFilter scopeFilter)
+    private bool ProcessCommandActions(string text, ScopeFilter scopeFilter, int idx)
     {
         List<CommandAction> cmdActions = GameManager.commandActions;
         for (int i = 0; i < cmdActions.Count; i++)
         {
-            if (cmdActions[i].phrase.ToLower() == text.ToLower())
+            if (text.ToLower().Contains(cmdActions[i].phrase.ToLower()))
             {
                 GameManager.TriggerAction(cmdActions[i].id, cmdActions[i].context);
                 return true;
             }
-            scopeFilter.AddToFilter(cmdActions[i], text);
+            if (idx == 0) scopeFilter.AddToFilter(cmdActions[i], text);
         }
         return false;
     }
@@ -186,16 +176,18 @@ public class VoiceInputHandler : MonoBehaviour
     {
         Debug.Log("Disabling Dictation");
         if (setFlag) GameManager.Instance.voiceInteractionEnabled = false;
-        if (!voiceProcessor.IsRecording) return;
-        voiceProcessor.StopRecording();
+
+        //if (!voiceProcessor.IsRecording) return;
+        //voiceProcessor.StopRecording();
     }
 
     public void EnableRecognizer(bool setFlag = true)
     {
         Debug.Log("Enabling Dictation");
         if (setFlag) GameManager.Instance.voiceInteractionEnabled = true;
-        if (voiceProcessor.IsRecording) return;
-        voiceProcessor.StartRecording();
+
+        //if (voiceProcessor.IsRecording) return;
+        //voiceProcessor.StartRecording();
     }
 
     public void ProcessEnd()
@@ -203,26 +195,34 @@ public class VoiceInputHandler : MonoBehaviour
         EnableRecognizer();
 
     }
-    private IEnumerator ProcessResult(string text)
+    private IEnumerator ProcessResult(List<string> texts)
     {
-
         DisableRecognizer();
-        Debug.Log("Dictation result: " + text);
-        //Check if text is an intro command.
-        if (ProcessIntroCommands(text) || IntroManager.Instance.isIntroActive) yield break;
-
         //Initilize Filters.
         var envFilter = new EnvironmentFilter();
         var contextFilter = new ContextFilter();
         var scopeFilter = new ScopeFilter();
-        CommandLog commandLog = new CommandLog(text);
-        //process text by checking if it is a command action.
-        if (ProcessCommandActions(text, scopeFilter))
+        CommandLog commandLog = new CommandLog(texts[0]);
+        string text = texts[0];
+        bool broken = false;
+        for (int i = 0; i < texts.Count; i++)
         {
-            commandLog.isCorrectlyRecognized = true;
-            performanceLogger.AddToCommandLogs(commandLog);
-            yield break;
+            text = texts[i];
+            Debug.Log("Dictation result: " + text);
+            //Check if text is an intro command.
+            if (ProcessIntroCommands(text) || (IntroManager.Instance.isIntroActive && texts.Count == i)) yield break;
+            //process text by checking if it is a command action.
+            if (ProcessCommandActions(text, scopeFilter, i))
+            {
+                commandLog = new CommandLog(text);
+                commandLog.isCorrectlyRecognized = true;
+                performanceLogger.AddToCommandLogs(commandLog);
+                broken = true;
+                yield break;
+            }
         }
+        if (broken) yield break;
+        if (IntroManager.Instance.isIntroActive) yield break;
         //!COMMAND NOT FOUND, PREDICTING...
         //var startTime = Time.realtimeSinceStartup;
         commandLog.isCorrectlyRecognized = false;
@@ -257,12 +257,15 @@ public class VoiceInputHandler : MonoBehaviour
 
 
 
-    public void RaiseDictationResult(string text)
+    public void RaiseDictationResult(List<string> texts)
     {
-        Debug.Log("Dictation result: " + text);
-        if (text == "") return;
-        Debug.LogFormat("Dictation result: {0}", text);
-        StartCoroutine(ProcessResult(text));
+        if (texts[0] == "" || texts.Count == 0 || (!IntroManager.Instance.isIntroActive && !texts[0].Any(x => System.Char.IsWhiteSpace(x)))) return;
+        for (int i = 0; i < texts.Count; i++)
+        {
+            Debug.Log(i + " Dictation result: " + texts[i]);
+        }
+
+        StartCoroutine(ProcessResult(texts));
     }
 
     public void RaiseDictationComplete(bool isError, string reason, string result, AudioClip clip)

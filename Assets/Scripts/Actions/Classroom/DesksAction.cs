@@ -61,7 +61,7 @@ public class DesksAction : VAction
     private void SitAndSleep()
     {
         //IntroManager.Instance.ShowEndingConfirmation(IntroManager.Ending.ESCAPE_BY_SLEEPING);
-        
+
         GameObject.Find("Fade").transform.GetChild(0).gameObject.SetActive(true);
         cmds[1].isUsedOnce = true;
     }
@@ -98,9 +98,9 @@ public class DesksAction : VAction
         player.transform.rotation = Quaternion.Euler(0, 90, 0);
         player.SetActive(true);
         GameObject.Find("Character").GetComponent<Animator>().SetBool("isEnding", true);
-        DictationEngine.Instance.SaveAndClose();
-        yield return new WaitForSeconds(15f);
-        SceneManager.LoadSceneAsync("EndScene");
+        VoiceInputHandler.Instance.SaveAndClose();
+        yield return new WaitForSeconds(12f);
+        SceneManager.LoadScene("EndScene");
 
     }
 

@@ -175,7 +175,7 @@ public class VoskSpeechToText : MonoBehaviour
     //Decompress the model zip file or return the location of the decompressed files.
     private IEnumerator Decompress()
     {
-		ModelPath = "vosk-model-small-en-us-0.15.zip";
+        ModelPath = "vosk-model-small-en-us-0.15.zip";
         if (!Path.HasExtension(ModelPath)
             || Directory.Exists(
                 Path.Combine(Application.persistentDataPath, Path.GetFileNameWithoutExtension(ModelPath))))
@@ -190,7 +190,7 @@ public class VoskSpeechToText : MonoBehaviour
 
         OnStatusUpdated?.Invoke("Decompressing model...");
         string dataPath = Path.Combine(Application.streamingAssetsPath, ModelPath);
-       
+
         Stream dataStream;
         // Read data from the streaming assets path. You cannot access the streaming assets directly on Android.
         if (dataPath.Contains("://"))

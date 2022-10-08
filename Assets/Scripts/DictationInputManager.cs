@@ -252,7 +252,7 @@ public class DictationInputManager : MonoBehaviour
         textSoFar.Append(text);
         dictationResult = textSoFar.ToString();
         //  Debug.LogFormat("Dictation result: {0}", dictationResult);
-        VoiceInputHandler.Instance.RaiseDictationResult(text);
+        //!IMPORTANT VoiceInputHandler.Instance.RaiseDictationResult(text);
     }
 
     /// <summary>

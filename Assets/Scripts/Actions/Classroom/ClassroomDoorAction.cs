@@ -16,7 +16,7 @@ public class ClassroomDoorAction : VAction
 
         CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the classroom door");
         CommandAction cmdAction2 = new CommandAction(1, TAG, "Force open the classroom door with the broom", "Force Open", Visibility.HIDDEN);
-        CommandAction cmdAction3 = new CommandAction(2, TAG, "Exit the classroom from the exit door and run away", "Run!", Visibility.HIDDEN);
+        CommandAction cmdAction3 = new CommandAction(2, TAG, "Run away from the classroom door", "Run!", Visibility.HIDDEN);
 
 
 

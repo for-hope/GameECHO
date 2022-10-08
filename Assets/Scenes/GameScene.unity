@@ -23455,7 +23455,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MicrophoneIndex: 1
-  _minimumSpeakingSampleValue: 0.05
+  _minimumSpeakingSampleValue: 0.4
   _silenceTimer: 1
   _autoDetect: 0
 --- !u!4 &969559367

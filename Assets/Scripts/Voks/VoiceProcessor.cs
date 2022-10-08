@@ -95,7 +95,7 @@ public class VoiceProcessor : MonoBehaviour
 
     [Header("Voice Detection Settings")]
     [SerializeField, Tooltip("The minimum volume to detect voice input for"), Range(0.0f, 1.0f)]
-    private float _minimumSpeakingSampleValue = 0.05f;
+    private float _minimumSpeakingSampleValue = 0.4f;
 
     [SerializeField, Tooltip("Time in seconds of detected silence before voice request is sent")]
     private float _silenceTimer = 1.0f;

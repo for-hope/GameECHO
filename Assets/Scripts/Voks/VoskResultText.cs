@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class VoskResultText : MonoBehaviour
 {
@@ -16,8 +17,10 @@ public class VoskResultText : MonoBehaviour
         //Debug.Log(obj);
         string resultText = "";
         var result = new RecognitionResult(obj);
+        var phrases = new List<string>();
         for (int i = 0; i < result.Phrases.Length; i++)
         {
+            phrases.Add(result.Phrases[i].Text);
             if (i > 0)
             {
                 resultText += ", ";
@@ -27,7 +30,8 @@ public class VoskResultText : MonoBehaviour
         }
         Debug.Log(result.Partial ? "Partial" : "Final");
         Debug.Log("RAW RESULT" + resultText);
-        VoiceInputHandler.Instance.RaiseDictationResult(result.Phrases[0].Text);
+       
+        VoiceInputHandler.Instance.RaiseDictationResult(phrases);
         resultText += "\n";
     }
 }
