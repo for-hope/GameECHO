@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour
     //public GameObject IntroScreen;
     //public bool isIntroPlaying;
     public bool predictorEnabled = true;
+    public bool scopeOnlyPrediction = true;
     public bool isPaused = false;
     private GameObject pauseScreen;
     //private GameObject startScreen;

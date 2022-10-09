@@ -45,7 +45,7 @@ public class PerformanceLogger
     public float averageContextFilterScore = 0;
     public float averageEnvironmentFilterScore = 0;
 
-    public int totalCommandsPredictedCByScopeOnly = 0;
+    public int totalCommandsPredictedByScopeOnly = 0;
 
     [SerializeField]
     public List<CommandLog> commandLogs = new List<CommandLog>();
@@ -63,7 +63,7 @@ public class PerformanceLogger
         if (commandLog.commandPredicted != null)
         {
             totalCommandsPredicted++;
-            if (commandLog.commandPredicted == commandLog.commandBasedOnScopeFilter) totalCommandsPredictedCByScopeOnly++;
+            if (commandLog.commandPredicted == commandLog.commandBasedOnScopeFilter) totalCommandsPredictedByScopeOnly++;
             commandLog.predictedPhrase = commandLog.commandPredicted.phrase;
             commandLog.predictedPhraseBasedOnScope = commandLog.commandBasedOnScopeFilter.phrase;
             commandLogsPredicted.Add(commandLog);

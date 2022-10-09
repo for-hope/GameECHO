@@ -101,7 +101,7 @@ public class VoiceInputHandler : MonoBehaviour
             IntroManager.Instance.NextCommand();
             return true;
         }
-        EnableRecognizer();
+
         //if (IntroManager.Instance.isActiveAndEnabled) StartCoroutine(DictationInputManager.StartRecording());
         return false;
     }
@@ -141,6 +141,8 @@ public class VoiceInputHandler : MonoBehaviour
         var scopeFilteredCommandsList = GetPossibleCommands(text, scopeFilter);
         //If no commands are found, return.
         if (scopeFilteredCommandsList == null) return null;
+
+
         //process commands through the filters
         commandLog.numberOfCommandsConsidered = scopeFilteredCommandsList.Count;
         commandLog.commandBasedOnScopeFilter = scopeFilter.BestScoreCommand().Key;
@@ -168,6 +170,7 @@ public class VoiceInputHandler : MonoBehaviour
         commandLog.commandPredictedEnvironmentFilterScore = envFilter.getCommandScore(bestCommandWithScore.Key);
         commandLog.commandPredicted = bestCommand;
         commandLog.commandPredictedScore = bestCommandWithScore.Value;
+        if (GameManager.Instance.scopeOnlyPrediction) return scopeFilter.BestScoreCommand().Key;
         Debug.Log("=> Best Score Command: " + bestCommand.phrase + " with score: " + bestCommandWithScore.Value);
         return bestCommand;
     }
@@ -176,9 +179,7 @@ public class VoiceInputHandler : MonoBehaviour
     {
         Debug.Log("Disabling Dictation");
         if (setFlag) GameManager.Instance.voiceInteractionEnabled = false;
-
-        //if (!voiceProcessor.IsRecording) return;
-        //voiceProcessor.StopRecording();
+        voiceProcessor.StopRecording();
     }
 
     public void EnableRecognizer(bool setFlag = true)
@@ -187,7 +188,7 @@ public class VoiceInputHandler : MonoBehaviour
         if (setFlag) GameManager.Instance.voiceInteractionEnabled = true;
 
         //if (voiceProcessor.IsRecording) return;
-        //voiceProcessor.StartRecording();
+        voiceProcessor.StartRecording();
     }
 
     public void ProcessEnd()
@@ -210,7 +211,15 @@ public class VoiceInputHandler : MonoBehaviour
             text = texts[i];
             Debug.Log("Dictation result: " + text);
             //Check if text is an intro command.
-            if (ProcessIntroCommands(text) || (IntroManager.Instance.isIntroActive && texts.Count == i)) yield break;
+            var processIntro = ProcessIntroCommands(text);
+           
+
+            if (processIntro || (IntroManager.Instance.isIntroActive && texts.Count == i + 1))
+            {
+                Debug.Log("Intro Command " + texts.Count + " " + i + " " + processIntro);
+                if (texts.Count == i + 1 && !processIntro) EnableRecognizer();
+                yield break;
+            }
             //process text by checking if it is a command action.
             if (ProcessCommandActions(text, scopeFilter, i))
             {
