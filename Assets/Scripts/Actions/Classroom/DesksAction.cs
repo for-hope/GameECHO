@@ -83,6 +83,7 @@ public class DesksAction : VAction
         GameObject.Find("Characters").transform.GetChild(1).gameObject.SetActive(true);
         //move player to //
         GameObject player = GameObject.Find("PlayerCapsule");
+        GameManager.Instance.voiceInteractionEnabled = false;
         //animate isEnding to true
         SoundManager.Instance.PlayMusic(Resources.Load<AudioClip>("Sounds/ending_background_school"));
         SoundManager.Instance.Play(Resources.Load<AudioClip>("Sounds/ending-dialog"));
@@ -93,6 +94,7 @@ public class DesksAction : VAction
         player.GetComponent<StarterAssets.FirstPersonController>().enabled = false;
         player.GetComponent<UnityEngine.AI.NavMeshAgent>().enabled = false;
         player.GetComponent<PlayerNavMesh>().enabled = false;
+        GameObject.Find("Blackboard_Canvas").transform.GetChild(0).gameObject.SetActive(false);
         player.SetActive(false);
         player.transform.position = new Vector3(-9.25f, -0.4f, -0.55f);
         player.transform.rotation = Quaternion.Euler(0, 90, 0);

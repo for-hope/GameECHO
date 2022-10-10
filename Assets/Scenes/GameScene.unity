@@ -25716,7 +25716,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MicrophoneIndex: 1
-  _minimumSpeakingSampleValue: 0.3
+  _minimumSpeakingSampleValue: 0.6
   _silenceTimer: 1
   _autoDetect: 0
 --- !u!4 &969559367
@@ -45838,8 +45838,8 @@ MonoBehaviour:
   animator: {fileID: 0}
   voiceInteractionEnabled: 1
   ignoreLowScopeScores: 1
-  predictorEnabled: 1
-  scopeOnlyPrediction: 1
+  predictorEnabled: 0
+  scopeOnlyPrediction: 0
   isPaused: 0
   targetFrameRate: 0
   micOffFeedback: {fileID: 108611073}

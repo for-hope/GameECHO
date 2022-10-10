@@ -96,7 +96,7 @@ public class VoiceInputHandler : MonoBehaviour
         if (text == "okay" || text == "ok") text = "okay";
         var activeIntroCommand = IntroManager.Instance.activeIntroCommand;
         if (activeIntroCommand == null) return false;
-        if (text.Contains(activeIntroCommand.playerResponse.ToLower()))
+        if (text.Contains(activeIntroCommand.playerResponse.ToLower().ToCharArray()[0].ToString()))
         {
             IntroManager.Instance.NextCommand();
             return true;
