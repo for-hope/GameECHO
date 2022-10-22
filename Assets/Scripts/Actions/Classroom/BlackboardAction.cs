@@ -16,7 +16,7 @@ public class BlackboardAction : VAction
     {
 
         CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the blackboard", noAnimation: true);
-        CommandAction cmdAction2 = new CommandAction(1, TAG, "What is the writing on the blackboard", "The writing?");
+        CommandAction cmdAction2 = new CommandAction(1, TAG, "What is the writing on the blackboard", "The writing?*");
         CommandAction cmdAction3 = new CommandAction(2, TAG, "Wipe off the blackboard", "Wipe off");
 
         actions.Add(new ActionFlow(1, WhatIsWriting, "Sounds/blackboard-2a", "", ""));

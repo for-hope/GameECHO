@@ -16,7 +16,7 @@ public class NotebooksAction : VAction
     {
 
         CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the notebooks");
-        CommandAction cmdAction2 = new CommandAction(1, TAG, "Read the notebooks with your name", "Read");
+        CommandAction cmdAction2 = new CommandAction(1, TAG, "Read the notebooks with your name", "Read*");
 
 
         actions.Add(new ActionFlow(1, Read, "Sounds/notebooks-2a", "Sounds/read-notebooks", "Sounds/notebooks-2b"));

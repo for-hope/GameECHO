@@ -16,8 +16,8 @@ public class SmallBathroomAction : VAction
     {
 
         CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the small bathroom");
-        CommandAction cmdAction2 = new CommandAction(1, TAG, "Check for exists in the small bathroom", "Check Exits");
-        CommandAction cmdAction3 = new CommandAction(2, TAG, "Close the door of the small bathroom", "Close Door");
+        CommandAction cmdAction2 = new CommandAction(1, TAG, "Check for exists in the small bathroom", "Check Exits*");
+        CommandAction cmdAction3 = new CommandAction(2, TAG, "Close the door of the small bathroom", "Close Door*");
 
 
         actions.Add(new ActionFlow(1, CheckExits, "Sounds/small-bathroom-2a", "Sounds/check-exits", "Sounds/small-bathroom-2b"));

@@ -17,7 +17,7 @@ public class MirrorAction : VAction
 
         CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the mirror");
         CommandAction cmdAction2 = new CommandAction(1, TAG, "Break the mirror", "Break");
-        CommandAction cmdAction3 = new CommandAction(2, TAG, "Pick a shard from the broken mirror", "Pick Shard", Visibility.HIDDEN);
+        CommandAction cmdAction3 = new CommandAction(2, TAG, "Pick a shard from the broken mirror", "Pick Shard*", Visibility.HIDDEN);
 
 
         actions.Add(new ActionFlow(1, BreakMirror, "Sounds/mirror-2a", "Sounds/break-mirror", "Sounds/mirror-2b"));

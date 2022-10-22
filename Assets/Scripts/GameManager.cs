@@ -26,6 +26,7 @@ public class GameManager : MonoBehaviour
     private List<CommandAction> showList = new List<CommandAction>();
     private TMPro.TextMeshProUGUI hintText;
     private GameObject instructionsWindow;
+    private GameObject settingsWindow;
     private bool isLostScreen = false;
     //public GameObject IntroScreen;
     //public bool isIntroPlaying;
@@ -46,6 +47,7 @@ public class GameManager : MonoBehaviour
         pauseScreen = canvas.transform.Find("PauseScreen").gameObject;
         micOffFeedback = canvas.transform.Find("MicOffFeedback").gameObject;
         instructionsWindow = pauseScreen.transform.Find("Instructions").gameObject;
+        settingsWindow = pauseScreen.transform.Find("Settings").gameObject;
         pauseScreen.SetActive(false);
         playerCam = GameObject.Find("PlayerFollowCamera").GetComponent<Cinemachine.CinemachineVirtualCamera>();
         handCam = GameObject.Find("HandCam").GetComponent<Cinemachine.CinemachineVirtualCamera>();
@@ -266,6 +268,15 @@ public class GameManager : MonoBehaviour
     public void HideInstructions()
     {
         instructionsWindow.SetActive(false);
+    }
+
+    public void ShowSettings()
+    {
+        settingsWindow.SetActive(true);
+    }
+    public void HideSettings()
+    {
+        settingsWindow.SetActive(false);
     }
 
     private void updateVoiceObjects()

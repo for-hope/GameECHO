@@ -212,7 +212,7 @@ public class VoiceInputHandler : MonoBehaviour
             Debug.Log("Dictation result: " + text);
             //Check if text is an intro command.
             var processIntro = ProcessIntroCommands(text);
-           
+
 
             if (processIntro || (IntroManager.Instance.isIntroActive && texts.Count == i + 1))
             {
@@ -287,7 +287,6 @@ public class VoiceInputHandler : MonoBehaviour
     {
         Debug.LogFormat(errorText);
     }
-
 
     public void SaveAndClose()
     {

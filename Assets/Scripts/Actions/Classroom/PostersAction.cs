@@ -16,7 +16,7 @@ public class PostersAction : VAction
     {
 
         CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the posters");
-        CommandAction cmdAction2 = new CommandAction(1, TAG, "What are the posters about?", "About?");
+        CommandAction cmdAction2 = new CommandAction(1, TAG, "What are the posters about?", "About?*");
    
 
 

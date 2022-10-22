@@ -16,7 +16,7 @@ public class ScreenAction : VAction
     {
 
         CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the screen", noAnimation: true);
-        CommandAction cmdAction2 = new CommandAction(1, TAG, "What just played on the screen?", "What played?");
+        CommandAction cmdAction2 = new CommandAction(1, TAG, "What just played on the screen?", "What played?*");
 
 
 

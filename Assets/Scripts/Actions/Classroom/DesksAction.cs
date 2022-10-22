@@ -17,7 +17,7 @@ public class DesksAction : VAction
     {
 
         CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the desks");
-        CommandAction cmdAction2 = new CommandAction(1, TAG, "Sit on your desk and fall asleep", "Sit & Sleep", Visibility.HIDDEN);
+        CommandAction cmdAction2 = new CommandAction(1, TAG, "Sit on your desk and fall asleep", "Sit & Sleep*", Visibility.HIDDEN);
 
 
 

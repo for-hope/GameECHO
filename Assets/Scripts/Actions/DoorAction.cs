@@ -14,7 +14,7 @@ public class DoorAction : VAction
     {
         CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the door");
         CommandAction cmdAction2 = new CommandAction(1, TAG, "Try to open the door", "Try to Open");
-        CommandAction cmdAction3 = new CommandAction(2, TAG, "Break the door with the pipe", "Break with pipe", Visibility.HIDDEN);
+        CommandAction cmdAction3 = new CommandAction(2, TAG, "Break the door with the pipe", "Break with pipe*", Visibility.HIDDEN);
         cmds.Add(cmdAction);
         cmds.Add(cmdAction2);
         cmds.Add(cmdAction3);

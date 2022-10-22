@@ -149,7 +149,7 @@ public class VoskSpeechToText : MonoBehaviour
         _isInitializing = false;
         _didInit = true;
 
-        ToggleRecording();
+        ToggleRecording(true);
     }
 
     //Translates the KeyPhraseses into a json array and appends the `[unk]` keyword at the end to tell vosk to filter other phrases.
@@ -256,10 +256,11 @@ public class VoskSpeechToText : MonoBehaviour
     }
 
     //Can be called from a script or a GUI button to start detection.
-    public void ToggleRecording()
+    public void ToggleRecording(bool forceStart = false)
     {
-        Debug.Log("Toogle Recording");
-        if (!VoiceProcessor.IsRecording)
+        Debug.Log("Toogle Recording | forceStart: " + forceStart);
+
+        if (!VoiceProcessor.IsRecording || forceStart)
         {
             Debug.Log("Start Recording");
             _running = true;

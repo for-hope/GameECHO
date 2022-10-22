@@ -16,7 +16,7 @@ public class WiresAction : VAction
         bool boardTranslated = GameManager.commandActions.Find(x => x.context.ToLower() == EnvObjects.BOARD.ToString().ToLower() && x.id == 1).isUsedOnce;
         bool mirrorShardPicked = GameManager.commandActions.Find(x => x.context.ToLower() == EnvObjects.MIRROR.ToString().ToLower() && x.id == 2).isUsedOnce;
         bool alarmInspected = GameManager.commandActions.Find(x => x.context.ToLower() == EnvObjects.ALARM.ToString().ToLower() && x.id == 0).isUsedOnce;
-        bool unlockHiddenCommands = boardTranslated && mirrorShardPicked && alarmInspected;
+        bool unlockHiddenCommands = (boardTranslated && mirrorShardPicked) || (alarmInspected && boardTranslated) || (alarmInspected && mirrorShardPicked);
         //Debug.Log("Unlocking commands if possible " + unlockHiddenCommands);
         if (unlockHiddenCommands)
         {
@@ -27,16 +27,17 @@ public class WiresAction : VAction
 
     public override void Inspect()
     {
-        base.Inspect();
         UnlockCommandsIfPossible();
+        base.Inspect();
+     
     }
 
     public new void Start()
     {
 
         CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the wires");
-        CommandAction cmdAction2 = new CommandAction(1, TAG, "Cut the wires near the orange door", "Cut wires (orange door)", Visibility.HIDDEN);
-        CommandAction cmdAction3 = new CommandAction(2, TAG, "Cut the wires near the white door", "Cut wires (white door)", Visibility.HIDDEN);
+        CommandAction cmdAction2 = new CommandAction(1, TAG, "Cut the wires near the orange door", "Cut wires (orange door)*", Visibility.HIDDEN);
+        CommandAction cmdAction3 = new CommandAction(2, TAG, "Cut the wires near the white door", "Cut wires (white door)*", Visibility.HIDDEN);
 
 
         actions.Add(new ActionFlow(1, CutWiresOrangeDoor, "Sounds/wires-2a", "Sounds/cut-wires", "Sounds/wires-2b", endAction: GoToNextLevel));

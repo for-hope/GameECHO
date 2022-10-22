@@ -15,8 +15,8 @@ public class SpeakerAction : VAction
     {
 
         CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the speaker", noAnimation: true);
-        CommandAction cmdAction2 = new CommandAction(1, TAG, "Did the speakers just say something?", "Speaker says?");
-        CommandAction cmdAction3 = new CommandAction(2, TAG, "Remind me what the speakers said", "Remind");
+        CommandAction cmdAction2 = new CommandAction(1, TAG, "Did the speakers just say something?", "Speaker says?*");
+        CommandAction cmdAction3 = new CommandAction(2, TAG, "Remind me what the speakers said", "Remind*");
 
 
         actions.Add(new ActionFlow(1, SpeakerSays, "Sounds/speaker-2a", "", ""));

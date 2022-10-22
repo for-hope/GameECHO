@@ -14,7 +14,7 @@ public class MetalDoorAction : VAction
         CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the metal door");
         CommandAction cmdAction2 = new CommandAction(1, TAG, "Open the metal door", "Open");
         CommandAction cmdAction3 = new CommandAction(2, TAG, "Break the metal door", "Break");
-        CommandAction cmdAction4 = new CommandAction(3, TAG, "Knock down the metal door with the pipe", "Knock down (Pipe)", Visibility.HIDDEN);
+        CommandAction cmdAction4 = new CommandAction(3, TAG, "Knock down the metal door with the pipe", "Knock down (Pipe)*", Visibility.HIDDEN);
 
         actions.Add(new ActionFlow(1, Open, "Sounds/a42", "Sounds/open-metal-door", "Sounds/a43"));
         actions.Add(new ActionFlow(2, Break, "Sounds/a44", "", ""));

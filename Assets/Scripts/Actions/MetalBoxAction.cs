@@ -17,10 +17,10 @@ public class MetalBoxAction : VAction
     {
         CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the metal box");
         CommandAction cmdAction2 = new CommandAction(1, TAG, "Try to open the metal box", "Try to open");
-        CommandAction cmdAction3 = new CommandAction(2, TAG, "Use a key to open the metal box", "Use a key");
+        CommandAction cmdAction3 = new CommandAction(2, TAG, "Use a key to open the metal box", "Use a key*");
         CommandAction cmdAction4 = new CommandAction(3, TAG, "Try to Break the metal box", "Try to Break");
-        CommandAction cmdAction5 = new CommandAction(4, TAG, "Use the chair to reach the metal box", "Use Chair", Visibility.HIDDEN);
-        CommandAction cmdAction6 = new CommandAction(5, TAG, "Use the table to reach the metal box", "Use Table", Visibility.HIDDEN);
+        CommandAction cmdAction5 = new CommandAction(4, TAG, "Use the chair to reach the metal box", "Use Chair*", Visibility.HIDDEN);
+        CommandAction cmdAction6 = new CommandAction(5, TAG, "Use the table to reach the metal box", "Use Table*", Visibility.HIDDEN);
 
         cmds = new List<CommandAction>
         {

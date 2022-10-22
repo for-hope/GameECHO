@@ -116,15 +116,15 @@ public class VoiceProcessor : MonoBehaviour
     {
         UpdateDevices();
     }
-#if UNITY_EDITOR
-    void Update()
-    {
-        if (CurrentDeviceIndex != MicrophoneIndex)
-        {
-            ChangeDevice(MicrophoneIndex);
-        }
-    }
-#endif
+// #if UNITY_EDITOR
+//     void Update()
+//     {
+//         if (CurrentDeviceIndex != MicrophoneIndex)
+//         {
+//             ChangeDevice(MicrophoneIndex);
+//         }
+//     }
+// #endif
 
     /// <summary>
     /// Updates list of available audio devices
@@ -151,6 +151,7 @@ public class VoiceProcessor : MonoBehaviour
     /// <param name="deviceIndex">Index of the new audio capture device</param>
     public void ChangeDevice(int deviceIndex)
     {
+        Debug.Log("Changing device to " + deviceIndex);
         if (deviceIndex < 0 || deviceIndex >= Devices.Count)
         {
             Debug.LogError(string.Format("Specified device index {0} is not a valid recording device", deviceIndex));

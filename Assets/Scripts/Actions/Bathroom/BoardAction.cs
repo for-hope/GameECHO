@@ -16,7 +16,7 @@ public class BoardAction : VAction
     {
 
         CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the board");
-        CommandAction cmdAction2 = new CommandAction(1, TAG, "Translate the writing on the Board", "Translate");
+        CommandAction cmdAction2 = new CommandAction(1, TAG, "Translate the writing on the Board", "Translate*");
 
 
         actions.Add(new ActionFlow(1, Translate, "", "", "Sounds/board-2a"));

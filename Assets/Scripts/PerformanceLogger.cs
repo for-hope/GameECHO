@@ -103,7 +103,7 @@ public class PerformanceLogger
             Directory.CreateDirectory(dirPath);
         }
         CalculateAverageScores();
-        playtimeInSeconds = (int)Time.timeSinceLevelLoad;
+        playtimeInSeconds = (int)Time.time;
         string json = JsonUtility.ToJson(this);
         string jsonFile = dirPath + "/" + "PerformanceLog.json";
         //save or replace to disk

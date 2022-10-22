@@ -18,7 +18,7 @@ public class ClassroomWindowsAction : VAction
         CommandAction cmdAction = new CommandAction(0, TAG, "Inspect the classroom windows");
         CommandAction cmdAction2 = new CommandAction(1, TAG, "What's outside the classroom windows?", "What's outside?");
         CommandAction cmdAction3 = new CommandAction(2, TAG, "Break the classroom windows", "Break");
-        CommandAction cmdAction4 = new CommandAction(3, TAG, "Run away from the classroom windows", "Run!", Visibility.HIDDEN);
+        CommandAction cmdAction4 = new CommandAction(3, TAG, "Run away from the classroom windows", "Run!*", Visibility.HIDDEN);
 
 
         actions.Add(new ActionFlow(1, WhatsInside, "Sounds/classroom-windows-2a", "", ""));
